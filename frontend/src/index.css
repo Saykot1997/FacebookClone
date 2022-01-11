@@ -1,0 +1,213 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+.rightbar {
+  height: calc(100vh - theme('spacing.14'));
+}
+.forgetPassword{
+  height: calc(100% - theme('spacing.14'));
+}
+.menubar{
+  height: calc(100vh - theme('spacing.20'));
+}
+.menubarChild{
+  height: calc(100vh - theme('spacing.32'));
+}
+
+.sidebar {
+  height: calc(100vh - theme('spacing.48'));
+}
+.friendSidebar {
+  height: calc(100vh - theme('spacing.48'));
+}
+
+.listItem {
+  @apply flex items-center px-2 font-semibold cursor-pointer hover:bg-gray-200 hover:rounded-md h-12 my-1;
+}
+
+.inputText {
+  @apply bg-gray-100 hover:bg-gray-200 focus:outline-0 w-full py-2 px-3 rounded-3xl cursor-pointer;
+}
+
+.profileItems {
+  @apply  font-semibold relative py-3 px-4 hover:bg-gray-100 rounded-md cursor-pointer;
+}
+
+.icons{
+  @apply mr-[10px] w-9;
+}
+
+.shareItems{
+  @apply flex-1 flex items-center py-2 px-3 cursor-pointer hover:bg-gray-200 rounded-md;
+}
+
+.postItems{
+  @apply flex-1 py-1 flex items-center justify-center cursor-pointer hover:bg-gray-100 rounded-md;
+}
+
+.topbarItems{
+  @apply w-full h-full cursor-pointer hover:bg-gray-200 flex items-center justify-center rounded-lg;
+}
+.marketplaceLinksItem{
+  @apply w-full flex items-center hover:bg-gray-100 rounded-lg py-2 px-2;
+}
+.marketplaceLinksDiv{
+  @apply h-9 w-9 rounded-full flex justify-center items-center mr-2;
+}
+
+.friendLinksItems{
+  @apply flex items-center h-[53px] hover:bg-gray-100  px-2 py-1 rounded-lg cursor-pointer;
+}
+
+.friendLinksIconItems{
+  @apply  h-9 w-9 rounded-full flex justify-center items-center mr-3;
+}
+
+.friendLinksTitle{
+  @apply font-semibold text-[17px];
+}
+.TopHoverBox{
+  @apply absolute scale-0 group-hover:scale-100 transition-all duration-200 ease-in shadow-md shadow-gray-700 -bottom-9 left-0 bg-black rounded-lg flex justify-center items-center p-2;
+}
+.TopRightBox{
+  @apply  relative cursor-pointer mx-1 p-1 h-9 w-9 hover:bg-gray-300 rounded-full flex justify-center items-center;
+}
+.TopRightHoverBox{
+  @apply absolute scale-0 group-hover:scale-100 transition-all duration-200 ease-in shadow-md shadow-gray-200 -bottom-11 bg-black rounded-lg flex justify-center items-center p-2;
+}
+.groupLeftItems{
+  @apply flex items-center px-3 py-2 hover:bg-gray-100 rounded-md;
+}
+.groupLeftIconBox{
+  @apply h-9 w-9 rounded-full flex justify-center items-center mr-2;
+}
+
+@layer utilities {
+  .scrollbar::-webkit-scrollbar {
+    width: 7px;
+    opacity: 0; 
+  }
+  .scrollbar:hover::-webkit-scrollbar {
+    opacity: 1;
+    
+  }
+
+  .scrollbar:hover::-webkit-scrollbar-track {
+    background: #f1f1f1;
+  }
+
+  .scrollbar:hover::-webkit-scrollbar-thumb {
+    background:rgba(179,179,179,1);
+    border-radius: 10px;
+  }
+}
+
+@layer utilities {
+  .friendSuggetionsScrollbar::-webkit-scrollbar {
+  width: 10px; 
+  opacity: 0;
+
+  }
+  .friendSuggetionsScrollbar:hover::-webkit-scrollbar {
+    opacity: 1;
+  }
+
+  .friendSuggetionsScrollbar:hover::-webkit-scrollbar-thumb {
+    background:rgba(179,179,179,1);
+    border-radius: 80px;
+  }
+}
+
+@layer utilities {
+  .ProfileScrollbar::-webkit-scrollbar {
+    width: 0px;
+    opacity: 0; 
+  }
+}
+
+@layer utilities {
+  .requestFriendsIcon {
+    background-image: url('./images/icons.png');
+    width: 30px;
+    height: 24px;
+    border-radius: 0%;
+    margin-right: 8px;
+    background-size: 25px 720px;
+    background-position: 8px -242px;
+    background-repeat: no-repeat;
+    display: inline-block;
+}
+}
+
+@layer utilities {
+  .suggetionFriendsIcon {
+    background-image: url('./images/icons.png');
+    width: 30px;
+    height: 24px;
+    border-radius: 0%;
+    margin-right: 8px;
+    background-size: 25px 720px;
+    background-position: 8px -176px;
+    background-repeat: no-repeat;
+    display: inline-block;
+}
+}
+
+@layer utilities {
+  .allFriendsIcon {
+    background-image: url('./images/icons.png');
+    width: 30px;
+    height: 22px;
+    border-radius: 0%;
+    margin-right: 8px;
+    background-size: 25px 720px;
+    background-position: 8px -200px;
+    background-repeat: no-repeat;
+    display: inline-block;
+}
+}
+
+@layer utilities {
+  .birthdayIcon {
+    background-image: url('./images/icons.png');
+    width: 30px;
+    height: 21px;
+    border-radius: 0%;
+    margin-right: 8px;
+    background-size: 25px 720px;
+    background-position: 9px -307px;
+    background-repeat: no-repeat;
+    display: inline-block;
+}
+}
+
+@layer utilities {
+  .postCreateBox {
+    position: absolute;
+    background-color: rgba(255,255,255,0.6);
+    height: 100vh;
+    width: 100%;
+    top: 0;
+    left: 0;
+    z-index: 20;
+    display:flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+}
+
+@layer utilities {
+  .mutualFrideBox {
+    position: absolute;
+    background-color: rgba(0,0,0,0.7);
+    bottom: -30px;
+    left: 0;
+    border-radius:8px;
+    z-index: 2;
+    padding:10px;
+    cursor: pointer;
+}
+}
