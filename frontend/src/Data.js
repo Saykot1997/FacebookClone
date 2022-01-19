@@ -1,3 +1,6 @@
+
+export const Host = "http://localhost:8000";
+
 const sidebarLinks = [
     {
         name: "Friends",

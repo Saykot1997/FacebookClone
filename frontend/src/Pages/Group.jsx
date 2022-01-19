@@ -31,10 +31,10 @@ function Group() {
                             </div>
                             <div className=' mt-3'>
                                 <h2 className=' to-gray-400 font-semibold -mb-2'>Recent activity</h2>
+                                {/* <Post />
                                 <Post />
                                 <Post />
-                                <Post />
-                                <Post />
+                                <Post /> */}
                             </div>
                         </div>
 

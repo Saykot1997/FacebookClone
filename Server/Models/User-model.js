@@ -1,25 +1,42 @@
 const mongoose = require('mongoose');
 
 const UserSchema = new mongoose.Schema({
-    name: {
+    firstName: {
         type: String,
         required: true,
         minlength: 3,
         maxlength: 20,
         trim: true,
-        unique: true
+    },
+    sureName: {
+        type: String,
+        required: true,
+        minlength: 3,
+        maxlength: 20,
+        trim: true,
     },
     email: {
         type: String,
-        required: true,
-        minlength: 5,
-        maxlength: 55,
-        unique: true
+        default: "",
+        unique: false
     },
     password: {
         type: String,
         required: true,
         minlength: 5
+    },
+    mobileNumber: {
+        type: String,
+        default: "",
+        unique: false
+    },
+    birthDay: {
+        type: Date,
+        required: true,
+    },
+    gender: {
+        type: String,
+        required: true
     },
     profilePicture: {
         type: String,
@@ -37,6 +54,12 @@ const UserSchema = new mongoose.Schema({
         type: Array,
         default: []
     },
+    timelinePost: [
+        post = {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Post'
+        }
+    ],
     role: {
         type: String,
         enum: ['user', 'admin'],

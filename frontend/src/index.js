@@ -2,10 +2,12 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
-import IsPostCreateOpenProvider from './Context/PostCreate';
+import { Provider } from 'react-redux'
+import { store } from './Redux/Store';
 
 ReactDOM.render(
-    <IsPostCreateOpenProvider>
+    <Provider store={store}>
         <App />
-    </IsPostCreateOpenProvider>
-    , document.getElementById('root'));
+    </Provider>
+    , document.getElementById('root')
+);

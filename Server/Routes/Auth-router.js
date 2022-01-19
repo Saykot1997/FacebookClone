@@ -7,27 +7,62 @@ const jwt = require('jsonwebtoken');
 
 router.post("/register", async (req, res) => {
 
-    const { email, password, name } = req.body;
+    const { firstName, sureName, password, birthDay, gender } = req.body;
 
-    if (email && password && name) {
+    if (firstName && sureName && password && birthDay && gender) {
+
+        if (!req.body.email && !req.body.mobileNumber) {
+            res.status(403).json("Email or MobileNumber is required")
+        }
 
         const user = new User({
-            email,
-            name
+            firstName,
+            sureName,
+            birthDay,
+            gender
         })
+
+        req.body.email ? user.email = req.body.email : user.mobileNumber = req.body.mobileNumber;
 
         try {
 
-            const salt = await bcrypt.genSalt(10);
-            const saltPassword = await bcrypt.hash(password, salt);
-            user.password = saltPassword;
-            const newUser = await user.save();
-            res.status(200).json(newUser);
+            let findUserEmail
+            let findUserMobileNumber
+
+            if (user.email) {
+
+                findUserEmail = await User.findOne({ email: user.email });
+
+            } else {
+
+                findUserMobileNumber = await User.findOne({ mobileNumber: user.mobileNumber })
+            }
+
+            if (findUserEmail) {
+
+                res.status(403).json("User email should be unique");
+
+            } else if (findUserMobileNumber) {
+
+                res.status(403).json("User mobile number should be unique");
+
+            } else {
+
+                const allIndesv = await User.collection.getIndexes();
+
+                await User.collection.dropIndexes();
+
+                const salt = await bcrypt.genSalt(10);
+                const saltPassword = await bcrypt.hash(password, salt);
+                user.password = saltPassword;
+                const newUser = await user.save();
+                res.status(200).json(newUser);
+            }
 
         } catch (error) {
 
             res.status(400).json(error);
-            // console.log(error);
+            console.log(error);
         }
 
     } else {
@@ -42,13 +77,22 @@ router.post("/register", async (req, res) => {
 
 router.post("/login", async (req, res) => {
 
-    const { email, password } = req.body;
+    const { email, mobileNumber, password } = req.body;
 
-    if (email && password) {
+    if (password && email || mobileNumber) {
 
         try {
 
-            const user = await User.findOne({ email });
+            let user
+
+            if (email) {
+
+                user = await User.findOne({ email });
+
+            } else {
+
+                user = await User.findOne({ mobileNumber });
+            }
 
             if (!user) {
 
@@ -64,11 +108,11 @@ router.post("/login", async (req, res) => {
 
                 } else {
 
-                    const token = jwt.sign({ id: user._id, role: user.role }, process.env.TOKENSECRATE);
+                    const token = jwt.sign({ id: user._id, role: user.role, userName: user.firstName }, process.env.TOKENSECRATE);
 
-                    const { password, ...rest } = user._doc;
+                    const { password, timelinePost, updatedAt, createdAt, ...rest } = user._doc;
 
-                    res.status(200).cookie("jwt", token, { httpOnly: true }).json(rest);
+                    res.status(200).json({ ...rest, token });
 
                 }
             }

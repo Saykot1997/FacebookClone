@@ -28,17 +28,19 @@ import ProfileFriends from "./Pages/ProfileFriends";
 import ProfilePhotos from "./Pages/ProfilePhotos";
 import ProfileVideo from "./Pages/ProfileVideo";
 import ProfileCheckInc from "./Pages/ProfileCheckInc";
-import Login from "./Pages/Login";
-import LoginFromScratch from "./Pages/LoginFromScratch";
 import ForgetPassword from "./Pages/ForgetPassword";
 import CreatePassword from "./Pages/CreatePassword";
+import { useSelector } from "react-redux";
+import Login from "./Pages/Login";
 
 function App() {
-  return (
 
+  const User = useSelector(state => state.User.User);
+
+  return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Home />} />
+        <Route path="/" element={User ? <Home /> : <Login />} />
         <Route path="/friends" element={<Friend />} />
         <Route path="/friends/request" element={<FriendRequest />} />
         <Route path="/friends/request/profile" element={<FriendRequestProfile />} />
@@ -67,8 +69,7 @@ function App() {
         <Route path="/profile/photos" element={<ProfilePhotos />} />
         <Route path="/profile/videos" element={<ProfileVideo />} />
         <Route path="/profile/checkInc" element={<ProfileCheckInc />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/newlogin" element={<LoginFromScratch />} />
+        <Route path="/login" element={User ? <Home /> : <Login />} />
         <Route path="/forgetPassword" element={<ForgetPassword />} />
         <Route path="/createPassword" element={<CreatePassword />} />
       </Routes>

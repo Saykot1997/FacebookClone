@@ -1,19 +1,60 @@
-import React, { useContext } from 'react'
+import React, { useState } from 'react'
 import profilePhoto from "../images/1.jpg";
 import { RiArrowDownSFill } from "react-icons/ri";
 import { FaUserFriends } from "react-icons/fa";
-import { IsPostCreateOpen } from '../Context/PostCreate';
+import { CloseCreatePost } from "../Redux/CreatePostSlice";
+import { useDispatch, useSelector } from 'react-redux';
+import axios from 'axios';
+import { Host } from "../Data";
+import { PostCreateSuccess, PostCreateFailure } from "../Redux/PostSlice"
+
 
 function CreatePost() {
 
-    const { IsOpen, setIsOpen } = useContext(IsPostCreateOpen);
+    const dispatch = useDispatch();
+    const createPostWithoutImage = useSelector(state => state.CreatePost.createPostWithoutImage);
+    const User = useSelector(state => state.User.User);
+    const [post, setPost] = useState('');
+    const [errMessage, setErrMessage] = useState('');
 
     const HidePostCreate = () => {
-        setIsOpen(false)
+        dispatch(CloseCreatePost())
+        setPost('');
+        setErrMessage('');
     }
 
+    const BrotcustPost = async () => {
+
+        if (post === '') {
+
+            setErrMessage('Please write something');
+
+        } else {
+
+            try {
+
+                const res = await axios.post(`${Host}/api/post/create`, { post: post }, {
+                    headers: {
+                        'Authorization': `Bearer ${User.token}`
+                    }
+                });
+
+                dispatch(PostCreateSuccess(res.data));
+                HidePostCreate()
+
+            } catch (error) {
+
+                dispatch(PostCreateFailure(error.response.data));
+                setErrMessage("Something went wrong");
+            }
+
+        }
+
+    }
+
+
     return (
-        <div className={IsOpen ? 'postCreateBox' : " hidden"}>
+        <div className={`${createPostWithoutImage ? "postCreateBox" : "hidden"} `}>
             <div className=' bg-white z-30 opacity-100 shadow-lg px-2 rounded-md shadow-gray-400 w-[500px]'>
                 <div className=' py-2 px-3 flex items-center' >
                     <h3 className=' text-xl font-bold w-full text-center'>Create Post</h3>
@@ -36,10 +77,11 @@ function CreatePost() {
                 </div>
 
                 <div className=' w-full h-64'>
-                    <textarea type="text" autoFocus="autofocus" placeholder="What's on your mind?" className='w-full h-full px-4 focus:outline-0 placeholder:text-2xl placeholder:text-gray-500' ></textarea>
+                    <textarea onFocus={() => setErrMessage('')} value={post} onChange={(e) => setPost(e.target.value)} type="text" autoFocus="autofocus" placeholder={`What's on your mind?, ${User.firstName} `} className='w-full h-full px-4 focus:outline-0 placeholder:text-2xl placeholder:text-gray-500' ></textarea>
                 </div>
                 <div className=' w-full my-3 px-2'>
-                    <button className=' w-full py-2 text-center bg-blue-500 text-white font-bold rounded-lg '>Post</button>
+                    <button onClick={BrotcustPost} className=' w-full py-2 text-center bg-blue-500 text-white font-bold rounded-lg '>Post</button>
+                    <p className=' my-2 text-sm text-red-400 text-center'>{errMessage}</p>
                 </div>
             </div>
         </div>

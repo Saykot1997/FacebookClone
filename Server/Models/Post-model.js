@@ -16,20 +16,54 @@ const PostSchema = new Schema({
         type: String,
         default: ""
     },
-    likes: {
-        type: Array,
-        default: []
-
+    video: {
+        type: String,
+        default: ""
     },
+    likes: [
+        userId = {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'User'
+        }
+    ],
     comments: [
-        {
+
+        comment = {
+
             user: {
                 type: mongoose.Schema.Types.ObjectId,
                 ref: "User"
             },
-            comments: {
-                type: String,
+
+            comentData: String,
+
+            replaies: [
+
+                replay = {
+
+                    user: {
+                        type: mongoose.Schema.Types.ObjectId,
+                        ref: "User"
+                    },
+
+                    replayData: String,
+
+                    createdAt: {
+                        type: Date,
+                        default: Date.now
+                    }
+                }
+            ],
+            likes: [
+                user = {
+                    type: mongoose.Schema.Types.ObjectId,
+                }
+            ],
+            createdAt: {
+                type: Date,
+                default: Date.now
             }
+
         }
     ]
 

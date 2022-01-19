@@ -6,14 +6,18 @@ import { MdOutlineArrowForwardIos } from 'react-icons/md'
 import { RiSettings5Fill } from 'react-icons/ri'
 import { useNavigate } from 'react-router-dom'
 import ProfilePhoto from "../images/2.jpg"
+import { useDispatch } from 'react-redux'
+import { Logout } from '../Redux/UserSlice'
 
 function TopbarAccounts() {
 
     const navigate = useNavigate()
+    const dispatch = useDispatch()
 
-    const Logout = () => {
+    const LogoutFunc = () => {
 
-        navigate('/newlogin')
+        dispatch(Logout());
+        navigate('/login');
     }
 
     return (
@@ -71,12 +75,12 @@ function TopbarAccounts() {
                     <MdOutlineArrowForwardIos className=' text-xl text-gray-500' />
                 </div>
             </div>
-            <div className=' flex items-center justify-between p-2 hover:bg-gray-100 rounded-md'>
+            <div onClick={LogoutFunc} className=' flex items-center justify-between p-2 hover:bg-gray-100 rounded-md'>
                 <div className=' flex items-center'>
                     <div className=' h-10 w-10 mr-2 rounded-full bg-gray-200 flex justify-center items-center'>
                         <BsFillDoorOpenFill className=' text-2xl' />
                     </div>
-                    <p onClick={Logout} className=' font-semibold text-black'>Log Out</p>
+                    <p className=' font-semibold text-black'>Log Out</p>
                 </div>
             </div>
             <div className=' px-3 py-1'>

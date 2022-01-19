@@ -2,132 +2,161 @@ const router = require('express').Router();
 const User = require("../Models/User-model");
 const bcrypt = require('bcrypt');
 const Authgurd = require("../Authgurd/Authgurd");
+const Post = require("../Models/Post-model");
 
 // update user
 
-router.put('/:id', Authgurd, async (req, res) => {
+// router.put('/:id', Authgurd, async (req, res) => {
 
-    const { id } = req.params;
+//     const { id } = req.params;
 
-    if (req.userId != id) {
+//     if (req.userId != id) {
 
-        res.status(401).json({
-            message: "Unauthorized"
-        })
+//         res.status(401).json({
+//             message: "Unauthorized"
+//         })
 
-    } else {
+//     } else {
 
-        try {
+//         try {
 
-            if (req.body.password) {
+//             if (req.body.password) {
 
-                req.body.password = await bcrypt.hash(req.body.password, 10);
-            }
+//                 req.body.password = await bcrypt.hash(req.body.password, 10);
+//             }
 
-            const updateUser = await User.findByIdAndUpdate(id, req.body, { new: true });
-            res.json(updateUser);
+//             const updateUser = await User.findByIdAndUpdate(id, req.body, { new: true });
+//             res.json(updateUser);
 
-        } catch (error) {
+//         } catch (error) {
 
-            res.status(400).json(error);
-            console.log(error);
-        }
-    }
-});
+//             res.status(400).json(error);
+//             console.log(error);
+//         }
+//     }
+// });
 
 
 // user delete 
 
-router.delete('/:id', Authgurd, async (req, res) => {
+// router.delete('/:id', Authgurd, async (req, res) => {
 
-    const { id } = req.params;
+//     const { id } = req.params;
 
-    if (req.userId != id) {
+//     if (req.userId != id) {
 
-        res.status(401).json({
-            message: "Unauthorized"
-        })
+//         res.status(401).json({
+//             message: "Unauthorized"
+//         })
 
-    } else {
+//     } else {
 
-        try {
+//         try {
 
-            await User.findByIdAndDelete(id);
-            res.status(200).json("User deleted");
+//             await User.findByIdAndDelete(id);
+//             res.status(200).json("User deleted");
 
-        } catch (error) {
+//         } catch (error) {
 
-            res.status(400).json(error);
-            console.log(error);
-        }
-    }
+//             res.status(400).json(error);
+//             console.log(error);
+//         }
+//     }
 
-});
+// });
 
 
 // get user by id
 
-router.get('/:id', async (req, res) => {
+// router.get('/:id', async (req, res) => {
 
-    const { id } = req.params;
+//     const { id } = req.params;
 
-    try {
+//     try {
 
-        const getUser = await User.findById(id);
-        const { password, ...others } = getUser._doc;
-        res.status(200).json(others);
+//         const getUser = await User.findById(id);
+//         const { password, ...others } = getUser._doc;
+//         res.status(200).json(others);
 
-    } catch (error) {
+//     } catch (error) {
 
-        res.status(400).json(error);
-        console.log(error);
-    }
+//         res.status(400).json(error);
+//         console.log(error);
+//     }
 
-});
+// });
 
 
 // flow a user
 
-router.put("/flow/:id", Authgurd, async (req, res) => {
+// router.put("/flow/:id", Authgurd, async (req, res) => {
 
-    const { id } = req.params;
+//     const { id } = req.params;
 
-    if (req.userId == id) {
+//     if (req.userId == id) {
 
-        res.status(400).json("You can't flow yourself");
+//         res.status(400).json("You can't flow yourself");
 
-    } else {
+//     } else {
 
-        try {
+//         try {
 
-            const user = await User.findById(id);
-            const currentUser = await User.findById(req.userId);
+//             const user = await User.findById(id);
+//             const currentUser = await User.findById(req.userId);
 
-            if (user.flowers.includes(req.userId)) {
+//             if (user.flowers.includes(req.userId)) {
 
-                res.status(400).json("User already flowing");
+//                 res.status(400).json("User already flowing");
 
-            } else {
+//             } else {
 
-                user.flowers.push(req.userId);
-                await user.save();
+//                 user.flowers.push(req.userId);
+//                 await user.save();
 
-                currentUser.flowings.push(id);
-                await currentUser.save();
+//                 currentUser.flowings.push(id);
+//                 await currentUser.save();
 
-                res.status(200).json("User is flowings");
+//                 res.status(200).json("User is flowings");
 
-            }
+//             }
 
-        } catch (error) {
+//         } catch (error) {
 
-            res.status(400).json(error);
-            console.log(error);
-        }
+//             res.status(400).json(error);
+//             console.log(error);
+//         }
 
+//     }
+
+// });
+
+
+// get timeline post
+router.get('/timelinePost', Authgurd, async (req, res) => {
+
+    try {
+
+        const user = await User.findById(req.userId).populate("timelinePost");
+        const { timelinePost, ...others } = user._doc;
+
+        const allPost = await Promise.all(timelinePost.map(post => {
+            return Post.find({ _id: post._id }).populate({ path: 'userId', select: 'firstName sureName profilePicture' }).populate({ path: 'comments.user', select: 'firstName sureName profilePicture' }).populate("comments.replaies.user", "firstName sureName profilePicture");
+        }));
+
+        const sendAbbleData = allPost.map(post => {
+            return post[0]._doc;
+
+        })
+
+        res.status(200).json(sendAbbleData);
+
+    } catch (error) {
+
+        res.status(400).json(error);
     }
 
-})
+
+});
 
 
 

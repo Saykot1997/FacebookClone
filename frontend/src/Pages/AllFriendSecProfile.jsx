@@ -94,13 +94,13 @@ function AllFriendSecProfile() {
                                 </div>
                                 <div className=' w-3/5 ml-2'>
                                     <Share />
+                                    {/* <Post />
                                     <Post />
                                     <Post />
                                     <Post />
                                     <Post />
                                     <Post />
-                                    <Post />
-                                    <Post />
+                                    <Post /> */}
                                 </div>
                             </div>
                         </div>

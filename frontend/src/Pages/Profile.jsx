@@ -6,8 +6,49 @@ import Intro from '../Components/Intro';
 import Photos from '../Components/Photos';
 import Friends from '../Components/Friends';
 import LiveEvents from '../Components/LiveEvents';
+import { useEffect, useState } from 'react';
+import axios from 'axios';
+import { Host } from "../Data"
+import { useSelector } from 'react-redux';
 
 function Profile() {
+
+    const [timelinePost, setTimelinePost] = useState(null);
+    const User = useSelector(state => state.User.User);
+
+    const reverseArray = (array) => {
+
+        let reversedArray = [];
+
+        for (let i = array.length - 1; i >= 0; i--) {
+
+            reversedArray.push(array[i]);
+
+        }
+
+        return reversedArray;
+
+    }
+
+    useEffect(() => {
+
+        axios.get(`${Host}/api/user/timelinePost`, {
+
+            headers: {
+
+                'Authorization': `Bearer ${User.token}`
+            }
+
+        }).then(res => {
+
+            setTimelinePost(reverseArray(res.data));
+
+        }).catch(err => {
+
+            console.log(err)
+        });
+
+    }, [timelinePost]);
 
     return (
 
@@ -24,13 +65,15 @@ function Profile() {
                     </div>
                     <div className=' w-3/5 ml-2'>
                         <Share />
-                        <Post />
-                        <Post />
-                        <Post />
-                        <Post />
-                        <Post />
-                        <Post />
-                        <Post />
+
+                        {
+                            timelinePost?.map((post, index) => {
+                                return (
+                                    <Post post={post} key={index} />
+                                )
+                            })
+                        }
+
                     </div>
                 </div>
             </div>

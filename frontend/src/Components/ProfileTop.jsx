@@ -18,9 +18,7 @@ function ProfileTop({ FriendSuggetions, Profile, About, Friends, Photos, Videos,
         setHover(false);
     }
 
-    const IsUserProfile = Profile || About || Friends || Photos || Videos || ChecksInc
-
-    console.log(IsUserProfile);
+    const IsUserProfile = Profile || About || Friends || Photos || Videos || ChecksInc;
 
     return (
         <div className=' min-h-[570px] w-full bg-white shadow flex justify-center'>
