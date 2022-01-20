@@ -36,6 +36,7 @@ import Login from "./Pages/Login";
 function App() {
 
   const User = useSelector(state => state.User.User);
+  console.log(User);
 
   return (
     <BrowserRouter>

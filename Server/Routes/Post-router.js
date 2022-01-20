@@ -42,13 +42,16 @@ const storage = multer.diskStorage({
             file.mimetype === "video/x-ms-asf") {
 
             cb(null, './uploads/videos');
+
         } else {
+
             cd("file does not match");
         }
 
     },
 
     filename: (req, file, cb) => {
+
         cb(null, req.userName.toLowerCase() + "-" + Date.now() + "-" + file.originalname)
     }
 })
@@ -133,16 +136,32 @@ router.post('/create', Authgurd, upload.single("file"), async (req, res) => {
 
     try {
 
-        const user = await User.findById(req.userId)
+        const user = await User.findById(req.userId);
         const newPost = new Post(post);
         const postSaved = await newPost.save();
         user.timelinePost = [
             ...user.timelinePost,
             postSaved._id
         ];
+
+        if (post.video) {
+            user.videos = [
+                ...user.videos,
+                req.file.filename
+            ];
+
+        } else if (post.image) {
+            user.uploads = [
+                ...user.uploads,
+                req.file.filename
+            ]
+        }
+
         await user.save()
 
         const SavedNewPost = await Post.findById(postSaved._id).populate("userId", "firstName sureName");
+        const SavedUser = await User.findById(req.userId);
+        console.log(SavedUser);
         res.status(201).json(SavedNewPost);
     }
     catch (err) {
@@ -175,6 +194,38 @@ router.get("/:id", async (req, res) => {
     }
 
 });
+
+
+
+// feed posts 
+
+router.get("/feed/all", Authgurd, async (req, res) => {
+
+    try {
+
+        const curantUser = await User.findById(req.userId);
+
+        const userPost = await Post.find({ userId: curantUser._id }).populate({ path: 'userId', select: 'firstName sureName profilePicture' }).populate({ path: 'comments.user', select: 'firstName sureName profilePicture' }).populate("comments.replaies.user", "firstName sureName profilePicture");
+
+        const friendsPost = await Promise.all(curantUser.flowings.map(friendId => {
+            return Post.find({ userId: friendId }).populate({ path: 'userId', select: 'firstName sureName profilePicture' }).populate({ path: 'comments.user', select: 'firstName sureName profilePicture' }).populate("comments.replaies.user", "firstName sureName profilePicture");
+        }));
+
+        res.status(200).json(
+            userPost.concat(...friendsPost)
+        );
+
+    } catch (error) {
+
+        console.log(error)
+        res.status(400).json({
+            message: error.message
+        })
+    }
+
+});
+
+
 
 // update post by id
 
@@ -219,6 +270,7 @@ router.post("/update/:id", Authgurd, upload.single("file"), async (req, res) => 
 
     try {
 
+        const user = await User.findById(req.userId);
         const updateAblePost = await Post.findById(req.params.id);
 
         if (updateAblePost.userId.toString() !== req.userId.toString()) {
@@ -241,6 +293,7 @@ router.post("/update/:id", Authgurd, upload.single("file"), async (req, res) => 
                             if (err) { new Error("Culd not delete photos") }
                         });
                     }
+
                 }
 
 
@@ -251,15 +304,55 @@ router.post("/update/:id", Authgurd, upload.single("file"), async (req, res) => 
                     const oldVideoWithPath = uploadDir + oldVideo;
 
                     if (fs.existsSync(oldVideoWithPath)) {
+
                         fs.unlink(oldVideoWithPath, (err) => {
                             if (err) { new Error("Culd not delete Video") }
                         });
                     }
                 }
+
+                if (post.image) {
+
+                    const postImage = user.uploads.find(video => video == updateAblePost.image);
+
+                    if (postImage) {
+
+                        user.uploads.pull(postImage);
+                        user.uploads.push(req.file.filename);
+                        await user.save();
+
+                    } else {
+
+                        user.videos.pull(updateAblePost.video);
+                        user.uploads.push(req.file.filename);
+                        await user.save();
+                    }
+
+
+                } else if (post.video) {
+
+                    const postVideo = user.videos.find(video => video == updateAblePost.video);
+
+                    if (postVideo) {
+
+                        user.videos.pull(postVideo);
+                        user.videos.push(req.file.filename);
+                        await user.save();
+
+                    } else {
+
+                        user.uploads.pull(updateAblePost.image);
+                        user.videos.push(req.file.filename);
+                        await user.save();
+                    }
+                }
+
             }
 
-            const postUpdated = await Post.findByIdAndUpdate(req.params.id, post, { new: true }).populate("userId", "firstName sureName profilePicture").populate("comments.user", "firstName sureName profilePicture").populate("comments.replaies.user", "firstName sureName profilePicture");;
+            const postUpdated = await Post.findByIdAndUpdate(req.params.id, post, { new: true }).populate("userId", "firstName sureName profilePicture").populate("comments.user", "firstName sureName profilePicture").populate("comments.replaies.user", "firstName sureName profilePicture");
 
+            const SavedUser = await User.findById(req.userId);
+            console.log(SavedUser);
             res.status(201).json(postUpdated);
         }
     }
@@ -272,26 +365,156 @@ router.post("/update/:id", Authgurd, upload.single("file"), async (req, res) => 
 });
 
 
-// comment delete 
+// delete post by id
 
-router.delete("/comment/delete/:postId/:commentId", Authgurd, async (req, res) => {
 
-    const { postId, commentId } = req.params;
-    // console.log(postId, commentId);
+router.delete("/delete/:id", Authgurd, async (req, res) => {
+
+    const { id } = req.params;
 
     try {
-        const post = await Post.findById(postId);
-        const comment = post.comments.find(comment => comment._id.toString() === commentId.toString());
-        post.comments.pull(comment);
-        await post.save();
-        const updatedPost = await Post.findById(postId).populate("userId", "firstName sureName profilePicture").populate("comments.user", "firstName sureName profilePicture").populate("comments.replaies.user", "firstName sureName profilePicture");;
-        res.status(200).json(updatedPost);
 
-    } catch (err) {
-        console.log(err);
+        const post = await Post.findById(id);
+        const user = await User.findById(req.userId);
+
+        if (post.userId != req.userId) {
+
+            res.status(401).json({
+                message: "you can not delete this post"
+            })
+
+        } else {
+
+            if (post.image) {
+
+                const oldPhoto = post.image;
+                const uploadDir = "uploads/images/";
+                const oldPhotoWithPath = uploadDir + oldPhoto;
+
+                if (fs.existsSync(oldPhotoWithPath)) {
+                    fs.unlink(oldPhotoWithPath, (err) => {
+                        if (err) { new Error("Culd not delete photos") }
+                    });
+                }
+
+                const postPhoto = user.uploads.find(photo => photo == oldPhoto);
+
+                if (postPhoto) {
+                    user.uploads.pull(postPhoto);
+                    await user.save();
+                }
+            }
+
+            if (post.video) {
+
+                const oldVideo = post.video;
+                const uploadDir = "uploads/videos/";
+                const oldVideoWithPath = uploadDir + oldVideo;
+
+                if (fs.existsSync(oldVideoWithPath)) {
+                    fs.unlink(oldVideoWithPath, (err) => {
+                        if (err) { new Error("Culd not delete Video") }
+                    });
+                }
+
+                const postVideo = user.videos.find(video => video == oldVideo);
+
+                if (postVideo) {
+                    user.videos.pull(postVideo);
+                    await user.save();
+                }
+            }
+
+
+            const deleteablePost = user.timelinePost.find((post) => post == post._id);
+            user.timelinePost.pull(deleteablePost);
+            await post.remove();
+            await user.save();
+            const SavedUser = await User.findById(req.userId);
+            console.log(SavedUser);
+            res.status(200).json("post deleted");
+        }
+
+    } catch (error) {
+
+        console.log(error)
+        res.status(400).json({
+            message: error.message
+        })
+    }
+});
+
+
+
+// like and dislike post
+
+router.get("/like/:id", Authgurd, async (req, res) => {
+
+    const { id } = req.params;
+
+    try {
+
+        const post = await Post.findById(id);
+
+        const hasLike = post.likes.find(like => like == req.userId);
+
+        if (hasLike) {
+
+            post.likes = post.likes.filter(like => like != req.userId);
+            await post.save();
+            const likedPost = await Post.findById(id).populate("userId", "firstName sureName profilePicture").populate("comments.user", "firstName sureName profilePicture").populate("comments.replaies.user", "firstName sureName profilePicture");
+            res.status(200).json(likedPost);
+
+        } else {
+
+            post.likes.push(req.userId);
+            await post.save();
+            const disLikedPost = await Post.findById(id).populate("userId", "firstName sureName profilePicture").populate("comments.user", "firstName sureName profilePicture").populate("comments.replaies.user", "firstName sureName profilePicture");
+            res.status(200).json(disLikedPost);
+        }
+
+    } catch (error) {
+
+        console.log(error)
+        res.status(400).json({
+            message: error.message
+        })
     }
 
-})
+});
+
+
+
+// comment on post
+
+router.post("/comment/:id", Authgurd, async (req, res) => {
+
+    const { id } = req.params;
+    const { comment } = req.body;
+
+    try {
+
+        const post = await Post.findById(id);
+
+        const newComment = {
+            user: req.userId,
+            comentData: comment
+        }
+
+        post.comments.push(newComment);
+        await post.save();
+        const commentPost = await Post.findById(id).populate("userId", "firstName sureName profilePicture").populate("comments.user", "firstName sureName profilePicture").populate("comments.replaies.user", "firstName sureName profilePicture");
+        res.status(200).json(commentPost);
+
+    } catch (error) {
+
+        console.log(error)
+        res.status(400).json({
+            message: error.message
+        })
+    }
+});
+
 
 
 // comment update
@@ -320,6 +543,27 @@ router.put("/comment/edit/:postId/:commentId", Authgurd, async (req, res) => {
             const updatedPost = await Post.findById(postId).populate("userId", "firstName sureName profilePicture").populate("comments.user", "firstName sureName profilePicture").populate("comments.replaies.user", "firstName sureName profilePicture");
             res.status(200).json(updatedPost);
         }
+
+    } catch (err) {
+        console.log(err);
+    }
+
+});
+
+
+// comment delete 
+
+router.delete("/comment/delete/:postId/:commentId", Authgurd, async (req, res) => {
+
+    const { postId, commentId } = req.params;
+
+    try {
+        const post = await Post.findById(postId);
+        const comment = post.comments.find(comment => comment._id.toString() === commentId.toString());
+        post.comments.pull(comment);
+        await post.save();
+        const updatedPost = await Post.findById(postId).populate("userId", "firstName sureName profilePicture").populate("comments.user", "firstName sureName profilePicture").populate("comments.replaies.user", "firstName sureName profilePicture");;
+        res.status(200).json(updatedPost);
 
     } catch (err) {
         console.log(err);
@@ -385,68 +629,6 @@ router.get("/commet/like/:commentId/:postId", Authgurd, async (req, res) => {
 
 });
 
-
-// delete post by id
-
-
-router.delete("/delete/:id", Authgurd, async (req, res) => {
-
-    const { id } = req.params;
-
-    try {
-
-        const post = await Post.findById(id);
-        const user = await User.findById(req.userId);
-
-        if (post.userId != req.userId) {
-
-            res.status(401).json({
-                message: "you can not delete this post"
-            })
-
-        } else {
-
-            if (post.image) {
-                const oldPhoto = post.image;
-                const uploadDir = "uploads/images/";
-                const oldPhotoWithPath = uploadDir + oldPhoto;
-
-                if (fs.existsSync(oldPhotoWithPath)) {
-                    fs.unlink(oldPhotoWithPath, (err) => {
-                        if (err) { new Error("Culd not delete photos") }
-                    });
-                }
-            }
-
-            if (post.video) {
-                const oldVideo = post.video;
-                const uploadDir = "uploads/videos/";
-                const oldVideoWithPath = uploadDir + oldVideo;
-
-                if (fs.existsSync(oldVideoWithPath)) {
-                    fs.unlink(oldVideoWithPath, (err) => {
-                        if (err) { new Error("Culd not delete Video") }
-                    });
-                }
-            }
-
-
-            const deleteablePost = user.timelinePost.find((post) => post == post._id);
-            user.timelinePost.pull(deleteablePost);
-            await post.remove();
-            await user.save();
-            res.status(200).json("post deleted");
-        }
-
-    } catch (error) {
-
-        console.log(error)
-        res.status(400).json({
-            message: error.message
-        })
-    }
-});
-
 // comment reply
 
 router.post("/comment/replay/:postId/:commentId", Authgurd, async (req, res) => {
@@ -473,263 +655,6 @@ router.post("/comment/replay/:postId/:commentId", Authgurd, async (req, res) => 
         console.log(err);
     }
 
-})
-
-// like and dislike post
-
-router.get("/like/:id", Authgurd, async (req, res) => {
-
-    const { id } = req.params;
-
-    try {
-
-        const post = await Post.findById(id);
-
-        const hasLike = post.likes.find(like => like == req.userId);
-
-        if (hasLike) {
-
-            post.likes = post.likes.filter(like => like != req.userId);
-            await post.save();
-            const likedPost = await Post.findById(id).populate("userId", "firstName sureName profilePicture").populate("comments.user", "firstName sureName profilePicture").populate("comments.replaies.user", "firstName sureName profilePicture");
-            res.status(200).json(likedPost);
-
-        } else {
-
-            post.likes.push(req.userId);
-            await post.save();
-            const disLikedPost = await Post.findById(id).populate("userId", "firstName sureName profilePicture").populate("comments.user", "firstName sureName profilePicture").populate("comments.replaies.user", "firstName sureName profilePicture");
-            res.status(200).json(disLikedPost);
-        }
-
-    } catch (error) {
-
-        console.log(error)
-        res.status(400).json({
-            message: error.message
-        })
-    }
-
 });
-
-// comment on post
-
-router.post("/comment/:id", Authgurd, async (req, res) => {
-
-    const { id } = req.params;
-    const { comment } = req.body;
-
-    try {
-
-        const post = await Post.findById(id);
-
-        const newComment = {
-            user: req.userId,
-            comentData: comment
-        }
-
-        post.comments.push(newComment);
-        await post.save();
-        const commentPost = await Post.findById(id).populate("userId", "firstName sureName profilePicture").populate("comments.user", "firstName sureName profilePicture").populate("comments.replaies.user", "firstName sureName profilePicture");
-        res.status(200).json(commentPost);
-
-    } catch (error) {
-
-        console.log(error)
-        res.status(400).json({
-            message: error.message
-        })
-    }
-});
-
-
-// feed posts 
-
-router.get("/feed/all", Authgurd, async (req, res) => {
-
-    try {
-
-        const curantUser = await User.findById(req.userId);
-
-        const userPost = await Post.find({ userId: curantUser._id }).populate({ path: 'userId', select: 'firstName sureName profilePicture' }).populate({ path: 'comments.user', select: 'firstName sureName profilePicture' }).populate("comments.replaies.user", "firstName sureName profilePicture");
-
-        const friendsPost = await Promise.all(curantUser.flowings.map(friendId => {
-            return Post.find({ userId: friendId }).populate({ path: 'userId', select: 'firstName sureName profilePicture' }).populate({ path: 'comments.user', select: 'firstName sureName profilePicture' }).populate("comments.replaies.user", "firstName sureName profilePicture");
-        }));
-
-        res.status(200).json(
-            userPost.concat(...friendsPost)
-        );
-
-    } catch (error) {
-
-        console.log(error)
-        res.status(400).json({
-            message: error.message
-        })
-    }
-
-});
-
-
-// create comments
-router.put('/comments/:id', Authgurd, async (req, res) => {
-
-    try {
-
-        const post = await Post.findById(req.params.id);
-
-        if (post) {
-
-            const postComment = await Post.findOneAndUpdate({ _id: req.params.id }, {
-                $set: {
-                    comments: [...post.comments,
-                    {
-                        user: req.userId,
-                        comments: req.body.comments
-                    }]
-
-                }
-            }
-                , { new: true })
-
-            res.status(200).json(postComment)
-
-        } else {
-
-            res.status(400).json("could not find the post")
-        }
-
-    } catch (error) {
-
-        console.log(error)
-        res.status(400).json({
-            message: error.message
-        })
-    }
-
-});
-
-// update comment
-router.put('/comments/eddit/:id', Authgurd, async (req, res) => {
-
-    try {
-
-        const post = await Post.findById(req.params.id);
-        const commentId = req.body.commentId;
-        const comment = req.body.comments;
-
-        if (!commentId || !comment) {
-
-            res.status(400).json("comment id or comment is missing")
-
-        } else {
-
-            if (post) {
-
-                const updateAbleCom = post.comments.find((comment) => comment._id == commentId);
-
-                if (!updateAbleCom) {
-
-                    res.status(403).json("could not find comment")
-
-                } else {
-
-                    if (updateAbleCom.user != req.userId) {
-
-                        res.status(403).json("you can't change the comment")
-
-                    } else {
-
-                        const updateComment = { ...updateAbleCom._doc, comments: comment }
-                        const allComents = post.comments.map((comment) => comment._id == commentId ? updateComment : comment)
-
-                        const updateSingleComment = await Post.findOneAndUpdate({ _id: req.params.id }, {
-                            $set: {
-                                comments: allComents
-                            }
-                        }, { new: true })
-
-                        res.status(200).json(updateSingleComment);
-                    }
-                }
-
-            } else {
-
-                res.status(400).json("could not find comment")
-            }
-
-        }
-
-    } catch (error) {
-
-        console.log(error)
-        res.status(400).json({
-            message: error.message
-        })
-    }
-
-});
-
-
-// delete comment
-router.put('/comments/delete/:id', Authgurd, async (req, res) => {
-
-    try {
-
-        const post = await Post.findById(req.params.id);
-        const commentId = req.body.commentId
-
-        if (!commentId) {
-
-            res.status(500).json("deleteable comment id requre");
-
-        } else {
-
-            if (post) {
-
-                const deleteAbleCom = post.comments.find((comment) => comment._id == commentId);
-
-                if (!deleteAbleCom) {
-
-                    res.status(403).json("comment could not found");
-
-                } else {
-
-                    if (deleteAbleCom.user != req.userId) {
-
-                        res.status(403).json("you can't delete the comment")
-
-                    } else {
-
-                        const allComents = post.comments.filter((comment) => comment._id != commentId)
-
-                        const updateSingleComment = await Post.findOneAndUpdate({ _id: req.params.id }, {
-                            $set: {
-                                comments: allComents
-                            }
-                        }, { new: true })
-
-                        res.status(200).json(updateSingleComment._doc)
-
-                    }
-                }
-
-            } else {
-
-                res.status(400).json("could not find the post")
-            }
-        }
-
-    } catch (error) {
-
-        console.log(error)
-        res.status(400).json({
-            message: error.message
-        })
-    }
-
-});
-
 
 module.exports = router;

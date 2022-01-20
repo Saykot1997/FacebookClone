@@ -20,8 +20,6 @@ function CreatePostWithFile() {
     const [video, setVideo] = useState(null);
     const [errMessage, setErrMessage] = useState('');
 
-    // URL.createObjectURL(object)
-
     const HidePostCreate = () => {
         dispatch(CloseCreatePostImage());
         setPost('');
@@ -45,7 +43,7 @@ function CreatePostWithFile() {
     }
 
     const BrotcustPost = async () => {
-        dispatch(Loading());
+
         if (post === '' && image === null && video === null) {
 
             setErrMessage('Please write something or select image or video');
@@ -53,9 +51,10 @@ function CreatePostWithFile() {
         } else if (post === '' && (image !== null || video !== null)) {
 
             setErrMessage('Please write something');
-        }
-        else {
 
+        } else {
+
+            dispatch(Loading());
             const formData = new FormData();
             formData.append('post', post);
             image && formData.append('file', image);

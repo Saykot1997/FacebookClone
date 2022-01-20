@@ -42,10 +42,33 @@ const UserSchema = new mongoose.Schema({
         type: String,
         default: ""
     },
+    allProfilePicture: [
+        photo = {
+            type: String,
+            default: ""
+        }
+    ],
+    AllCoverPhotos: [
+        photo = {
+            type: String,
+            default: ""
+        }
+    ],
     coverPicture: {
         type: String,
         default: ""
     },
+    uploads: [
+        photo = {
+            type: String,
+            default: ""
+        }
+    ],
+    videos: [
+        video = {
+            type: String,
+            default: ""
+        }],
     flowers: {
         type: Array,
         default: []
