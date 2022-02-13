@@ -24,7 +24,6 @@ function Post({ post }) {
     const [postEditBoxOpen, setPostEditBoxOpen] = useState(false);
 
 
-
     useEffect(() => {
 
         if (post.likes.length > 0) {
@@ -69,7 +68,6 @@ function Post({ post }) {
 
     const EditPost = async () => {
         setPostEditBoxOpen(true);
-
     }
 
     const LikeThePost = async () => {
@@ -81,7 +79,7 @@ function Post({ post }) {
                     'Authorization': `Bearer ${User.token}`
                 }
             })
-            console.log(res.data)
+
             dispatch(PostUpdate(res.data))
             setTimeout(() => {
                 setLikeAnimation(false);
@@ -111,8 +109,8 @@ function Post({ post }) {
                     'Authorization': `Bearer ${User.token}`
                 }
             })
+
             setComment('');
-            console.log(res.data)
             dispatch(PostUpdate(res.data))
 
         } catch (error) {
@@ -123,6 +121,7 @@ function Post({ post }) {
 
 
     return (
+
         <div className=' w-full my-5 cursor-pointer bg-white shadow rounded-lg'>
             <div className={`${postEditBoxOpen ? "visible" : "hidden"} h-screen w-screen z-[100] bg-white bg-opacity-60 overflow-hidden flex justify-center absolute top-0 left-0`}>
                 <PostEdit Post={post} setPostEditBoxOpen={setPostEditBoxOpen} />
@@ -149,10 +148,10 @@ function Post({ post }) {
                 <div className=' my-3'>
                     <p>{post.desc}</p>
                     {
-                        post.image && <img src={`${Host}/images/${post.image}`} alt="" className='w-full max-h-72 object-contain bg-black' />
+                        post.image && <img src={`${Host}/images/${post.image}`} alt="" className='w-full max-h-72 object-contain ' />
                     }
                     {
-                        post.video && <video src={`${Host}/videos/${post.video}`} controls className='w-full max-h-72 bg-black' />
+                        post.video && <video src={`${Host}/videos/${post.video}`} controls className='w-full max-h-72 ' />
                     }
                 </div>
                 <div>

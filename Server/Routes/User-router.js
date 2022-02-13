@@ -238,12 +238,10 @@ router.post("/updateCoverPhoto", Authgurd, upload.single("coverPhoto"), async (r
         user.AllCoverPhotos.push(file.filename);
         user.uploads.push(file.filename);
         await user.save();
+
         const updatedUser = await User.findById(req.userId);
-
         const token = jwt.sign({ id: updatedUser._id, role: updatedUser.role, userName: updatedUser.firstName }, process.env.TOKENSECRATE);
-
         const { password, timelinePost, updatedAt, createdAt, ...rest } = updatedUser._doc;
-
         res.status(200).json({ ...rest, token });
 
     } catch (error) {
@@ -252,6 +250,29 @@ router.post("/updateCoverPhoto", Authgurd, upload.single("coverPhoto"), async (r
     }
 
 });
+
+
+// cover photo update by name
+
+router.get("/updateCoverPhotoByName/:name", Authgurd, async (req, res) => {
+
+    try {
+
+        const user = await User.findById(req.userId);
+        user.coverPicture = req.params.name;
+        await user.save();
+
+        const updatedUser = await User.findById(req.userId);
+        const token = jwt.sign({ id: updatedUser._id, role: updatedUser.role, userName: updatedUser.firstName }, process.env.TOKENSECRATE);
+        const { password, timelinePost, updatedAt, createdAt, ...rest } = updatedUser._doc;
+        res.status(200).json({ ...rest, token });
+
+    } catch (error) {
+
+        console.log(error);
+        res.status(400).json(error);
+    }
+})
 
 
 

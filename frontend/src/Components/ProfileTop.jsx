@@ -26,16 +26,15 @@ function ProfileTop({ FriendSuggetions, Profile, About, Friends, Photos, Videos,
     const [selectedAlbum, setSelectedAlbum] = useState("");
 
 
-
     const showPeople = () => {
         setHover(true);
     }
+
     const hidePeople = () => {
         setHover(false);
     }
 
     const showuUpdateOptions = () => {
-
         setShowingUpdateOptions(!isShowingUpdateOptions);
         setCoverPhotoFile(null);
     }
@@ -59,11 +58,8 @@ function ProfileTop({ FriendSuggetions, Profile, About, Friends, Photos, Videos,
             setShowingUpdateOptions(false);
 
         } catch (error) {
-
             console.log(error);
-
         }
-
     };
 
     const showSelectPhotos = () => {
@@ -80,8 +76,27 @@ function ProfileTop({ FriendSuggetions, Profile, About, Friends, Photos, Videos,
         setShowPhotoType(type)
     }
 
-    console.log(User)
-    // console.log(isShowingUpdateOptions)
+    const SetCoverPhotoFunc = async (pic) => {
+
+        try {
+
+            const updateCoverPhoto = await axios.get(`${Host}/api/user/updateCoverPhotoByName/${pic}`, {
+                headers: {
+                    "Authorization": `Bearer ${User.token}`
+                }
+            });
+
+            dispatch(loadingSuccess(updateCoverPhoto.data));
+            setCoverPhotoFile(null);
+            setShowingUpdateOptions(false);
+            setShowingUpdateOptions(false);
+            setPhotoBoxOpen(false);
+
+        } catch (error) {
+
+            console.log(error);
+        }
+    }
 
     const IsUserProfile = Profile || About || Friends || Photos || Videos || ChecksInc;
 
@@ -110,7 +125,7 @@ function ProfileTop({ FriendSuggetions, Profile, About, Friends, Photos, Videos,
                                     :
                                     <h4 className=' w-full  text-center text-xl font-bold'>Select Photo</h4>
                             }
-                            <div onClick={() => setPhotoBoxOpen(false)} className=' w-9 h-9 rounded-full bg-gray-200 flex justify-center items-center font-semibold text-lg cursor-pointer'>
+                            <div onClick={() => { setPhotoBoxOpen(false); setShowPhotoType("Recent"); setSelectedAlbum("") }} className=' w-9 h-9 rounded-full bg-gray-200 flex justify-center items-center font-semibold text-lg cursor-pointer'>
                                 <AiOutlineClose />
                             </div>
                         </div>
@@ -133,7 +148,7 @@ function ProfileTop({ FriendSuggetions, Profile, About, Friends, Photos, Videos,
                                     {
                                         User && User.uploads.length > 0 && User.uploads.map((pic, index) => {
                                             return (
-                                                <img src={`${Host}/images/${pic}`} alt="" className=' w-full h-28 object-cover border border-gray-300' />
+                                                <img onClick={() => SetCoverPhotoFunc(pic)} src={`${Host}/images/${pic}`} alt="" className=' w-full h-28 object-cover border border-gray-300' />
                                             )
                                         })
                                     }
@@ -157,6 +172,21 @@ function ProfileTop({ FriendSuggetions, Profile, About, Friends, Photos, Videos,
                                 </div>
                             </div>
 
+                        }
+                        {
+                            showPhotoType === "Albums" && selectedAlbum === "Cover Photos" &&
+
+                            <div className=' overflow-y-scroll friendSuggetionsScrollbar h-[490px] p-3 w-full'>
+                                <div className=' w-full grid grid-cols-3 gap-3 rounded-lg cursor-pointer overflow-hidden'>
+                                    {
+                                        User && User.AllCoverPhotos.length > 0 && User.AllCoverPhotos.map((pic, index) => {
+                                            return (
+                                                <img onClick={() => SetCoverPhotoFunc(pic)} src={`${Host}/images/${pic}`} alt="" className=' w-full h-28 object-cover border border-gray-300' />
+                                            )
+                                        })
+                                    }
+                                </div>
+                            </div>
                         }
 
                     </div>
@@ -209,7 +239,7 @@ function ProfileTop({ FriendSuggetions, Profile, About, Friends, Photos, Videos,
                 <div className='flex w-full h-36 px-5'>
                     <div className=' basis-[24%] relative'>
                         <div className=' group cursor-pointer absolute -top-9 left-5 h-44 w-44 rounded-full border-4 border-white shadow bg-slate-200'>
-                            <img src={profilePhoto} alt="" className=' w-full h-full rounded-full object-cover' />
+                            <img src={User.profilePicture ? `${Host}/images/${User.profilePicture}` : profilePhoto} alt="" className=' w-full h-full rounded-full object-cover' />
                             <div className=' absolute right-0 bottom-2 rounded-full h-9 w-9 bg-gray-100 z-10 flex justify-center items-center overflow-hidden hover:bg-gray-200'>
                                 <BsFillCameraFill className=' text-lg' />
                             </div>
