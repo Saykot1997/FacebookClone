@@ -248,7 +248,34 @@ router.post("/updateCoverPhoto", Authgurd, upload.single("coverPhoto"), async (r
 
         console.log(error)
     }
+});
 
+
+// profile photo update
+
+
+router.post("/updateProfilePhoto", Authgurd, upload.single("profilePhoto"), async (req, res) => {
+
+    const file = req.file;
+
+    try {
+
+        console.log(file);
+        const user = await User.findById(req.userId);
+        user.profilePicture = file.filename;
+        user.allProfilePicture.push(file.filename);
+        user.uploads.push(file.filename);
+        await user.save();
+
+        const updatedUser = await User.findById(req.userId);
+        const token = jwt.sign({ id: updatedUser._id, role: updatedUser.role, userName: updatedUser.firstName }, process.env.TOKENSECRATE);
+        const { password, timelinePost, updatedAt, createdAt, ...rest } = updatedUser._doc;
+        res.status(200).json({ ...rest, token });
+
+    } catch (error) {
+
+        console.log(error)
+    }
 });
 
 
@@ -260,8 +287,40 @@ router.get("/updateCoverPhotoByName/:name", Authgurd, async (req, res) => {
 
         const user = await User.findById(req.userId);
         user.coverPicture = req.params.name;
-        await user.save();
+        const hasCoverPhoto = user.AllCoverPhotos.includes(req.params.name);
 
+        if (!hasCoverPhoto) {
+            user.AllCoverPhotos.push(req.params.name);
+        }
+
+        await user.save();
+        const updatedUser = await User.findById(req.userId);
+        const token = jwt.sign({ id: updatedUser._id, role: updatedUser.role, userName: updatedUser.firstName }, process.env.TOKENSECRATE);
+        const { password, timelinePost, updatedAt, createdAt, ...rest } = updatedUser._doc;
+        res.status(200).json({ ...rest, token });
+
+    } catch (error) {
+
+        console.log(error);
+        res.status(400).json(error);
+    }
+})
+
+// profile picture update by name
+
+router.get("/updateProfilePhotoByName/:name", Authgurd, async (req, res) => {
+
+    try {
+
+        const user = await User.findById(req.userId);
+        user.profilePicture = req.params.name;
+        const hasProfilePicture = user.allProfilePicture.includes(req.params.name);
+
+        if (!hasProfilePicture) {
+            user.allProfilePicture.push(req.params.name);
+        }
+
+        await user.save();
         const updatedUser = await User.findById(req.userId);
         const token = jwt.sign({ id: updatedUser._id, role: updatedUser.role, userName: updatedUser.firstName }, process.env.TOKENSECRATE);
         const { password, timelinePost, updatedAt, createdAt, ...rest } = updatedUser._doc;

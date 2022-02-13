@@ -20,10 +20,13 @@ function ProfileTop({ FriendSuggetions, Profile, About, Friends, Photos, Videos,
     const User = useSelector((state) => state.User.User);
     const [isHover, setHover] = useState(false);
     const [isShowingUpdateOptions, setShowingUpdateOptions] = useState(false);
+    const [isShowingProfileUpdateOptions, setShowingProfileUpdateOptions] = useState(false);
     const [coverPhotoFile, setCoverPhotoFile] = useState(null);
     const [PhotoBoxOpen, setPhotoBoxOpen] = useState(false);
     const [showPhotoType, setShowPhotoType] = useState("Recent");
     const [selectedAlbum, setSelectedAlbum] = useState("");
+    const [profilePhotoFile, setProfilePhotoFile] = useState(null);
+    const [showPhotoSelectPhotoType, setShowPhotoSelectPhotoType] = useState("");
 
 
     const showPeople = () => {
@@ -34,10 +37,26 @@ function ProfileTop({ FriendSuggetions, Profile, About, Friends, Photos, Videos,
         setHover(false);
     }
 
-    const showuUpdateOptions = () => {
-        setShowingUpdateOptions(!isShowingUpdateOptions);
-        setCoverPhotoFile(null);
+    const showuUpdateOptions = (type) => {
+
+        console.log(type);
+
+        if (type === "profile") {
+
+            setShowingProfileUpdateOptions(!isShowingProfileUpdateOptions);
+            setProfilePhotoFile(null);
+            setShowPhotoSelectPhotoType("profile");
+            setShowingUpdateOptions && setShowingUpdateOptions(false);
+
+        } else {
+
+            setShowingUpdateOptions(!isShowingUpdateOptions);
+            setShowingProfileUpdateOptions && setShowingProfileUpdateOptions(false);
+            setCoverPhotoFile(null);
+            setShowPhotoSelectPhotoType("cover");
+        }
     }
+
 
     const updateCoverPhoto = async () => {
 
@@ -62,9 +81,40 @@ function ProfileTop({ FriendSuggetions, Profile, About, Friends, Photos, Videos,
         }
     };
 
+
+    const UpdateProfilePhoto = async () => {
+
+        const formData = new FormData();
+
+        formData.append("profilePhoto", profilePhotoFile);
+
+        try {
+
+            const res = await axios.post(`${Host}/api/user/updateProfilePhoto`, formData, {
+                headers: {
+                    "Authorization": `Bearer ${User.token}`
+                }
+            });
+
+            dispatch(loadingSuccess(res.data));
+            setProfilePhotoFile(null);
+            setShowingProfileUpdateOptions(false);
+
+        } catch (error) {
+
+            console.log(error)
+        }
+
+    }
+
     const showSelectPhotos = () => {
         setPhotoBoxOpen(true);
         setShowingUpdateOptions(false);
+    }
+
+    const showuProfileUpdateOptions = () => {
+        setPhotoBoxOpen(true);
+        setShowingProfileUpdateOptions(false);
     }
 
     const removeSelectedPhoto = () => {
@@ -76,21 +126,40 @@ function ProfileTop({ FriendSuggetions, Profile, About, Friends, Photos, Videos,
         setShowPhotoType(type)
     }
 
-    const SetCoverPhotoFunc = async (pic) => {
+    const SetPhotoFunc = async (pic) => {
 
         try {
 
-            const updateCoverPhoto = await axios.get(`${Host}/api/user/updateCoverPhotoByName/${pic}`, {
-                headers: {
-                    "Authorization": `Bearer ${User.token}`
-                }
-            });
+            if (showPhotoSelectPhotoType === "profile") {
 
-            dispatch(loadingSuccess(updateCoverPhoto.data));
-            setCoverPhotoFile(null);
-            setShowingUpdateOptions(false);
-            setShowingUpdateOptions(false);
-            setPhotoBoxOpen(false);
+                const updateProfilePhoto = await axios.get(`${Host}/api/user/updateProfilePhotoByName/${pic}`, {
+                    headers: {
+                        "Authorization": `Bearer ${User.token}`
+                    }
+                })
+
+                dispatch(loadingSuccess(updateProfilePhoto.data));
+                setShowingProfileUpdateOptions(false);
+                setPhotoBoxOpen(false);
+                setProfilePhotoFile(null);
+                setShowPhotoType("Recent");
+                setSelectedAlbum("");
+
+            } else {
+
+                const updateCoverPhoto = await axios.get(`${Host}/api/user/updateCoverPhotoByName/${pic}`, {
+                    headers: {
+                        "Authorization": `Bearer ${User.token}`
+                    }
+                });
+
+                dispatch(loadingSuccess(updateCoverPhoto.data));
+                setCoverPhotoFile(null);
+                setShowingUpdateOptions(false);
+                setPhotoBoxOpen(false);
+                setShowPhotoType("Recent");
+                setSelectedAlbum("");
+            }
 
         } catch (error) {
 
@@ -98,12 +167,14 @@ function ProfileTop({ FriendSuggetions, Profile, About, Friends, Photos, Videos,
         }
     }
 
+    console.log(showPhotoSelectPhotoType);
+
     const IsUserProfile = Profile || About || Friends || Photos || Videos || ChecksInc;
 
     return (
         <div className=' min-h-[570px] w-full bg-white shadow flex justify-center'>
 
-            {/* select cover photo section start */}
+            {/* select photo section start */}
 
             {
                 PhotoBoxOpen &&
@@ -148,7 +219,7 @@ function ProfileTop({ FriendSuggetions, Profile, About, Friends, Photos, Videos,
                                     {
                                         User && User.uploads.length > 0 && User.uploads.map((pic, index) => {
                                             return (
-                                                <img onClick={() => SetCoverPhotoFunc(pic)} src={`${Host}/images/${pic}`} alt="" className=' w-full h-28 object-cover border border-gray-300' />
+                                                <img onClick={() => SetPhotoFunc(pic)} src={`${Host}/images/${pic}`} alt="" className=' w-full h-28 object-cover border border-gray-300' />
                                             )
                                         })
                                     }
@@ -181,7 +252,22 @@ function ProfileTop({ FriendSuggetions, Profile, About, Friends, Photos, Videos,
                                     {
                                         User && User.AllCoverPhotos.length > 0 && User.AllCoverPhotos.map((pic, index) => {
                                             return (
-                                                <img onClick={() => SetCoverPhotoFunc(pic)} src={`${Host}/images/${pic}`} alt="" className=' w-full h-28 object-cover border border-gray-300' />
+                                                <img onClick={() => SetPhotoFunc(pic)} src={`${Host}/images/${pic}`} alt="" className=' w-full h-28 object-cover border border-gray-300' />
+                                            )
+                                        })
+                                    }
+                                </div>
+                            </div>
+                        }
+                        {
+                            showPhotoType === "Albums" && selectedAlbum === "Profile Pictures" &&
+
+                            <div className=' overflow-y-scroll friendSuggetionsScrollbar h-[490px] p-3 w-full'>
+                                <div className=' w-full grid grid-cols-3 gap-3 rounded-lg cursor-pointer overflow-hidden'>
+                                    {
+                                        User && User.allProfilePicture.length > 0 && User.allProfilePicture.map((pic, index) => {
+                                            return (
+                                                <img onClick={() => SetPhotoFunc(pic)} src={`${Host}/images/${pic}`} alt="" className=' w-full h-28 object-cover border border-gray-300' />
                                             )
                                         })
                                     }
@@ -193,10 +279,10 @@ function ProfileTop({ FriendSuggetions, Profile, About, Friends, Photos, Videos,
                 </div>
             }
 
-            {/* select cover photo section end */}
-
+            {/* select photo section end */}
 
             <div className={FriendSuggetions ? " w-[80%] h-full" : 'w-[62%] h-full'}>
+                {/* cover photo start */}
                 <div className=' h-[350px] w-full relative'>
                     {
                         coverPhotoFile &&
@@ -214,7 +300,7 @@ function ProfileTop({ FriendSuggetions, Profile, About, Friends, Photos, Videos,
                             :
                             <img src={User.coverPicture ? `${Host}/images/${User.coverPicture}` : coverPhoto} alt="" className=' w-full h-full object-cover rounded-b-lg' />
                     }
-                    <div onClick={showuUpdateOptions} className=' cursor-pointer flex items-center absolute right-3 bottom-5 bg-white rounded-md px-2 py-2 group'>
+                    <div onClick={() => { showuUpdateOptions("cover") }} className=' cursor-pointer flex items-center absolute right-3 bottom-5 bg-white rounded-md px-2 py-2 group'>
                         <BsFillCameraFill className=' mr-1 text-lg' />
                         <button className='font-semibold text-sm'>Edit Cover Photo</button>
                         <div className=' absolute top-0 left-0 h-full w-full bg-slate-800 opacity-0 group-hover:opacity-10 '></div>
@@ -234,17 +320,49 @@ function ProfileTop({ FriendSuggetions, Profile, About, Friends, Photos, Videos,
                             </div>
                         </div>
                     }
-
                 </div>
+                {/* cover photo end */}
                 <div className='flex w-full h-36 px-5'>
                     <div className=' basis-[24%] relative'>
-                        <div className=' group cursor-pointer absolute -top-9 left-5 h-44 w-44 rounded-full border-4 border-white shadow bg-slate-200'>
-                            <img src={User.profilePicture ? `${Host}/images/${User.profilePicture}` : profilePhoto} alt="" className=' w-full h-full rounded-full object-cover' />
+                        <div onClick={() => { showuUpdateOptions("profile") }} className=' group cursor-pointer absolute -top-9 left-5 h-44 w-44 rounded-full border-4 border-white shadow bg-slate-200'>
+                            {
+                                profilePhotoFile ?
+                                    <div className=' w-full h-full relative'>
+                                        <img src={URL.createObjectURL(profilePhotoFile)} alt="" className=' w-full h-full object-cover rounded-full' />
+                                        <div className=' absolute top-7 right-4 h-7 w-7 z-50'>
+                                            <p onClick={UpdateProfilePhoto} className=' text-green-400 cursor-pointer'>Save</p>
+                                            <p onClick={() => setProfilePhotoFile(null)} className=' text-red-400 cursor-pointer'>Calcle</p>
+                                        </div>
+                                    </div>
+                                    :
+                                    <img src={User.profilePicture ? `${Host}/images/${User.profilePicture}` : profilePhoto} alt="" className=' w-full h-full rounded-full object-cover' />
+
+                            }
+
                             <div className=' absolute right-0 bottom-2 rounded-full h-9 w-9 bg-gray-100 z-10 flex justify-center items-center overflow-hidden hover:bg-gray-200'>
                                 <BsFillCameraFill className=' text-lg' />
                             </div>
                             <div className=' absolute top-0 left-0 h-full w-full rounded-full bg-slate-500 opacity-0 group-hover:opacity-10 '></div>
                         </div>
+                        {/* profile pic update start */}
+
+                        {
+                            isShowingProfileUpdateOptions && !profilePhotoFile &&
+
+                            <div className=' bg-white rounded-md p-2 z-20 shadow-lg absolute -bottom-16  right-0 w-52'>
+                                <div onClick={showuProfileUpdateOptions} className=' cursor-pointer flex items-center p-1 px-2 text-gray-700 font-semibold hover:bg-gray-100 rounded-md'>
+                                    <AiOutlineCopy className=' font-semibold text-gray-500 text-lg mr-2' />
+                                    <span>Select Photo</span>
+                                </div>
+                                <div className=' flex items-center p-1 px-2 text-gray-700 font-semibold hover:bg-gray-100 rounded-md'>
+                                    <BiUpload className=' font-semibold text-gray-500 text-lg mr-2' />
+                                    <label htmlFor="file">Upload Photo</label>
+                                    <input onChange={(e) => { setProfilePhotoFile(e.target.files[0]) }} type="file" id='file' className=' hidden' />
+                                </div>
+                            </div>
+                        }
+                        {/* profile pic update end */}
+
                     </div>
                     <div className=' basis-[30%] self-end'>
                         <h4 className=' font-bold text-3xl'>Jhon Doe</h4>
@@ -264,7 +382,6 @@ function ProfileTop({ FriendSuggetions, Profile, About, Friends, Photos, Videos,
                             <div className='flex justify-center items-center mr-1'> {FriendSuggetions ? <FaFacebookMessenger /> : <MdModeEditOutline />}</div>
                             <button className=' text-sm font-semibold'>{FriendSuggetions ? "Message" : "Edit Profile"}</button>
                         </div>
-
                     </div>
                 </div>
 
