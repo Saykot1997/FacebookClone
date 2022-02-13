@@ -29,8 +29,6 @@ const Authgurd = async (req, res, next) => {
         res.status(401).json("You are not authorized login first")
     }
 
-
-
 }
 
 

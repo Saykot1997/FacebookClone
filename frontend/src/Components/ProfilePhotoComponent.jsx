@@ -1,13 +1,47 @@
 import React, { useState } from 'react'
 import { BsThreeDots } from 'react-icons/bs';
-import Photo2 from "../images/2.jpg"
+import coverPhoto from '../images/FBCoverPhoto.png';
+import profilePhoto from '../images/userAvater.png';
 import { BiPencil } from 'react-icons/bi';
 import { AiOutlinePlus } from 'react-icons/ai';
+import { useEffect } from 'react';
+import { useSelector } from 'react-redux';
+import axios from 'axios';
+import { Host } from "../Data"
 
 function ProfilePhotoComponent({ About }) {
 
+    const [uploadPhotos, setUploadPhotos] = useState([]);
+    const [coverPhotos, setCoverPhotos] = useState([]);
+    const [profilePhotos, setProfilePhotos] = useState([])
+    const User = useSelector((state) => state.User.User);
     const [yourPhoto, setYourPhoto] = useState(true);
     const [album, setAlbum] = useState(false);
+
+    useEffect(() => {
+
+        try {
+
+            const getPhotos = async () => {
+
+                const res = await axios.get(`${Host}/api/user/allPhotos`, {
+                    headers: {
+                        "Authorization": `Bearer ${User.token}`
+                    }
+                });
+                setUploadPhotos(res.data.uploads);
+                setCoverPhotos(res.data.coverPhotos);
+                setProfilePhotos(res.data.profilePictures)
+            }
+
+            getPhotos();
+
+        } catch (error) {
+
+            console.log(error)
+        }
+
+    }, [User])
 
     const SeeYourPhotos = () => {
         setYourPhoto(true);
@@ -17,6 +51,11 @@ function ProfilePhotoComponent({ About }) {
         setYourPhoto(false);
         setAlbum(true);
     }
+
+    // console.log({ coverPhotos: coverPhotos })
+    // console.log({ profilePhotos: profilePhotos })
+    // console.log({ uploads: uploadPhotos })
+
 
     return (
         <div className=' w-full p-3 bg-white shadow shadow-gray-300 rounded-md mb-3'>
@@ -39,42 +78,35 @@ function ProfilePhotoComponent({ About }) {
                     yourPhoto &&
 
                     <div className=' grid grid-cols-5 gap-2 my-3'>
-                        <div className=' relative w-full h-36 rounded-md overflow-hidden'>
-                            <img src={Photo2} alt="" className=' w-full h-full object-cover' />
-                            <div className=' absolute top-2 right-2 h-7 w-7 hover:bg-opacity-50 cursor-pointer rounded-full bg-black bg-opacity-40 flex justify-center items-center'>
-                                <BiPencil className=' text-white text-lg' />
-                            </div>
-                        </div>
-                        <div className=' relative w-full h-36 rounded-md overflow-hidden'>
-                            <img src={Photo2} alt="" className=' w-full h-full object-cover' />
-                            <div className=' absolute top-2 right-2 h-7 w-7 hover:bg-opacity-50 cursor-pointer rounded-full bg-black bg-opacity-40 flex justify-center items-center'>
-                                <BiPencil className=' text-white text-lg' />
-                            </div>
-                        </div>
-                        <div className=' relative w-full h-36 rounded-md overflow-hidden'>
-                            <img src={Photo2} alt="" className=' w-full h-full object-cover' />
-                            <div className=' absolute top-2 right-2 h-7 w-7 hover:bg-opacity-50 cursor-pointer rounded-full bg-black bg-opacity-40 flex justify-center items-center'>
-                                <BiPencil className=' text-white text-lg' />
-                            </div>
-                        </div>
-                        <div className=' relative w-full h-36 rounded-md overflow-hidden'>
-                            <img src={Photo2} alt="" className=' w-full h-full object-cover' />
-                            <div className=' absolute top-2 right-2 h-7 w-7 hover:bg-opacity-50 cursor-pointer rounded-full bg-black bg-opacity-40 flex justify-center items-center'>
-                                <BiPencil className=' text-white text-lg' />
-                            </div>
-                        </div>
-                        <div className=' relative w-full h-36 rounded-md overflow-hidden'>
-                            <img src={Photo2} alt="" className=' w-full h-full object-cover' />
-                            <div className=' absolute top-2 right-2 h-7 w-7 hover:bg-opacity-50 cursor-pointer rounded-full bg-black bg-opacity-40 flex justify-center items-center'>
-                                <BiPencil className=' text-white text-lg' />
-                            </div>
-                        </div>
-                        <div className=' relative w-full h-36 rounded-md overflow-hidden'>
-                            <img src={Photo2} alt="" className=' w-full h-full object-cover' />
-                            <div className=' absolute top-2 right-2 h-7 w-7 hover:bg-opacity-50 cursor-pointer rounded-full bg-black bg-opacity-40 flex justify-center items-center'>
-                                <BiPencil className=' text-white text-lg' />
-                            </div>
-                        </div>
+
+                        {
+
+                            About && uploadPhotos.length > 10 && uploadPhotos.slice(0, 10).map((item, index) => {
+
+                                return (
+                                    <div className=' relative w-full h-36 rounded-md overflow-hidden'>
+                                        <img src={`${Host}/images/${item}`} alt="" className=' w-full h-full object-cover' />
+                                        <div className=' absolute top-2 right-2 h-7 w-7 hover:bg-opacity-50 cursor-pointer rounded-full bg-black bg-opacity-40 flex justify-center items-center'>
+                                            <BiPencil className=' text-white text-lg' />
+                                        </div>
+                                    </div>
+                                )
+                            })
+                        }
+                        {
+                            !About && uploadPhotos.length > 0 && uploadPhotos.map((item, index) => {
+
+                                return (
+                                    <div className=' relative w-full h-36 rounded-md overflow-hidden'>
+                                        <img src={`${Host}/images/${item}`} alt="" className=' w-full h-full object-cover' />
+                                        <div className=' absolute top-2 right-2 h-7 w-7 hover:bg-opacity-50 cursor-pointer rounded-full bg-black bg-opacity-40 flex justify-center items-center'>
+                                            <BiPencil className=' text-white text-lg' />
+                                        </div>
+                                    </div>
+                                )
+                            })
+                        }
+
                     </div>
                 }
 
@@ -92,7 +124,7 @@ function ProfilePhotoComponent({ About }) {
                         </div>
                         <div>
                             <div className='relative w-full h-36 rounded-md overflow-hidden'>
-                                <img src={Photo2} alt="" className=' w-full h-full object-cover' />
+                                <img src={User.profilePicture ? `${Host}/images/${User.profilePicture}` : profilePhoto} alt="" className=' w-full h-full object-cover' />
                                 <div className=' absolute top-2 right-2 h-7 w-7 hover:bg-opacity-50 cursor-pointer rounded-full bg-black bg-opacity-40 flex justify-center items-center'>
                                     <BsThreeDots className=' text-white text-lg' />
                                 </div>
@@ -104,7 +136,7 @@ function ProfilePhotoComponent({ About }) {
                         </div>
                         <div>
                             <div className='relative w-full h-36 rounded-md overflow-hidden'>
-                                <img src={Photo2} alt="" className=' w-full h-full object-cover' />
+                                <img src={User.coverPicture ? `${Host}/images/${User.coverPicture}` : coverPhoto} alt="" className=' w-full h-full object-cover' />
                                 <div className=' absolute top-2 right-2 h-7 w-7 hover:bg-opacity-50 cursor-pointer rounded-full bg-black bg-opacity-40 flex justify-center items-center'>
                                     <BsThreeDots className=' text-white text-lg' />
                                 </div>
@@ -123,6 +155,7 @@ function ProfilePhotoComponent({ About }) {
                         <button className=' w-full py-2 hover:bg-gray-300 bg-gray-200 rounded-lg font-semibold'>See All</button>
                     </div>
                 }
+
             </div>
         </div >
     )

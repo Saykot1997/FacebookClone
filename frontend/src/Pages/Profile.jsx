@@ -13,6 +13,7 @@ import { useSelector } from 'react-redux';
 
 function Profile() {
 
+    const Posts = useSelector((state) => state.Post.Post);
     const [timelinePost, setTimelinePost] = useState(null);
     const User = useSelector(state => state.User.User);
 
@@ -48,7 +49,7 @@ function Profile() {
             console.log(err)
         });
 
-    }, [timelinePost]);
+    }, [Posts]);
 
     return (
 

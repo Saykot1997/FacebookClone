@@ -6,6 +6,7 @@ import ProfileVideoComponent from '../Components/ProfileVideoComponent'
 import Topbar from '../Components/Topbar'
 
 function ProfilePhotos() {
+
     return (
         <div className=' bg-gray-100 w-full h-screen overflow-y-scroll'>
             <Topbar Profile />

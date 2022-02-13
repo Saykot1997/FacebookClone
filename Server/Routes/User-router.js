@@ -3,6 +3,56 @@ const User = require("../Models/User-model");
 const bcrypt = require('bcrypt');
 const Authgurd = require("../Authgurd/Authgurd");
 const Post = require("../Models/Post-model");
+const jwt = require('jsonwebtoken');
+
+
+
+// image upload require functions
+const multer = require('multer');
+
+// multer images upload
+
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+
+        if (
+            file.mimetype === 'image/jpeg' ||
+            file.mimetype === 'image/png' ||
+            file.mimetype === 'image/jpg' ||
+            file.mimetype === 'image/gif') {
+
+            cb(null, './uploads/images');
+
+        } else {
+
+            cd("file does not match");
+        }
+
+    },
+
+    filename: (req, file, cb) => {
+
+        cb(null, req.userName.toLowerCase() + "-" + Date.now() + "-" + file.originalname)
+    }
+})
+
+const upload = multer({
+    storage: storage, fileFilter: (req, file, cb) => {
+        if (
+            file.mimetype === "image/jpg" ||
+            file.mimetype === "image/jpeg" ||
+            file.mimetype === "image/png"
+        ) {
+            cb(null, true);
+
+        }
+        else {
+
+            cb(new Error("file type is not supported"), false);
+        }
+
+    }
+})
 
 // update user
 
@@ -155,6 +205,51 @@ router.get('/timelinePost', Authgurd, async (req, res) => {
         res.status(400).json(error);
     }
 
+
+});
+
+
+// get all photos
+
+router.get('/allPhotos', Authgurd, async (req, res) => {
+
+    try {
+
+        const user = await User.findById(req.userId).select("uploads AllCoverPhotos allProfilePicture");
+        res.status(200).json({ uploads: user.uploads, coverPhotos: user.AllCoverPhotos, profilePictures: user.allProfilePicture });
+
+    } catch (error) {
+
+        res.status(400).json(error);
+    }
+});
+
+
+// cover photo upload
+
+router.post("/updateCoverPhoto", Authgurd, upload.single("coverPhoto"), async (req, res) => {
+
+    const file = req.file;
+
+    try {
+
+        const user = await User.findById(req.userId);
+        user.coverPicture = file.filename;
+        user.AllCoverPhotos.push(file.filename);
+        user.uploads.push(file.filename);
+        await user.save();
+        const updatedUser = await User.findById(req.userId);
+
+        const token = jwt.sign({ id: updatedUser._id, role: updatedUser.role, userName: updatedUser.firstName }, process.env.TOKENSECRATE);
+
+        const { password, timelinePost, updatedAt, createdAt, ...rest } = updatedUser._doc;
+
+        res.status(200).json({ ...rest, token });
+
+    } catch (error) {
+
+        console.log(error)
+    }
 
 });
 
