@@ -5,6 +5,7 @@ import { CgDanger } from 'react-icons/cg';
 import { useSelector, useDispatch } from 'react-redux';
 import { loading, loadingSuccess, loadingFailure } from '../Redux/UserSlice';
 import { Host } from '../Data';
+import { useNavigate } from 'react-router-dom';
 
 
 function Register({ createAccount, setCreateAccount }) {
@@ -30,6 +31,7 @@ function Register({ createAccount, setCreateAccount }) {
     const [birthYearErr, setBirthYearErr] = useState("")
     const [genderErr, setGenderErr] = useState("")
     const [showError, setShowError] = useState("")
+    const navigation = useNavigate()
 
 
 
@@ -160,9 +162,11 @@ function Register({ createAccount, setCreateAccount }) {
 
             try {
 
-                const res = await axios.post(`${Host}/api/auth/register`, userData)
-                res && setCreateAccount(false);
-                res && closeTheForm();
+                const res = await axios.post(`${Host}/api/auth/register`, userData);
+                navigation("/profilePhotoUpdate");
+                dispatch(loadingSuccess(res.data));
+                setCreateAccount(false);
+                closeTheForm();
 
             } catch (error) {
 

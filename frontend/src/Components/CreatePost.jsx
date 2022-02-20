@@ -1,5 +1,4 @@
 import React, { useState } from 'react'
-import profilePhoto from "../images/1.jpg";
 import { RiArrowDownSFill } from "react-icons/ri";
 import { FaUserFriends } from "react-icons/fa";
 import { CloseCreatePost } from "../Redux/CreatePostSlice";
@@ -7,6 +6,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
 import { Host } from "../Data";
 import { PostCreateSuccess, PostCreateFailure } from "../Redux/PostSlice"
+import userAvater from "../images/userAvater.png";
 
 
 function CreatePost() {
@@ -65,7 +65,7 @@ function CreatePost() {
                 </div>
 
                 <div className=' flex items-start p-3 w-ful'>
-                    <img src={profilePhoto} alt="" className=' bg-red-800 h-11 w-11 rounded-full object-cover mr-2' />
+                    <img src={User.profilePicture ? `${Host}/images/${User.profilePicture}` : `${userAvater}`} alt="" className=' bg-red-800 h-11 w-11 rounded-full object-cover mr-2' />
                     <div className='flex items-start flex-col'>
                         <span className=' font-semibold text-sm'>Saykot Hossain</span>
                         <div className=' bg-gray-200 mt-1 py-1 px-2 rounded flex items-center'>

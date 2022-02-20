@@ -9,12 +9,23 @@ import ProfileTop from '../Components/ProfileTop';
 import Share from '../Components/Share';
 import SingleAllFriend from '../Components/SingleAllFriend';
 import Topbar from '../Components/Topbar';
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from 'react-redux';
+import { useEffect } from 'react';
+import axios from 'axios';
+import { Host } from '../Data';
 
 function AllFriendSecProfile() {
 
     const [isScrolled, setScrolled] = useState(false);
     let navigate = useNavigate();
+    const user = useSelector(state => state.User.User);
+    const allFriend = useSelector(state => state.Friends.AllFriends);
+    const dispatch = useDispatch();
+    const location = useLocation();
+    const friendId = location.pathname.split('/')[4];
+    const [friendData, setFriendData] = useState(null);
+
 
     const GotoFriendHomePage = () => {
         navigate('/friends/all');
@@ -28,6 +39,32 @@ function AllFriendSecProfile() {
             setScrolled(false);
         }
     }
+
+    useEffect(() => {
+
+        try {
+
+            const getFriendData = async () => {
+                const res = await axios.get(`${Host}/api/friend/getSingleFriend/${friendId}`, {
+                    headers: {
+                        'Authorization': 'Bearer ' + user.token
+                    }
+                })
+
+                setFriendData(res.data);
+            }
+
+            getFriendData()
+
+        } catch (error) {
+
+            console.log(error);
+        }
+
+    }, []);
+
+
+    // console.log(friendData);
 
     return (
         <div className=' bg-gray-100 h-screen w-full'>
@@ -52,38 +89,22 @@ function AllFriendSecProfile() {
                         </div>
                     </div>
                     <div className=' px-2'>
-                        <p className='text-[17px] font-semibold ml-2'>123 Friends</p>
-                        <SingleAllFriend />
-                        <SingleAllFriend />
-                        <SingleAllFriend />
-                        <SingleAllFriend />
-                        <SingleAllFriend />
-                        <SingleAllFriend />
-                        <SingleAllFriend />
-                        <SingleAllFriend />
-                        <SingleAllFriend />
-                        <SingleAllFriend />
-                        <SingleAllFriend />
-                        <SingleAllFriend />
-                        <SingleAllFriend />
-                        <SingleAllFriend />
-                        <SingleAllFriend />
-                        <SingleAllFriend />
-                        <SingleAllFriend />
-                        <SingleAllFriend />
-                        <SingleAllFriend />
-                        <SingleAllFriend />
-                        <SingleAllFriend />
-                        <SingleAllFriend />
-                        <SingleAllFriend />
-                        <SingleAllFriend />
+                        <p className='text-[17px] font-semibold ml-2'>{allFriend.length} Friends</p>
+                        {
+                            allFriend.length > 0 && allFriend.map((friend, index) => {
+                                return (
+
+                                    <SingleAllFriend friend={friend} key={index} />
+                                )
+                            })
+                        }
                     </div>
                 </div>
 
                 {/* right part */}
                 <div className='w-[77.5%] h-full bg-gray-100 overflow-y-scroll'>
                     <div>
-                        <ProfileTop FriendSuggetions />
+                        <ProfileTop friendData={friendData} AllFriends />
                         <div className=' flex justify-center items-center mt-4 mx-6'>
                             <div className=' w-[80%] flex justify-between'>
                                 <div className='h-screen sticky left-0 top-4 overflow-scroll ProfileScrollbar w-2/5 mb-2 mr-2'>

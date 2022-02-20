@@ -7,9 +7,11 @@ const jwt = require('jsonwebtoken');
 
 router.post("/register", async (req, res) => {
 
-    const { firstName, sureName, password, birthDay, gender } = req.body;
+    const { firstName, sureName, birthDay, gender } = req.body;
 
-    if (firstName && sureName && password && birthDay && gender) {
+    const userPassword = req.body.password
+
+    if (firstName && sureName && userPassword && birthDay && gender) {
 
         if (!req.body.email && !req.body.mobileNumber) {
             res.status(403).json("Email or MobileNumber is required")
@@ -48,15 +50,18 @@ router.post("/register", async (req, res) => {
 
             } else {
 
-                const allIndesv = await User.collection.getIndexes();
-
+                await User.collection.getIndexes();
                 await User.collection.dropIndexes();
-
                 const salt = await bcrypt.genSalt(10);
-                const saltPassword = await bcrypt.hash(password, salt);
+                const saltPassword = await bcrypt.hash(userPassword, salt);
                 user.password = saltPassword;
-                const newUser = await user.save();
-                res.status(200).json(newUser);
+                const saveduser = await user.save();
+
+                const updatedUser = await User.findById(saveduser._id);
+
+                const token = jwt.sign({ id: updatedUser._id, role: updatedUser.role, userName: updatedUser.firstName }, process.env.TOKENSECRATE);
+                const { password, timelinePost, updatedAt, createdAt, ...rest } = updatedUser._doc;
+                res.status(200).json({ ...rest, token });
             }
 
         } catch (error) {
@@ -109,9 +114,7 @@ router.post("/login", async (req, res) => {
                 } else {
 
                     const token = jwt.sign({ id: user._id, role: user.role, userName: user.firstName }, process.env.TOKENSECRATE);
-
                     const { password, timelinePost, updatedAt, createdAt, ...rest } = user._doc;
-
                     res.status(200).json({ ...rest, token });
 
                 }

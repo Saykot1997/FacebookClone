@@ -1,12 +1,13 @@
 import React, { useState } from 'react'
-import profilePhoto from "../images/1.jpg";
 import { RiArrowDownSFill } from "react-icons/ri";
 import { FaUserFriends } from "react-icons/fa";
 import { CloseCreatePostImage } from "../Redux/CreatePostSlice";
-import { PostCreateSuccess, PostCreateFailure, Loading } from "../Redux/PostSlice"
+import { PostCreateFailure, Loading, AllPostFatchSuccess } from "../Redux/PostSlice"
 import { useDispatch, useSelector } from 'react-redux';
 import { Host } from "../Data";
 import axios from 'axios';
+import userAvater from "../images/userAvater.png";
+import { loadingSuccess } from '../Redux/UserSlice';
 
 
 function CreatePostWithFile() {
@@ -62,22 +63,33 @@ function CreatePostWithFile() {
 
             try {
 
-                const res = await axios.post(`${Host}/api/post/create`, formData, {
+                await axios.post(`${Host}/api/post/create`, formData, {
+                    headers: {
+                        'Authorization': `Bearer ${User.token}`
+                    }
+                });
+                HidePostCreate()
+
+                const res = await axios.get(`${Host}/api/post/feed/all`, {
+                    headers: {
+                        'Authorization': `Bearer ${User.token}`
+                    }
+                });
+                dispatch(AllPostFatchSuccess(res.data));
+
+                const user = await axios.get(`${Host}/api/user/userRefresh`, {
                     headers: {
                         'Authorization': `Bearer ${User.token}`
                     }
                 });
 
-
-                dispatch(PostCreateSuccess(res.data));
-                HidePostCreate()
+                dispatch(loadingSuccess(user.data));
 
             } catch (error) {
 
                 dispatch(PostCreateFailure(error.response.data));
                 setErrMessage("Something went wrong");
             }
-
         }
 
     }
@@ -94,7 +106,7 @@ function CreatePostWithFile() {
                 </div>
 
                 <div className=' flex items-start p-3 w-ful'>
-                    <img src={profilePhoto} alt="" className=' bg-red-800 h-11 w-11 rounded-full object-cover mr-2' />
+                    <img src={User.profilePicture ? `${Host}/images/${User.profilePicture}` : `${userAvater}`} alt="" className=' bg-red-800 h-11 w-11 rounded-full object-cover mr-2' />
                     <div className='flex items-start flex-col'>
                         <span className=' font-semibold text-sm'>Saykot Hossain</span>
                         <div className=' bg-gray-200 mt-1 py-1 px-2 rounded flex items-center'>

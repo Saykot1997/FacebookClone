@@ -1,9 +1,14 @@
 import React from 'react'
 import { BiRightArrowAlt } from 'react-icons/bi';
-import ProfilePhoto from "../images/1.jpg";
+import ProfilePhoto from "../images/userAvater.png"
 import photo from "../images/2.jpg"
+import { useSelector } from "react-redux";
+import { Host } from '../Data';
 
 export default function Story() {
+
+    const user = useSelector(state => state.User.User);
+
     return (
         <div className=' w-ful mb-4 relative'>
             <div className='flex justify-between w-full h-52'>
@@ -12,7 +17,7 @@ export default function Story() {
 
                 <div className='group basis-[18.8%] h-full cursor-pointer bg-white shadow rounded-xl relative'>
                     <div className=' h-3/4 w-full overflow-hidden rounded-t-xl relative'>
-                        <img src={ProfilePhoto} alt="" className=' transition-all duration-500 group-hover:scale-105 w-full h-full object-cover' />
+                        <img src={user.profilePicture ? `${Host}/images/${user.profilePicture}` : ProfilePhoto} alt="" className=' transition-all duration-500 group-hover:scale-110 w-full h-full object-cover' />
                         <div className=' absolute h-full w-full top-0 left-0 bg-black opacity-10 '></div>
                     </div>
                     <div className=' h-1/4 w-full flex flex-col justify-end items-center relative'>
@@ -30,7 +35,7 @@ export default function Story() {
                     <div className=' z-10 absolute h-10 w-10 rounded-full top-2 left-1 border-4 border-blue-500 '>
                         <img src={ProfilePhoto} alt="" className=' w-full h-full rounded-full object-cover' />
                     </div>
-                    <img src={photo} alt="" className=' h-full w-full object-cover' />
+                    <img src={photo} alt="" className='transition-all duration-500 group-hover:scale-110 h-full w-full object-cover' />
                     <div className=' absolute w-full bottom-3 left-0 z-10 text-white text-center text-sm font-semibold'>
                         <p className=''>Jone Doe</p>
                     </div>
@@ -45,7 +50,7 @@ export default function Story() {
                     <div className=' z-10 absolute h-10 w-10 rounded-full top-2 left-1 border-4 border-blue-500 '>
                         <img src={ProfilePhoto} alt="" className=' w-full h-full rounded-full object-cover' />
                     </div>
-                    <img src={photo} alt="" className=' h-full w-full object-cover' />
+                    <img src={photo} alt="" className='transition-all duration-500 group-hover:scale-110 h-full w-full object-cover' />
                     <div className=' absolute w-full bottom-3 left-0 z-10 text-white text-center text-sm font-semibold'>
                         <p className=''>Jone Doe</p>
                     </div>
@@ -60,7 +65,7 @@ export default function Story() {
                     <div className=' z-10 absolute h-10 w-10 rounded-full top-2 left-1 border-4 border-blue-500 '>
                         <img src={ProfilePhoto} alt="" className=' w-full h-full rounded-full object-cover' />
                     </div>
-                    <img src={photo} alt="" className=' h-full w-full object-cover' />
+                    <img src={photo} alt="" className='transition-all duration-500 group-hover:scale-110 h-full w-full object-cover' />
                     <div className=' absolute w-full bottom-3 left-0 z-10 text-white text-center text-sm font-semibold'>
                         <p className=''>Jone Doe</p>
                     </div>
@@ -75,7 +80,7 @@ export default function Story() {
                     <div className=' z-10 absolute h-10 w-10 rounded-full top-2 left-1 border-4 border-blue-500 '>
                         <img src={ProfilePhoto} alt="" className=' w-full h-full rounded-full object-cover' />
                     </div>
-                    <img src={photo} alt="" className=' h-full w-full object-cover' />
+                    <img src={photo} alt="" className='transition-all duration-500 group-hover:scale-110 h-full w-full object-cover' />
                     <div className=' absolute w-full bottom-3 left-0 z-10 text-white text-center text-sm font-semibold'>
                         <p className=''>Jone Doe</p>
                     </div>

@@ -8,13 +8,8 @@ function Watch() {
 
     const showVideo = (e) => {
 
-        const videoDiv = document.getElementsByClassName('singleVideo'); //v.offsetTop < e.target.scrollTop + e.target.clientHeight && v.offsetTop + v.offsetHeight > e.target.scrollTop
-        console.log(e.target.scrollTop)
+        const videoDiv = document.getElementsByClassName('singleVideo');
         Array.from(videoDiv).forEach((v, i) => {
-
-            console.log([
-                { containerHight: e.target.clientHeight }, { scrollTop: e.target.scrollTop }, { videoHight: v.offsetHeight }, { videoTop: v.offsetTop }
-            ])
 
             if (v.offsetTop + e.target.offsetTop > e.target.scrollTop && v.offsetTop + v.offsetHeight < e.target.scrollTop + e.target.clientHeight) {
 
@@ -43,7 +38,6 @@ function Watch() {
 
     useEffect(() => {
         document.getElementsByClassName('singleVideo')[0].querySelector('video').play();
-
     }, [])
 
 

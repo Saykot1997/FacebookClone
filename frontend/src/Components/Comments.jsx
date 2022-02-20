@@ -139,7 +139,7 @@ function Comments({ post }) {
                                 <li className={` mt-2 flex group `} key={index}>
                                     <div className='flex'>
                                         <div>
-                                            <img src={post.userId.profilePicture ? `${Host}/uploads/images/${comment.user.profilePicture}` : `${userAvater}`} alt="" className=' h-8 w-8 rounded-full object-cover' />
+                                            <img src={post.userId.profilePicture ? `${Host}/images/${comment.user.profilePicture}` : userAvater} alt="" className=' h-8 w-8 rounded-full object-cover' />
                                         </div>
                                         <div className=' ml-2'>
                                             <div className='bg-gray-200 rounded-xl p-2 relative'>
@@ -200,7 +200,7 @@ function Comments({ post }) {
                                             <li className={` mt-2 ml-12 flex group `} key={index}>
                                                 <div className='flex'>
                                                     <div>
-                                                        <img src={post.userId.profilePicture ? `${Host}/uploads/images/${replay.user.profilePicture}` : `${userAvater}`} alt="" className=' h-8 w-8 rounded-full object-cover' />
+                                                        <img src={post.userId.profilePicture ? `${Host}/images/${replay.user.profilePicture}` : userAvater} alt="" className=' h-8 w-8 rounded-full object-cover' />
                                                     </div>
                                                     <div className=' ml-2'>
                                                         <div className='bg-gray-200 rounded-xl p-2 relative'>

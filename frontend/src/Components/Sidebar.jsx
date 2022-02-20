@@ -1,14 +1,16 @@
-import ProfilePhoto from "../images/1.jpg";
+import ProfilePhoto from "../images/userAvater.png"
 import candy from "../images/candyCrush.png";
-import sidebarLinks from "../Data";
+import sidebarLinks, { Host } from "../Data";
 import { BiChevronDown } from "react-icons/bi";
 import { IoIosArrowUp } from "react-icons/io";
 import { useState } from "react";
 import { NavLink } from "react-router-dom"
+import { useSelector } from "react-redux";
 
 
 export default function Sidebar() {
 
+    const user = useSelector(state => state.User.User);
     const [cliked, setClicked] = useState(false);
 
     const ShowItems = () => {
@@ -20,8 +22,8 @@ export default function Sidebar() {
             <div className='p-2 h-full' >
                 <ul className={cliked ? "overflow-visible" : "sidebar overflow-hidden"}>
                     <NavLink to="/profile" className="flex items-center px-2 font-semibold hover:bg-gray-200 hover:rounded-md h-12 my-2">
-                        <img src={ProfilePhoto} alt="" className=" h-9 w-9 rounded-full mr-3 object-cover" />
-                        <span>Saykot Hossain</span>
+                        <img src={user.profilePicture ? `${Host}/images/${user.profilePicture}` : ProfilePhoto} alt="" className=" h-9 w-9 rounded-full mr-3 object-cover" />
+                        <span className=" capitalize">{user.firstName + " " + user.sureName}</span>
                     </NavLink>
 
                     {
@@ -53,7 +55,7 @@ export default function Sidebar() {
                 <ul>
                     <li className='flex items-center cursor-pointer mt-3 p-2  hover:bg-gray-200 hover:rounded-md' >
                         <img src={candy} alt="" className=' w-9 h-9 rounded-md object-cover' />
-                        <p className=' ml-4 font-semibold'>Jone Do</p>
+                        <p className=' ml-4 font-semibold capitalize'>{user.firstName + " " + user.sureName}</p>
                     </li>
                 </ul>
                 <div className=" w-full mt-2">

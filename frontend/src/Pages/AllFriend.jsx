@@ -1,13 +1,45 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { AiOutlineArrowLeft } from 'react-icons/ai';
 import SingleAllFriend from '../Components/SingleAllFriend';
 import Topbar from '../Components/Topbar';
 import { useNavigate } from "react-router-dom";
+import axios from 'axios';
+import { Host } from '../Data';
+import { useDispatch, useSelector } from 'react-redux';
+import { AllFriendsFatchSuccess } from '../Redux/FriendsSlice';
 
 function AllFriend() {
 
     const [isScrolled, setScrolled] = useState(false);
     let navigate = useNavigate();
+    const user = useSelector(state => state.User.User);
+    const allFriend = useSelector(state => state.Friends.AllFriends);
+    const dispatch = useDispatch();
+
+    useEffect(() => {
+
+        try {
+
+            const getRequest = async () => {
+
+                const res = await axios.get(`${Host}/api/friend/getAllFriends`, {
+                    headers: {
+                        Authorization: `Bearer ${user.token}`
+                    }
+                });
+
+                dispatch(AllFriendsFatchSuccess(res.data));
+            }
+
+            getRequest()
+
+        } catch (error) {
+
+            console.log(error);
+        }
+
+    }, [user])
+
 
     const GotoFriendHomePage = () => {
         navigate('/friends');
@@ -46,31 +78,15 @@ function AllFriend() {
                     </div>
 
                     <div className=' px-2'>
-                        <p className='text-[17px] font-semibold ml-2'>123 Friends</p>
-                        <SingleAllFriend />
-                        <SingleAllFriend />
-                        <SingleAllFriend />
-                        <SingleAllFriend />
-                        <SingleAllFriend />
-                        <SingleAllFriend />
-                        <SingleAllFriend />
-                        <SingleAllFriend />
-                        <SingleAllFriend />
-                        <SingleAllFriend />
-                        <SingleAllFriend />
-                        <SingleAllFriend />
-                        <SingleAllFriend />
-                        <SingleAllFriend />
-                        <SingleAllFriend />
-                        <SingleAllFriend />
-                        <SingleAllFriend />
-                        <SingleAllFriend />
-                        <SingleAllFriend />
-                        <SingleAllFriend />
-                        <SingleAllFriend />
-                        <SingleAllFriend />
-                        <SingleAllFriend />
-                        <SingleAllFriend />
+                        <p className='text-[17px] font-semibold ml-2'>{allFriend.length} Friends</p>
+                        {
+                            allFriend.length > 0 && allFriend.map((friend, index) => {
+                                return (
+
+                                    <SingleAllFriend friend={friend} key={index} />
+                                )
+                            })
+                        }
                     </div>
                 </div>
 

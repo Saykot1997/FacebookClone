@@ -4,7 +4,8 @@ const bcrypt = require('bcrypt');
 const Authgurd = require("../Authgurd/Authgurd");
 const Post = require("../Models/Post-model");
 const jwt = require('jsonwebtoken');
-
+const Posts = require("../Models/Post-model");
+const fs = require('fs');
 
 
 // image upload require functions
@@ -52,133 +53,7 @@ const upload = multer({
         }
 
     }
-})
-
-// update user
-
-// router.put('/:id', Authgurd, async (req, res) => {
-
-//     const { id } = req.params;
-
-//     if (req.userId != id) {
-
-//         res.status(401).json({
-//             message: "Unauthorized"
-//         })
-
-//     } else {
-
-//         try {
-
-//             if (req.body.password) {
-
-//                 req.body.password = await bcrypt.hash(req.body.password, 10);
-//             }
-
-//             const updateUser = await User.findByIdAndUpdate(id, req.body, { new: true });
-//             res.json(updateUser);
-
-//         } catch (error) {
-
-//             res.status(400).json(error);
-//             console.log(error);
-//         }
-//     }
-// });
-
-
-// user delete 
-
-// router.delete('/:id', Authgurd, async (req, res) => {
-
-//     const { id } = req.params;
-
-//     if (req.userId != id) {
-
-//         res.status(401).json({
-//             message: "Unauthorized"
-//         })
-
-//     } else {
-
-//         try {
-
-//             await User.findByIdAndDelete(id);
-//             res.status(200).json("User deleted");
-
-//         } catch (error) {
-
-//             res.status(400).json(error);
-//             console.log(error);
-//         }
-//     }
-
-// });
-
-
-// get user by id
-
-// router.get('/:id', async (req, res) => {
-
-//     const { id } = req.params;
-
-//     try {
-
-//         const getUser = await User.findById(id);
-//         const { password, ...others } = getUser._doc;
-//         res.status(200).json(others);
-
-//     } catch (error) {
-
-//         res.status(400).json(error);
-//         console.log(error);
-//     }
-
-// });
-
-
-// flow a user
-
-// router.put("/flow/:id", Authgurd, async (req, res) => {
-
-//     const { id } = req.params;
-
-//     if (req.userId == id) {
-
-//         res.status(400).json("You can't flow yourself");
-
-//     } else {
-
-//         try {
-
-//             const user = await User.findById(id);
-//             const currentUser = await User.findById(req.userId);
-
-//             if (user.flowers.includes(req.userId)) {
-
-//                 res.status(400).json("User already flowing");
-
-//             } else {
-
-//                 user.flowers.push(req.userId);
-//                 await user.save();
-
-//                 currentUser.flowings.push(id);
-//                 await currentUser.save();
-
-//                 res.status(200).json("User is flowings");
-
-//             }
-
-//         } catch (error) {
-
-//             res.status(400).json(error);
-//             console.log(error);
-//         }
-
-//     }
-
-// });
+});
 
 
 // get timeline post
@@ -199,24 +74,6 @@ router.get('/timelinePost', Authgurd, async (req, res) => {
         })
 
         res.status(200).json(sendAbbleData);
-
-    } catch (error) {
-
-        res.status(400).json(error);
-    }
-
-
-});
-
-
-// get all photos
-
-router.get('/allPhotos', Authgurd, async (req, res) => {
-
-    try {
-
-        const user = await User.findById(req.userId).select("uploads AllCoverPhotos allProfilePicture");
-        res.status(200).json({ uploads: user.uploads, coverPhotos: user.AllCoverPhotos, profilePictures: user.allProfilePicture });
 
     } catch (error) {
 
@@ -260,7 +117,6 @@ router.post("/updateProfilePhoto", Authgurd, upload.single("profilePhoto"), asyn
 
     try {
 
-        console.log(file);
         const user = await User.findById(req.userId);
         user.profilePicture = file.filename;
         user.allProfilePicture.push(file.filename);
@@ -333,6 +189,115 @@ router.get("/updateProfilePhotoByName/:name", Authgurd, async (req, res) => {
     }
 })
 
+
+// updateBiogrophy
+
+
+router.post("/updateBiography", Authgurd, async (req, res) => {
+
+    try {
+
+        const user = await User.findById(req.userId);
+        await User.findByIdAndUpdate(req.userId, {
+            $set: {
+                ...req.body
+            }
+        });
+        const updatedUser = await User.findById(req.userId);
+        const token = jwt.sign({ id: updatedUser._id, role: updatedUser.role, userName: updatedUser.firstName }, process.env.TOKENSECRATE);
+        const { password, timelinePost, updatedAt, createdAt, ...rest } = updatedUser._doc;
+        res.status(200).json({ ...rest, token });
+
+    } catch (error) {
+
+        console.log(error);
+        res.status(400).json(error);
+    }
+});
+
+// photo delete
+
+router.delete("/photoDelete/:name", Authgurd, async (req, res) => {
+
+    try {
+
+        const user = await User.findById(req.userId).populate("timelinePost");
+        const hasProfilePicture = user.allProfilePicture.find(photo => photo === req.params.name);
+        const hasCoverPhoto = user.AllCoverPhotos.find(photo => photo === req.params.name);
+
+        const hasPost = user.timelinePost.map(post => {
+            return post.image === req.params.name
+        });
+
+        if (hasProfilePicture) {
+            user.allProfilePicture = user.allProfilePicture.filter(name => name !== req.params.name);
+            if (user.allProfilePicture.length === 0) {
+                user.profilePicture = "";
+            } else {
+                user.profilePicture = user.allProfilePicture[0];
+            }
+        }
+
+        if (hasCoverPhoto) {
+            user.AllCoverPhotos = user.AllCoverPhotos.filter(name => name !== req.params.name);
+            if (user.AllCoverPhotos.length === 0) {
+                user.coverPicture = "";
+            } else {
+                user.coverPicture = user.AllCoverPhotos[0];
+            }
+        }
+
+        if (hasPost.includes(true)) {
+            user.timelinePost = user.timelinePost.filter(post => post.image !== req.params.name);
+        }
+
+        user.uploads = user.uploads.filter(name => name !== req.params.name);
+
+        const oldPhoto = req.params.name;
+        const uploadDir = "uploads/images/";
+        const oldPhotoWithPath = uploadDir + oldPhoto;
+
+        if (fs.existsSync(oldPhotoWithPath)) {
+            fs.unlink(oldPhotoWithPath, (err) => {
+                if (err) {
+                    console.log("Culd not delete photos")
+                } else {
+                    console.log("deleted")
+                }
+            });
+        }
+
+        await user.save();
+        const updatedUser = await User.findById(req.userId);
+        const token = jwt.sign({ id: updatedUser._id, role: updatedUser.role, userName: updatedUser.firstName }, process.env.TOKENSECRATE);
+        const { password, timelinePost, updatedAt, createdAt, ...rest } = updatedUser._doc;
+        res.status(200).json({ ...rest, token });
+
+    } catch (error) {
+
+        console.log(error);
+        res.status(400).json(error);
+    }
+
+})
+
+// refresh token
+
+router.get("/userRefresh", Authgurd, async (req, res) => {
+
+    try {
+
+        const updatedUser = await User.findById(req.userId);
+        const token = jwt.sign({ id: updatedUser._id, role: updatedUser.role, userName: updatedUser.firstName }, process.env.TOKENSECRATE);
+        const { password, timelinePost, updatedAt, createdAt, ...rest } = updatedUser._doc;
+        res.status(200).json({ ...rest, token });
+
+    } catch (error) {
+
+        console.log(error);
+        res.status(400).json(error);
+    }
+});
 
 
 module.exports = router;

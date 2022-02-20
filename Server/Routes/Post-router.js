@@ -161,7 +161,6 @@ router.post('/create', Authgurd, upload.single("file"), async (req, res) => {
 
         const SavedNewPost = await Post.findById(postSaved._id).populate("userId", "firstName sureName");
         const SavedUser = await User.findById(req.userId);
-        console.log(SavedUser);
         res.status(201).json(SavedNewPost);
     }
     catch (err) {
@@ -205,14 +204,35 @@ router.get("/feed/all", Authgurd, async (req, res) => {
 
         const curantUser = await User.findById(req.userId);
 
+        const allFriends = curantUser.friends;
+        // console.log(allFriends);
+        const allFlowings = curantUser.flowings;
+        // console.log(allFlowings);
+
+        const findAllSendAblePost = [];
+
+        allFriends.forEach(friend => {
+
+            findAllSendAblePost.push(friend);
+
+            allFlowings.forEach(flow => {
+
+                if (friend !== flow) {
+                    findAllSendAblePost.push(flow);
+                }
+            })
+        })
+
+        // console.log(findAllSendAblePost);
+
         const userPost = await Post.find({ userId: curantUser._id }).populate({ path: 'userId', select: 'firstName sureName profilePicture' }).populate({ path: 'comments.user', select: 'firstName sureName profilePicture' }).populate("comments.replaies.user", "firstName sureName profilePicture");
 
-        const friendsPost = await Promise.all(curantUser.flowings.map(friendId => {
+        const flowingsPost = await Promise.all(findAllSendAblePost.map(friendId => {
             return Post.find({ userId: friendId }).populate({ path: 'userId', select: 'firstName sureName profilePicture' }).populate({ path: 'comments.user', select: 'firstName sureName profilePicture' }).populate("comments.replaies.user", "firstName sureName profilePicture");
         }));
 
         res.status(200).json(
-            userPost.concat(...friendsPost)
+            userPost.concat(...flowingsPost)
         );
 
     } catch (error) {
@@ -397,12 +417,28 @@ router.delete("/delete/:id", Authgurd, async (req, res) => {
                     });
                 }
 
-                const postPhoto = user.uploads.find(photo => photo == oldPhoto);
+                const hasProfilePicture = user.allProfilePicture.find(photo => photo === post.image);
+                const hasCoverPhoto = user.AllCoverPhotos.find(photo => photo === post.image);
 
-                if (postPhoto) {
-                    user.uploads.pull(postPhoto);
-                    await user.save();
+                if (hasProfilePicture) {
+                    user.allProfilePicture = user.allProfilePicture.filter(name => name !== post.image);
+                    if (user.allProfilePicture.length === 0) {
+                        user.profilePicture = "";
+                    } else {
+                        user.profilePicture = user.allProfilePicture[0];
+                    }
                 }
+
+                if (hasCoverPhoto) {
+                    user.AllCoverPhotos = user.AllCoverPhotos.filter(name => name !== post.image);
+                    if (user.AllCoverPhotos.length === 0) {
+                        user.coverPicture = "";
+                    } else {
+                        user.coverPicture = user.AllCoverPhotos[0];
+                    }
+                }
+
+                user.uploads = user.uploads.filter(name => name !== post.image);
             }
 
             if (post.video) {
@@ -417,12 +453,7 @@ router.delete("/delete/:id", Authgurd, async (req, res) => {
                     });
                 }
 
-                const postVideo = user.videos.find(video => video == oldVideo);
-
-                if (postVideo) {
-                    user.videos.pull(postVideo);
-                    await user.save();
-                }
+                user.videos = user.videos.filter(name => name !== post.video);
             }
 
 
@@ -656,5 +687,26 @@ router.post("/comment/replay/:postId/:commentId", Authgurd, async (req, res) => 
     }
 
 });
+
+// delete photo
+
+router.delete("/photoDelete/:photo", Authgurd, async (req, res) => {
+
+    const photoName = req.params.photo;
+
+    console.log(photoName);
+    console.log(req.userId);
+
+    try {
+
+        res.send("ok");
+
+    } catch (error) {
+
+        console.log(error);
+        res.status(400).json(error);
+    }
+
+})
 
 module.exports = router;

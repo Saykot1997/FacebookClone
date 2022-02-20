@@ -1,6 +1,6 @@
 import coverPhoto from '../images/FBCoverPhoto.png';
-import profilePhoto from '../images/userAvater.png';
-import { BsArrowLeftShort, BsFillCameraFill } from "react-icons/bs";
+import ProfilePhoto from "../images/userAvater.png"
+import { BsArrowLeftShort, BsFillCameraFill, BsMessenger, BsPencilFill } from "react-icons/bs";
 import { MdModeEditOutline } from "react-icons/md";
 import { FaFacebookMessenger } from "react-icons/fa";
 import { ImUserPlus } from 'react-icons/im';
@@ -8,13 +8,14 @@ import { useState } from 'react';
 import FriendsInfo from './FriendsInfo';
 import { NavLink } from "react-router-dom"
 import { useDispatch, useSelector } from 'react-redux';
-import { AiOutlineClose, AiOutlineCopy } from 'react-icons/ai';
+import { AiFillPlusCircle, AiOutlineClose, AiOutlineCopy } from 'react-icons/ai';
 import { BiUpload } from 'react-icons/bi';
 import axios from 'axios';
 import { Host } from "../Data";
 import { loadingSuccess } from '../Redux/UserSlice';
+import { useEffect } from 'react';
 
-function ProfileTop({ FriendSuggetions, Profile, About, Friends, Photos, Videos, ChecksInc }) {
+function ProfileTop({ FriendSuggetions, AllFriends, friendData, Profile, About, Friends, Photos, Videos, ChecksInc }) {
 
     const dispatch = useDispatch();
     const User = useSelector((state) => state.User.User);
@@ -27,10 +28,57 @@ function ProfileTop({ FriendSuggetions, Profile, About, Friends, Photos, Videos,
     const [selectedAlbum, setSelectedAlbum] = useState("");
     const [profilePhotoFile, setProfilePhotoFile] = useState(null);
     const [showPhotoSelectPhotoType, setShowPhotoSelectPhotoType] = useState("");
+    const allFriends = useSelector((state) => state.Friends.AllFriends)
+    const [hoveredFriend, setHoveredFriend] = useState("");
+    const [mutalFriendsLength, setMutalFriendsLength] = useState();
+    const [friendDataAllFriends, setFriendDataAllFriends] = useState([]);
 
 
-    const showPeople = () => {
+    useEffect(() => {
+
+        if (friendData) {
+            const MutalFriend = () => {
+                let mutal = [];
+                let userFriends = User.friends;
+                let friendFriends = friendData.friends;
+
+                for (let i = 0; i < userFriends.length; i++) {
+                    for (let j = 0; j < friendFriends.length; j++) {
+                        if (userFriends[i] === friendFriends[j]) {
+                            mutal.push(userFriends[i]);
+                        }
+                    }
+                }
+                setMutalFriendsLength(mutal.length);
+            }
+            MutalFriend()
+
+            const getAllFriends = async () => {
+
+                try {
+
+                    const res = await axios.get(`${Host}/api/friend/getAllFriendsOfFriend/${friendData._id}`, {
+                        headers: {
+                            Authorization: `Bearer ${User.token}`
+                        }
+                    });
+
+                    setFriendDataAllFriends(res.data)
+
+                } catch (error) {
+
+                    console.log(error);
+                }
+            }
+
+            getAllFriends()
+        }
+    }, [friendData])
+
+
+    const showPeople = (friend) => {
         setHover(true);
+        setHoveredFriend(friend);
     }
 
     const hidePeople = () => {
@@ -38,8 +86,6 @@ function ProfileTop({ FriendSuggetions, Profile, About, Friends, Photos, Videos,
     }
 
     const showuUpdateOptions = (type) => {
-
-        console.log(type);
 
         if (type === "profile") {
 
@@ -165,11 +211,8 @@ function ProfileTop({ FriendSuggetions, Profile, About, Friends, Photos, Videos,
 
             console.log(error);
         }
-    }
+    };
 
-    console.log(showPhotoSelectPhotoType);
-
-    const IsUserProfile = Profile || About || Friends || Photos || Videos || ChecksInc;
 
     return (
         <div className=' min-h-[570px] w-full bg-white shadow flex justify-center'>
@@ -219,7 +262,7 @@ function ProfileTop({ FriendSuggetions, Profile, About, Friends, Photos, Videos,
                                     {
                                         User && User.uploads.length > 0 && User.uploads.map((pic, index) => {
                                             return (
-                                                <img onClick={() => SetPhotoFunc(pic)} src={`${Host}/images/${pic}`} alt="" className=' w-full h-28 object-cover border border-gray-300' />
+                                                <img key={index} onClick={() => SetPhotoFunc(pic)} src={`${Host}/images/${pic}`} alt="" className=' w-full h-28 object-cover border border-gray-300' />
                                             )
                                         })
                                     }
@@ -232,7 +275,7 @@ function ProfileTop({ FriendSuggetions, Profile, About, Friends, Photos, Videos,
 
                             <div className='p-3 grid grid-cols-3 gap-3'>
                                 <div>
-                                    <img onClick={() => setSelectedAlbum("Profile Pictures")} src={User.profilePicture ? `${Host}/images/${User.profilePicture}` : profilePhoto} alt="" className=' w-full h-28 rounded-lg cursor-pointer object-cover' />
+                                    <img onClick={() => setSelectedAlbum("Profile Pictures")} src={User.profilePicture ? `${Host}/images/${User.profilePicture}` : ProfilePhoto} alt="" className=' w-full h-28 rounded-lg cursor-pointer object-cover' />
                                     <p className=' font-semibold '>Profile Picture</p>
                                     <p className=' text-[12px] text-gray-800'><span>{User.allProfilePicture.length}</span> Uploads</p>
                                 </div>
@@ -252,7 +295,7 @@ function ProfileTop({ FriendSuggetions, Profile, About, Friends, Photos, Videos,
                                     {
                                         User && User.AllCoverPhotos.length > 0 && User.AllCoverPhotos.map((pic, index) => {
                                             return (
-                                                <img onClick={() => SetPhotoFunc(pic)} src={`${Host}/images/${pic}`} alt="" className=' w-full h-28 object-cover border border-gray-300' />
+                                                <img key={index} onClick={() => SetPhotoFunc(pic)} src={`${Host}/images/${pic}`} alt="" className=' w-full h-28 object-cover border border-gray-300' />
                                             )
                                         })
                                     }
@@ -267,7 +310,7 @@ function ProfileTop({ FriendSuggetions, Profile, About, Friends, Photos, Videos,
                                     {
                                         User && User.allProfilePicture.length > 0 && User.allProfilePicture.map((pic, index) => {
                                             return (
-                                                <img onClick={() => SetPhotoFunc(pic)} src={`${Host}/images/${pic}`} alt="" className=' w-full h-28 object-cover border border-gray-300' />
+                                                <img key={index} onClick={() => SetPhotoFunc(pic)} src={`${Host}/images/${pic}`} alt="" className=' w-full h-28 object-cover border border-gray-300' />
                                             )
                                         })
                                     }
@@ -281,7 +324,7 @@ function ProfileTop({ FriendSuggetions, Profile, About, Friends, Photos, Videos,
 
             {/* select photo section end */}
 
-            <div className={FriendSuggetions ? " w-[80%] h-full" : 'w-[62%] h-full'}>
+            <div className={Profile ? 'w-[62%] h-full' : " w-[80%] h-full"}>
                 {/* cover photo start */}
                 <div className=' h-[350px] w-full relative'>
                     {
@@ -298,13 +341,25 @@ function ProfileTop({ FriendSuggetions, Profile, About, Friends, Photos, Videos,
                         coverPhotoFile ?
                             <img src={URL.createObjectURL(coverPhotoFile)} alt="" className=' w-full h-full object-cover rounded-b-lg' />
                             :
-                            <img src={User.coverPicture ? `${Host}/images/${User.coverPicture}` : coverPhoto} alt="" className=' w-full h-full object-cover rounded-b-lg' />
+                            <div className=' w-full h-full'>
+                                {
+                                    friendData ?
+                                        <img src={friendData && friendData.coverPicture ? `${Host}/images/${friendData.coverPicture}` : coverPhoto} alt="" className=' w-full h-full object-cover rounded-b-lg' />
+                                        :
+                                        <img src={User.coverPicture ? `${Host}/images/${User.coverPicture}` : coverPhoto} alt="" className=' w-full h-full object-cover rounded-b-lg' />
+                                }
+
+                            </div>
                     }
-                    <div onClick={() => { showuUpdateOptions("cover") }} className=' cursor-pointer flex items-center absolute right-3 bottom-5 bg-white rounded-md px-2 py-2 group'>
-                        <BsFillCameraFill className=' mr-1 text-lg' />
-                        <button className='font-semibold text-sm'>Edit Cover Photo</button>
-                        <div className=' absolute top-0 left-0 h-full w-full bg-slate-800 opacity-0 group-hover:opacity-10 '></div>
-                    </div>
+                    {
+                        Profile &&
+
+                        <div onClick={() => { showuUpdateOptions("cover") }} className=' cursor-pointer flex items-center absolute right-3 bottom-5 bg-white rounded-md px-2 py-2 group'>
+                            <BsFillCameraFill className=' mr-1 text-lg' />
+                            <button className='font-semibold text-sm'>Edit Cover Photo</button>
+                            <div className=' absolute top-0 left-0 h-full w-full bg-slate-800 opacity-0 group-hover:opacity-10 '></div>
+                        </div>
+                    }
                     {
                         isShowingUpdateOptions && !coverPhotoFile &&
 
@@ -322,9 +377,10 @@ function ProfileTop({ FriendSuggetions, Profile, About, Friends, Photos, Videos,
                     }
                 </div>
                 {/* cover photo end */}
+
                 <div className='flex w-full h-36 px-5'>
                     <div className=' basis-[24%] relative'>
-                        <div onClick={() => { showuUpdateOptions("profile") }} className=' group cursor-pointer absolute -top-9 left-5 h-44 w-44 rounded-full border-4 border-white shadow bg-slate-200'>
+                        <div onClick={() => { Profile && showuUpdateOptions("profile") }} className=' group cursor-pointer absolute -top-9 left-5 h-44 w-44 rounded-full border-4 border-white shadow bg-slate-200'>
                             {
                                 profilePhotoFile ?
                                     <div className=' w-full h-full relative'>
@@ -335,15 +391,25 @@ function ProfileTop({ FriendSuggetions, Profile, About, Friends, Photos, Videos,
                                         </div>
                                     </div>
                                     :
-                                    <img src={User.profilePicture ? `${Host}/images/${User.profilePicture}` : profilePhoto} alt="" className=' w-full h-full rounded-full object-cover' />
+                                    <div className=' w-full h-full'>
+                                        {
+                                            friendData ?
+                                                <img src={friendData && friendData.profilePicture ? `${Host}/images/${friendData.profilePicture}` : ProfilePhoto} alt="" className=' w-full h-full rounded-full object-cover' />
+                                                :
+                                                <img src={User.profilePicture ? `${Host}/images/${User.profilePicture}` : ProfilePhoto} alt="" className=' w-full h-full rounded-full object-cover' />
+                                        }
+                                    </div>
 
                             }
-
-                            <div className=' absolute right-0 bottom-2 rounded-full h-9 w-9 bg-gray-100 z-10 flex justify-center items-center overflow-hidden hover:bg-gray-200'>
-                                <BsFillCameraFill className=' text-lg' />
-                            </div>
+                            {
+                                Profile &&
+                                <div className=' absolute right-0 bottom-2 rounded-full h-9 w-9 bg-gray-100 z-10 flex justify-center items-center overflow-hidden hover:bg-gray-200'>
+                                    <BsFillCameraFill className=' text-lg' />
+                                </div>
+                            }
                             <div className=' absolute top-0 left-0 h-full w-full rounded-full bg-slate-500 opacity-0 group-hover:opacity-10 '></div>
                         </div>
+
                         {/* profile pic update start */}
 
                         {
@@ -364,24 +430,76 @@ function ProfileTop({ FriendSuggetions, Profile, About, Friends, Photos, Videos,
                         {/* profile pic update end */}
 
                     </div>
+                    {/* profile photo start */}
                     <div className=' basis-[30%] self-end'>
-                        <h4 className=' font-bold text-3xl'>Jhon Doe</h4>
-                        <p className={`text-gray-600 font-semibold ${FriendSuggetions ? "" : "hover:underline cursor-pointer"} my-1`}>{FriendSuggetions ? <div> <span>145 friends</span>   <span>14 mutal</span></div> : "145 Friends"}</p>
-                        <div className='flex relative'>
-                            <img src={profilePhoto} onMouseEnter={showPeople} onMouseLeave={hidePeople} alt="" className=' h-8 w-8 rounded-full object-cover cursor-pointer' />
-                            <FriendsInfo isHover={isHover} />
+                        {
+                            friendData ?
+                                <h4 className=' font-bold text-3xl capitalize'>{friendData.firstName + " " + friendData.sureName}</h4>
+                                :
+                                <h4 className=' font-bold text-3xl capitalize'>{User.firstName + " " + User.sureName}</h4>
+                        }
+                        <div className={`text-gray-600 font-semibold ${Profile ? "hover:underline cursor-pointer" : ""} my-1`}>
+
+                            {Profile ?
+                                `${User.friends.length} Friends`
+                                :
+                                `${friendData && friendData.friends.length} friends ${mutalFriendsLength && mutalFriendsLength} mutal`
+                            }
                         </div>
+                        {
+                            Profile &&
+                            <div className='flex relative'>
+                                {
+                                    allFriends.length > 0 && allFriends.map((friend, index) => {
+                                        return (
+
+                                            <img key={index} src={friend.profilePicture ? `${Host}/images/${friend.profilePicture}` : ProfilePhoto} onMouseEnter={() => showPeople(friend)} onMouseLeave={hidePeople} alt="" className=' h-8 w-8 rounded-full object-cover cursor-pointer' />
+                                        )
+                                    })
+                                }
+                                <FriendsInfo isHover={isHover} hoveredFriend={hoveredFriend} />
+                            </div>
+                        }
+                        {
+                            !Profile &&
+                            <div className='flex relative'>
+                                {
+                                    friendDataAllFriends.length > 0 && friendDataAllFriends.map((friend, index) => {
+                                        return (
+
+                                            <img key={index} src={friend.profilePicture ? `${Host}/images/${friend.profilePicture}` : ProfilePhoto} onMouseEnter={() => showPeople(friend)} onMouseLeave={hidePeople} alt="" className=' h-8 w-8 rounded-full object-cover cursor-pointer' />
+                                        )
+                                    })
+                                }
+                                <FriendsInfo isHover={isHover} hoveredFriend={hoveredFriend} />
+                            </div>
+                        }
                     </div>
+                    {/* profile photo end */}
                     <div className=' basis-[40%] self-end justify-self-end flex justify-end  '>
-                        <div className=' group relative rounded-md bg-blue-500 px-2 py-2 flex justify-center items-center cursor-pointer'>
-                            <div className=' bg-white text-blue-500 font-bold h-4 w-4 flex justify-center items-center mr-1 rounded-full'> {FriendSuggetions ? <ImUserPlus /> : <span className=' mb-1'>+</span>}</div>
-                            <button className=' text-white text-sm font-semibold'>{FriendSuggetions ? "Add Friend" : "Add To Story"}</button>
-                            <div className=' absolute h-full w-full bg-black opacity-0 top-0 left-0 group-hover:opacity-10'></div>
-                        </div>
-                        <div className='rounded-md bg-gray-200 hover:bg-gray-300 px-2 py-2 ml-2 flex justify-center items-center cursor-pointer'>
-                            <div className='flex justify-center items-center mr-1'> {FriendSuggetions ? <FaFacebookMessenger /> : <MdModeEditOutline />}</div>
-                            <button className=' text-sm font-semibold'>{FriendSuggetions ? "Message" : "Edit Profile"}</button>
-                        </div>
+                        {
+                            AllFriends && <button className=' flex justify-center items-center bg-gray-200 hover:bg-gray-300 py-2 px-3 rounded-md font-semibold '>
+                                <><img className=' w-5 mr-1' src='https://static.xx.fbcdn.net/rsrc.php/v3/ye/r/c9BbXR9AzI1.png' alt='' />Friends</>
+                            </button>
+                        }
+                        {
+                            AllFriends && <button className='flex justify-center items-center hover:bg-blue-600 bg-blue-500 text-white ml-2 py-2 px-3 rounded-md font-semibold'>
+                                <><BsMessenger className=' text-white w-5 mr-1' />Message</>
+                            </button>
+                        }
+                        {
+                            Profile &&
+                            <button className='flex justify-center items-center hover:bg-blue-600 bg-blue-500 text-white ml-2 py-2 px-3 rounded-md font-semibold'>
+                                <><AiFillPlusCircle className=' text-white text-xl mr-1' />Add To Story</>
+                            </button>
+                        }
+                        {
+                            Profile &&
+                            <button className=' flex justify-center items-center bg-gray-200 ml-2 hover:bg-gray-300 py-2 px-3 rounded-md font-semibold '>
+                                <><BsPencilFill className=' w-5 mr-1' />Edit Profile</>
+                            </button>
+                        }
+
                     </div>
                 </div>
 

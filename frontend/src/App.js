@@ -30,25 +30,82 @@ import ProfileVideo from "./Pages/ProfileVideo";
 import ProfileCheckInc from "./Pages/ProfileCheckInc";
 import ForgetPassword from "./Pages/ForgetPassword";
 import CreatePassword from "./Pages/CreatePassword";
-import { useSelector } from "react-redux";
 import Login from "./Pages/Login";
+import ProfilePhotoUpdate from "./Pages/ProfilePhotoUpdate";
+import CoverPhotoUpload from "./Pages/CoverPhotoUpload";
+import PrivateRoute from "./Components/PrivateRoute";
+import Biography from "./Pages/Biography";
+import PhotosOfProfile from "./Pages/PhotosOfProfile";
+import PhotosOfCover from "./Pages/PhotosOfCover";
+import { AllFriendsFatchSuccess, FriendsRequestsFatchSuccess, SuggestedFriendsFatchSuccess } from "./Redux/FriendsSlice";
+import { Host } from "./Data";
+import axios from "axios";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 
 function App() {
 
-  const User = useSelector(state => state.User.User);
-  console.log(User);
+  const user = useSelector(state => state.User.User);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+
+    try {
+
+      const getFriendSugeesions = async () => {
+
+        const res = await axios.get(`${Host}/api/friend/friendSuggestion`, {
+          headers: {
+            Authorization: `Bearer ${user.token}`
+          }
+        });
+
+        dispatch(SuggestedFriendsFatchSuccess(res.data));
+      }
+
+      const getAllFriends = async () => {
+
+        const res = await axios.get(`${Host}/api/friend/getAllFriends`, {
+          headers: {
+            Authorization: `Bearer ${user.token}`
+          }
+        });
+
+        dispatch(AllFriendsFatchSuccess(res.data));
+      }
+      const getRequest = async () => {
+
+        const res = await axios.get(`${Host}/api/friend/getFriendRequests`, {
+          headers: {
+            Authorization: `Bearer ${user.token}`
+          }
+        });
+        dispatch(FriendsRequestsFatchSuccess(res.data));
+      }
+
+      getRequest()
+      getAllFriends()
+      getFriendSugeesions();
+
+    } catch (error) {
+
+      console.log(error);
+    }
+
+  }, [user]);
+
 
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={User ? <Home /> : <Login />} />
-        <Route path="/friends" element={<Friend />} />
+        <Route path="/" element={<PrivateRoute><Home /></PrivateRoute>} />
+        <Route path="/friends" element={< Friend />} />
         <Route path="/friends/request" element={<FriendRequest />} />
         <Route path="/friends/request/profile" element={<FriendRequestProfile />} />
         <Route path="/friends/suggetion" element={<FriendSuggetions />} />
         <Route path="/friends/suggetion/profile" element={<FriendSugProfile />} />
         <Route path="/friends/all" element={<AllFriend />} />
-        <Route path="/friends/all/profile" element={<AllFriendSecProfile />} />
+        <Route path="/friends/all/profile/:id" element={<AllFriendSecProfile />} />
         <Route path="/friends/birthday" element={<FriendsBirthday />} />
         <Route path="/friends/customList" element={<FriendCustomList />} />
         <Route path="/watch" element={<Watch />} />
@@ -70,9 +127,14 @@ function App() {
         <Route path="/profile/photos" element={<ProfilePhotos />} />
         <Route path="/profile/videos" element={<ProfileVideo />} />
         <Route path="/profile/checkInc" element={<ProfileCheckInc />} />
-        <Route path="/login" element={User ? <Home /> : <Login />} />
+        <Route path="/profile/PhotosOfProfile" element={<PhotosOfProfile />} />
+        <Route path="/profile/PhotosOfCover" element={<PhotosOfCover />} />
+        <Route path="/login" element={<Login />} />
         <Route path="/forgetPassword" element={<ForgetPassword />} />
         <Route path="/createPassword" element={<CreatePassword />} />
+        <Route path="/profilePhotoUpdate" element={<ProfilePhotoUpdate />} />
+        <Route path="/coverPhotoupload" element={<CoverPhotoUpload />} />
+        <Route path="/biography" element={<Biography />} />
       </Routes>
     </BrowserRouter>
 

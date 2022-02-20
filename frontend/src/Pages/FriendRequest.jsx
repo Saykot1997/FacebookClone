@@ -4,12 +4,46 @@ import Icon from "../images/FriendRequestPageIcon.svg";
 import { AiOutlineArrowLeft } from "react-icons/ai";
 import { useNavigate } from 'react-router-dom';
 import SingleFriendRequest from '../Components/SingleFriendRequest';
+import { useEffect } from 'react';
+import axios from 'axios';
+import { Host } from '../Data';
+import { useSelector } from 'react-redux';
 
 function FriendRequest({ setPageType }) {
 
     const navigate = useNavigate();
-    const [hasFriendRequest, setHasFriendRequest] = useState(true);
     const [isScrolled, setScrolled] = useState(false);
+
+    const user = useSelector(state => state.User.User);
+    const [friendRequests, setFriendRequests] = useState([]);
+
+    useEffect(() => {
+
+        try {
+
+            const getRequest = async () => {
+
+                const res = await axios.get(`${Host}/api/friend/getFriendRequests`, {
+                    headers: {
+                        Authorization: `Bearer ${user.token}`
+                    }
+                });
+
+                setFriendRequests(res.data);
+            }
+
+            getRequest()
+
+        } catch (error) {
+
+            console.log(error);
+        }
+
+    }, [user])
+
+
+
+
     const GotoFriendHomePage = () => {
         navigate('/friends');
     }
@@ -45,22 +79,18 @@ function FriendRequest({ setPageType }) {
                         <p className=' my-1 font-semibold text-[17px]'>Friend Requests</p>
                         <p className=' text-sm text-blue-500 cursor-pointer'>View sent requests</p>
                         {
-                            hasFriendRequest ?
+                            friendRequests.length > 0 ?
                                 <div>
-                                    <SingleFriendRequest />
-                                    <SingleFriendRequest />
-                                    <SingleFriendRequest />
-                                    <SingleFriendRequest />
-                                    <SingleFriendRequest />
-                                    <SingleFriendRequest />
-                                    <SingleFriendRequest />
-                                    <SingleFriendRequest />
-                                    <SingleFriendRequest />
-                                    <SingleFriendRequest />
-                                    <SingleFriendRequest />
-                                    <SingleFriendRequest />
-                                    <SingleFriendRequest />
-                                    <SingleFriendRequest />
+
+                                    {
+                                        friendRequests.map((friendRequest, index) => {
+                                            return (
+
+                                                <SingleFriendRequest friend={friendRequest} key={index} friendRequests={friendRequests} setFriendRequests={setFriendRequests} />
+                                            )
+                                        })
+                                    }
+
                                 </div>
                                 :
                                 <p className=' text-green-600 text-sm'>No Friend Request</p>
@@ -75,7 +105,7 @@ function FriendRequest({ setPageType }) {
                         <div className=' flex flex-col justify-center items-center'>
                             <img src={Icon} alt="" className=' h-28' />
                             {
-                                hasFriendRequest ?
+                                friendRequests.length > 0 ?
 
                                     <h1 className=' text-gray-600 text-xl font-bold'>Select People's name to preview their profie</h1>
                                     :

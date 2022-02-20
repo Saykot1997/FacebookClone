@@ -11,6 +11,7 @@ import { PostDelete, PostUpdate } from "../Redux/PostSlice";
 import { format } from 'timeago.js';
 import userAvater from "../images/userAvater.png";
 import PostEdit from './PostEdit';
+import { loadingSuccess } from '../Redux/UserSlice';
 
 
 function Post({ post }) {
@@ -22,7 +23,7 @@ function Post({ post }) {
     const commentInput = document.getElementById('commentInput');
     const [comment, setComment] = useState('');
     const [postEditBoxOpen, setPostEditBoxOpen] = useState(false);
-
+    // console.log(post);
 
     useEffect(() => {
 
@@ -60,6 +61,14 @@ function Post({ post }) {
             })
 
             dispatch(PostDelete(post))
+
+            const user = await axios.get(`${Host}/api/user/userRefresh`, {
+                headers: {
+                    'Authorization': `Bearer ${User.token}`
+                }
+            });
+
+            dispatch(loadingSuccess(user.data));
 
         } catch (error) {
             console.log(error.response.data)
@@ -120,6 +129,7 @@ function Post({ post }) {
     }
 
 
+
     return (
 
         <div className=' w-full my-5 cursor-pointer bg-white shadow rounded-lg'>
@@ -129,7 +139,7 @@ function Post({ post }) {
             <div className='p-4'>
                 <div className='flex justify-between items-center'>
                     <div className='flex items-center'>
-                        <img src={post?.userId?.profilePicture ? `${Host}/uploads/images/${post.userId.profilePicture}` : `${userAvater}`} alt="" className=' h-8 w-8 rounded-full object-cover' />
+                        <img src={post.userId.profilePicture ? `${Host}/images/${post.userId.profilePicture}` : `${userAvater}`} alt="" className=' h-8 w-8 rounded-full object-cover' />
                         <p className=' font-semibold mx-3 '>{post.userId.firstName + " " + post.userId.sureName}</p>
                         <p className=' text-sm'>{format(post.createdAt, 'en-US')}</p>
                     </div>
@@ -186,7 +196,7 @@ function Post({ post }) {
                     <Comments post={post} />
 
                     <form onSubmit={PostComment} className='flex w-full items-center mt-2'>
-                        <img src={post.userId.profilePicture ? `${Host}/uploads/images/${post.userId.profilePicture}` : `${userAvater}`} alt="" className=' h-8 w-8 rounded-full object-cover' />
+                        <img src={post.userId.profilePicture ? `${Host}/images/${post.userId.profilePicture}` : `${userAvater}`} alt="" className=' h-8 w-8 rounded-full object-cover' />
                         <input onChange={(e) => { setComment(e.target.value) }} value={comment} id='commentInput' type="text" placeholder="Write your comments" className="inputText" />
                     </form>
                 </div>

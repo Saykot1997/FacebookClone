@@ -9,13 +9,15 @@ import LiveEvents from '../Components/LiveEvents';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Host } from "../Data"
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { AllFriendsFatchSuccess } from '../Redux/FriendsSlice';
 
 function Profile() {
 
     const Posts = useSelector((state) => state.Post.Post);
     const [timelinePost, setTimelinePost] = useState(null);
     const User = useSelector(state => state.User.User);
+    const dispatch = useDispatch();
 
     const reverseArray = (array) => {
 
@@ -30,6 +32,31 @@ function Profile() {
         return reversedArray;
 
     }
+
+    useEffect(() => {
+
+        try {
+
+            const getRequest = async () => {
+
+                const res = await axios.get(`${Host}/api/friend/getAllFriends`, {
+                    headers: {
+                        Authorization: `Bearer ${User.token}`
+                    }
+                });
+
+                dispatch(AllFriendsFatchSuccess(res.data));
+            }
+
+            getRequest()
+
+        } catch (error) {
+
+            console.log(error);
+        }
+
+    }, [User]);
+
 
     useEffect(() => {
 
@@ -49,7 +76,8 @@ function Profile() {
             console.log(err)
         });
 
-    }, [Posts]);
+    }, [Posts, User]);
+
 
     return (
 

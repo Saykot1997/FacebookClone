@@ -69,13 +69,41 @@ const UserSchema = new mongoose.Schema({
             type: String,
             default: ""
         }],
-    flowers: {
-        type: Array,
-        default: []
+    friends: [
+        friend = {
+            type: String,
+            default: ""
+        }
+    ],
+    sendFriendRequests: [
+        friend = {
+            type: String,
+            default: ""
+        }
+    ],
+    recievedFriendRequests: [
+        friend = {
+            type: String,
+            default: ""
+        }
+    ],
+    notifications: {
+        type: Array
     },
-    flowings: {
-        type: Array,
-        default: []
+    flowers: [
+        flower = {
+            type: String,
+            default: ""
+        }
+    ],
+    flowings: [
+        flow = {
+            type: String,
+            default: ""
+        }
+    ],
+    biography: {
+        type: String,
     },
     timelinePost: [
         post = {
@@ -94,15 +122,39 @@ const UserSchema = new mongoose.Schema({
     },
     city: {
         type: String,
-        max: 50
+        default: "",
+
     },
-    from: {
+    cuntry: {
         type: String,
-        max: 50
+        default: "",
+
     },
-    relationship: {
-        type: Number,
-        enum: [1, 2]
+    work: {
+        type: String,
+        default: "",
+
+    },
+    priparySchool: {
+        type: String,
+        default: "",
+
+    },
+    highSchool: {
+        type: String,
+        default: "",
+    },
+    college: {
+        type: String,
+        default: "",
+    },
+    university: {
+        type: String,
+        default: "",
+    },
+    relationshipStatus: {
+        type: String,
+        default: "",
     }
 }, {
     timestamps: true

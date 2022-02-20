@@ -4,44 +4,42 @@ import coverPhoto from '../images/FBCoverPhoto.png';
 import profilePhoto from '../images/userAvater.png';
 import { BiPencil } from 'react-icons/bi';
 import { AiOutlinePlus } from 'react-icons/ai';
-import { useEffect } from 'react';
-import { useSelector } from 'react-redux';
-import axios from 'axios';
+import { useDispatch, useSelector } from 'react-redux';
 import { Host } from "../Data"
+import { NavLink } from 'react-router-dom';
+import axios from 'axios';
+import { loadingSuccess } from '../Redux/UserSlice';
 
 function ProfilePhotoComponent({ About }) {
 
-    const [uploadPhotos, setUploadPhotos] = useState([]);
-    const [coverPhotos, setCoverPhotos] = useState([]);
-    const [profilePhotos, setProfilePhotos] = useState([])
     const User = useSelector((state) => state.User.User);
     const [yourPhoto, setYourPhoto] = useState(true);
     const [album, setAlbum] = useState(false);
+    const [editMod, setEditMod] = useState(false);
+    const [currantPhoto, setCurrantPhoto] = useState("");
+    const dispatch = useDispatch();
 
-    useEffect(() => {
+    const activeEditMod = (photo) => {
+        setEditMod(!editMod);
+        setCurrantPhoto(photo);
+    }
+
+    const DeletePhoto = async (photo) => {
 
         try {
 
-            const getPhotos = async () => {
+            const res = await axios.delete(`${Host}/api/user/photoDelete/${photo}`, {
+                headers: {
+                    Authorization: `Bearer ${User.token}`
+                }
+            });
 
-                const res = await axios.get(`${Host}/api/user/allPhotos`, {
-                    headers: {
-                        "Authorization": `Bearer ${User.token}`
-                    }
-                });
-                setUploadPhotos(res.data.uploads);
-                setCoverPhotos(res.data.coverPhotos);
-                setProfilePhotos(res.data.profilePictures)
-            }
-
-            getPhotos();
+            dispatch(loadingSuccess(res.data));
 
         } catch (error) {
-
-            console.log(error)
+            console.log(error);
         }
-
-    }, [User])
+    }
 
     const SeeYourPhotos = () => {
         setYourPhoto(true);
@@ -51,10 +49,6 @@ function ProfilePhotoComponent({ About }) {
         setYourPhoto(false);
         setAlbum(true);
     }
-
-    // console.log({ coverPhotos: coverPhotos })
-    // console.log({ profilePhotos: profilePhotos })
-    // console.log({ uploads: uploadPhotos })
 
 
     return (
@@ -81,27 +75,61 @@ function ProfilePhotoComponent({ About }) {
 
                         {
 
-                            About && uploadPhotos.length > 10 && uploadPhotos.slice(0, 10).map((item, index) => {
+                            About && User.uploads.length > 10 && User.uploads.slice(0, 10).map((item, index) => {
 
                                 return (
-                                    <div className=' relative w-full h-36 rounded-md overflow-hidden'>
+                                    <div key={index} className=' relative w-full h-36 rounded-md overflow-hidden'>
                                         <img src={`${Host}/images/${item}`} alt="" className=' w-full h-full object-cover' />
-                                        <div className=' absolute top-2 right-2 h-7 w-7 hover:bg-opacity-50 cursor-pointer rounded-full bg-black bg-opacity-40 flex justify-center items-center'>
+                                        <div onClick={() => activeEditMod(item)} className=' absolute top-2 right-2 h-7 w-7 hover:bg-opacity-50 cursor-pointer rounded-full bg-black bg-opacity-40 flex justify-center items-center'>
                                             <BiPencil className=' text-white text-lg' />
                                         </div>
+                                        {
+                                            editMod && currantPhoto === item &&
+                                            <div onClick={() => DeletePhoto(item)} className=' absolute top-10 flex items-center justify-center right-2 shadow rounded-md h-8 w-14 bg-white'>
+                                                <p className=' text-center hover:bg-gray-300 p-1 rounded-md'>Delete</p>
+                                            </div>
+                                        }
+
                                     </div>
                                 )
                             })
                         }
                         {
-                            !About && uploadPhotos.length > 0 && uploadPhotos.map((item, index) => {
+
+                            About && User.uploads.length < 10 && User.uploads.map((item, index) => {
 
                                 return (
-                                    <div className=' relative w-full h-36 rounded-md overflow-hidden'>
+                                    <div key={index} className=' relative w-full h-36 rounded-md overflow-hidden'>
                                         <img src={`${Host}/images/${item}`} alt="" className=' w-full h-full object-cover' />
-                                        <div className=' absolute top-2 right-2 h-7 w-7 hover:bg-opacity-50 cursor-pointer rounded-full bg-black bg-opacity-40 flex justify-center items-center'>
+                                        <div onClick={() => activeEditMod(item)} className=' absolute top-2 right-2 h-7 w-7 hover:bg-opacity-50 cursor-pointer rounded-full bg-black bg-opacity-40 flex justify-center items-center'>
                                             <BiPencil className=' text-white text-lg' />
                                         </div>
+
+                                        {
+                                            editMod && currantPhoto === item &&
+                                            <div onClick={() => DeletePhoto(item)} className=' absolute top-10 flex items-center justify-center right-2 shadow rounded-md h-8 w-14 bg-white'>
+                                                <p className=' text-center hover:bg-gray-300 p-1 rounded-md'>Delete</p>
+                                            </div>
+                                        }
+                                    </div>
+                                )
+                            })
+                        }
+                        {
+                            !About && User.uploads.length > 0 && User.uploads.map((item, index) => {
+
+                                return (
+                                    <div key={index} className=' relative w-full h-36 rounded-md overflow-hidden'>
+                                        <img src={`${Host}/images/${item}`} alt="" className=' w-full h-full object-cover' />
+                                        <div onClick={() => activeEditMod(item)} className=' absolute top-2 right-2 h-7 w-7 hover:bg-opacity-50 cursor-pointer rounded-full bg-black bg-opacity-40 flex justify-center items-center'>
+                                            <BiPencil className=' text-white text-lg' />
+                                        </div>
+                                        {
+                                            editMod && currantPhoto === item &&
+                                            <div onClick={() => DeletePhoto(item)} className=' absolute top-10 flex items-center justify-center right-2 shadow rounded-md h-8 w-14 bg-white'>
+                                                <p className=' text-center hover:bg-gray-300 p-1 rounded-md'>Delete</p>
+                                            </div>
+                                        }
                                     </div>
                                 )
                             })
@@ -124,26 +152,30 @@ function ProfilePhotoComponent({ About }) {
                         </div>
                         <div>
                             <div className='relative w-full h-36 rounded-md overflow-hidden'>
-                                <img src={User.profilePicture ? `${Host}/images/${User.profilePicture}` : profilePhoto} alt="" className=' w-full h-full object-cover' />
+                                <NavLink to="/profile/PhotosOfProfile">
+                                    <img src={User.profilePicture ? `${Host}/images/${User.profilePicture}` : profilePhoto} alt="" className=' w-full h-full object-cover' />
+                                </NavLink>
                                 <div className=' absolute top-2 right-2 h-7 w-7 hover:bg-opacity-50 cursor-pointer rounded-full bg-black bg-opacity-40 flex justify-center items-center'>
                                     <BsThreeDots className=' text-white text-lg' />
                                 </div>
                             </div>
                             <div className='mt-2'>
-                                <p className=' font-semibold hover:underline cursor-pointer'>Profile Picture</p>
-                                <p className=' text-sm text-gray-500 hover:underline cursor-pointer'>8 Items</p>
+                                <p className=' font-semibold hover:underline cursor-pointer'><NavLink to="/profile/PhotosOfProfile">Profile Picture</NavLink></p>
+                                <p className=' text-sm text-gray-500 hover:underline cursor-pointer'>{User.allProfilePicture.length} Items</p>
                             </div>
                         </div>
                         <div>
                             <div className='relative w-full h-36 rounded-md overflow-hidden'>
-                                <img src={User.coverPicture ? `${Host}/images/${User.coverPicture}` : coverPhoto} alt="" className=' w-full h-full object-cover' />
+                                <NavLink to="/profile/PhotosOfCover">
+                                    <img src={User.coverPicture ? `${Host}/images/${User.coverPicture}` : coverPhoto} alt="" className=' w-full h-full object-cover' />
+                                </NavLink>
                                 <div className=' absolute top-2 right-2 h-7 w-7 hover:bg-opacity-50 cursor-pointer rounded-full bg-black bg-opacity-40 flex justify-center items-center'>
                                     <BsThreeDots className=' text-white text-lg' />
                                 </div>
                             </div>
                             <div className='mt-2'>
-                                <p className=' font-semibold hover:underline cursor-pointer'>Cover Photos</p>
-                                <p className=' text-sm text-gray-500 hover:underline cursor-pointer'>12 Items</p>
+                                <p className=' font-semibold hover:underline cursor-pointer'><NavLink to="/profile/PhotosOfCover">Cover Photos</NavLink></p>
+                                <p className=' text-sm text-gray-500 hover:underline cursor-pointer'>{User.AllCoverPhotos.length} Items</p>
                             </div>
                         </div>
                     </div>
@@ -152,7 +184,9 @@ function ProfilePhotoComponent({ About }) {
                 {
                     About &&
                     <div className=' w-full my-3'>
-                        <button className=' w-full py-2 hover:bg-gray-300 bg-gray-200 rounded-lg font-semibold'>See All</button>
+                        <NavLink to="/profile/photos">
+                            <button className=' w-full py-2 hover:bg-gray-300 bg-gray-200 rounded-lg font-semibold'>See All</button>
+                        </NavLink>
                     </div>
                 }
 

@@ -9,21 +9,26 @@ import { CgMenuGridO } from 'react-icons/cg';
 import { FaFacebookMessenger } from 'react-icons/fa';
 import { GoBell } from 'react-icons/go';
 import { BsCaretDownFill } from 'react-icons/bs';
-import ProfilePhoto from "../images/1.jpg"
+import ProfilePhoto from "../images/userAvater.png"
 import FBIcon from "../images/icon.png";
 import { NavLink } from "react-router-dom";
 import TopbarAccounts from './TopbarAccounts';
 import TopbarNotifications from './TopbarNotifications';
 import TopbarMassenger from './TopbarMassenger';
 import TopbarMenu from './TopbarMenu';
+import { useSelector } from 'react-redux';
+import { Host } from '../Data';
 
 
 function Topbar({ Profile }) {
 
+    const user = useSelector((state) => state.User.User);
     const [showAccounts, setShowAccounts] = useState(false);
     const [showNotifications, setShowNotifications] = useState(false);
     const [showMessenger, setShowMessenger] = useState(false);
     const [showMenu, setShowMenu] = useState(false);
+    const friendRequests = useSelector((state) => state.Friends.FriendsRequests);
+
 
     const ShowAccounts = () => {
 
@@ -94,10 +99,16 @@ function Topbar({ Profile }) {
                 </NavLink>
                 <NavLink to='/friends' className={({ isActive }) => isActive ? " text-blue-500 h-full border-b-4 border-blue-500" : " relative group h-full text-gray-500"}>
                     <div className='h-full p-1'>
-                        <div className='topbarItems'>
+                        <div className='topbarItems relative'>
                             <MdGroup className=' text-[28px]' />
+                            {
+                                friendRequests.length > 0 &&
+                                <div className=' w-6 h-6 rounded-full bg-red-500 text-white absolute top-1 right-4 flex justify-center items-center'>{friendRequests.length}</div>
+                            }
                         </div>
-                        <div className='TopHoverBox'><span className=' text-white text-xs'>Friends</span></div>
+                        <div className='TopHoverBox'>
+                            <span className=' text-white text-xs'>Friends</span>
+                        </div>
                     </div>
                 </NavLink>
                 <NavLink to='/watch' className={({ isActive }) => isActive ? " text-blue-500 h-full border-b-4 border-blue-500" : " relative group h-full text-gray-500"}>
@@ -129,8 +140,8 @@ function Topbar({ Profile }) {
             <div className="basis-4/12 h-full flex items-center justify-end">
                 <NavLink to="/profile" className='h-full flex items-center'>
                     <div className={`${Profile ? " bg-blue-100 hover:bg-blue-200" : ""} flex items-center mr-3 px-1 hover:bg-gray-100 rounded-2xl`}>
-                        <img src={ProfilePhoto} alt="" className=' mr-1 h-8 w-8 rounded-full object-cover' />
-                        <p className={`${Profile ? "text-blue-600" : "text-black"} pr-1 text-sm font-semibold `}>Jhon Doe</p>
+                        <img src={user.profilePicture ? `${Host}/images/${user.profilePicture}` : ProfilePhoto} alt="" className=' mr-1 h-8 w-8 rounded-full object-cover' />
+                        <p className={`${Profile ? "text-blue-600" : "text-black"} pr-1 font-semibold capitalize `}>{user.firstName}</p>
                     </div>
                 </NavLink>
                 <div className={`group TopRightBox ${showMenu ? " bg-blue-100" : " bg-gray-200"}`} onClick={ShowMenu}>
@@ -153,6 +164,10 @@ function Topbar({ Profile }) {
                 </div>
                 <div className={`group TopRightBox ${showNotifications ? " bg-blue-100" : " bg-gray-200"}`} onClick={ShowNotifications}>
                     <GoBell className={`${showNotifications ? "text-blue-500" : ""} text-lg`} />
+                    {
+                        friendRequests.length > 0 &&
+                        <div className=' w-6 h-6 rounded-full bg-red-500 text-white absolute -top-2 -right-2 flex justify-center items-center'>{friendRequests.length}</div>
+                    }
                     {
                         !showNotifications && <div className='TopRightHoverBox left-0'><span className=' text-white text-xs'>Notifications</span></div>
                     }

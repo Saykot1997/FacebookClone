@@ -1,16 +1,18 @@
 import React from 'react'
 import CreatePost from './CreatePost'
-import profilePic from "../images/1.jpg";
 import { MdOutlinePermMedia } from "react-icons/md";
 import { BsFillEmojiSmileFill } from "react-icons/bs";
 import { RiVideoAddFill } from "react-icons/ri";
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { OpenCreatePost, OpenCreatePostImage } from '../Redux/CreatePostSlice';
 import CreatePostWithFile from './CreatePostWithFile';
+import { Host } from "../Data";
+import userAvater from "../images/userAvater.png";
 
 function Share() {
-    const dispatch = useDispatch();
 
+    const dispatch = useDispatch();
+    const User = useSelector(state => state.User.User);
 
     const OpenCreateBox = () => {
         dispatch(OpenCreatePost());
@@ -23,8 +25,8 @@ function Share() {
     return (
         <div className=' bg-white w-full shadow shadow-slate-300 p-2 rounded-xl'>
             <div className='flex w-full items-center'>
-                <img src={profilePic} alt="" className='h-14 w-14 rounded-full object-cover mr-3 cursor-pointer' />
-                <input type="text" placeholder="What's on your mind Jhon" className="inputText" onFocus={OpenCreateBox} />
+                <img src={User.profilePicture ? `${Host}/images/${User.profilePicture}` : `${userAvater}`} alt="" className='h-12 w-12 rounded-full object-cover mr-3 cursor-pointer' />
+                <input type="text" placeholder={`What's on your mind ${User.firstName}`} className="inputText" onFocus={OpenCreateBox} />
                 <CreatePost />
                 <CreatePostWithFile />
             </div>

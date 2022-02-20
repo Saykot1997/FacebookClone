@@ -5,8 +5,12 @@ import Icon from "../images/FriendRequestPageIcon.svg";
 import SingleFriendSug from '../Components/SingleFriendSug';
 import { useNavigate } from 'react-router-dom';
 
+import { useSelector } from 'react-redux';
+
 
 function FriendSuggetions() {
+
+    const friendSugeesions = useSelector(state => state.Friends.SuggestedFriends);
 
     const [isScrolled, setScrolled] = useState(false);
     let navigate = useNavigate();
@@ -23,7 +27,6 @@ function FriendSuggetions() {
             setScrolled(false);
         }
     }
-
 
 
     return (
@@ -46,27 +49,16 @@ function FriendSuggetions() {
                     </div>
                     <div className=' px-2'>
                         <p className='text-[17px] font-semibold'>People may you know</p>
-                        <SingleFriendSug />
-                        <SingleFriendSug />
-                        <SingleFriendSug />
-                        <SingleFriendSug />
-                        <SingleFriendSug />
-                        <SingleFriendSug />
-                        <SingleFriendSug />
-                        <SingleFriendSug />
-                        <SingleFriendSug />
-                        <SingleFriendSug />
-                        <SingleFriendSug />
-                        <SingleFriendSug />
-                        <SingleFriendSug />
-                        <SingleFriendSug />
-                        <SingleFriendSug />
-                        <SingleFriendSug />
-                        <SingleFriendSug />
-                        <SingleFriendSug />
-                        <SingleFriendSug />
-                        <SingleFriendSug />
-                        <SingleFriendSug />
+
+                        {
+                            friendSugeesions.length > 0 && friendSugeesions.map((friend, index) => {
+
+                                return (
+
+                                    <SingleFriendSug friend={friend} key={index} />
+                                )
+                            })
+                        }
                     </div>
                 </div>
 

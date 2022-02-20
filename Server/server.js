@@ -8,6 +8,7 @@ const env = require('dotenv');
 const authRoutes = require("./Routes/Auth-router");
 const userRoutes = require("./Routes/User-router");
 const postRoutes = require("./Routes/Post-router");
+const friendsRoutes = require("./Routes/Friends-router");
 const path = require('path');
 const Authgurd = require("./Authgurd/Authgurd");
 
@@ -37,6 +38,7 @@ app.get('/', Authgurd, async (req, res) => {
 app.use('/api/auth', authRoutes);
 app.use('/api/user', userRoutes);
 app.use('/api/post', postRoutes);
+app.use('/api/friend', friendsRoutes);
 
 
 // server listen

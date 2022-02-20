@@ -48,7 +48,7 @@ export default function Feed() {
             dispatch(AllPostFatchFailure(error.response.data));
         }
 
-    }, [dispatch, User])
+    }, [User])
 
 
     return (

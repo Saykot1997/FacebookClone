@@ -4,13 +4,15 @@ import { BsFillDoorOpenFill, BsFillInfoSquareFill } from 'react-icons/bs'
 import { IoMdMoon } from 'react-icons/io'
 import { MdOutlineArrowForwardIos } from 'react-icons/md'
 import { RiSettings5Fill } from 'react-icons/ri'
-import { useNavigate } from 'react-router-dom'
-import ProfilePhoto from "../images/2.jpg"
-import { useDispatch } from 'react-redux'
+import { NavLink, useNavigate } from 'react-router-dom'
+import ProfilePhoto from "../images/userAvater.png"
+import { useDispatch, useSelector } from 'react-redux'
 import { Logout } from '../Redux/UserSlice'
+import { Host } from '../Data'
 
 function TopbarAccounts() {
 
+    const user = useSelector(state => state.User.User)
     const navigate = useNavigate()
     const dispatch = useDispatch()
 
@@ -20,14 +22,16 @@ function TopbarAccounts() {
         navigate('/login');
     }
 
+
+
     return (
         <div className=' absolute top-11 right-0 w-[360px] bg-white rounded-md p-3 shadow-lg shadow-gray-400 z-50 '>
             <div className='flex items-center p-2 hover:bg-gray-100 rounded-md'>
-                <img src={ProfilePhoto} alt="" className=' h-14 w-14 mr-3 rounded-full object-cover shadow' />
-                <div className=' '>
-                    <p className=' font-semibold'>Saykot Hossain</p>
+                <img src={user.profilePicture ? `${Host}/images/${user.profilePicture}` : ProfilePhoto} alt="" className=' h-14 w-14 mr-3 rounded-full object-cover shadow' />
+                <NavLink to="/profile" className=' '>
+                    <p className=' font-semibold capitalize'>{user.firstName + " " + user.sureName}</p>
                     <p className=' text-sm text-gray-500'>See your profile</p>
-                </div>
+                </NavLink>
             </div>
             <hr className=' h-[2px] w-full my-2 bg-gray-300 ' />
             <div className=' flex items-center my-2 p-2 hover:bg-gray-100 rounded-md'>

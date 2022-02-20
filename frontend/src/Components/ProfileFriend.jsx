@@ -1,9 +1,13 @@
-import React from 'react'
 import { BiSearchAlt2 } from 'react-icons/bi'
 import { BsThreeDots } from 'react-icons/bs'
+import { useSelector } from 'react-redux';
+import { NavLink } from 'react-router-dom';
 import SingleProfileFriend from './SingleProfileFriend'
 
 function ProfileFriend({ About }) {
+
+    const allFriends = useSelector(state => state.Friends.AllFriends);
+
     return (
         <div className=' w-full p-3 bg-white shadow shadow-gray-300 rounded-md mb-3'>
             <div className=' flex items-center justify-between px-2'>
@@ -44,30 +48,46 @@ function ProfileFriend({ About }) {
 
                     <div className=' w-full'>
                         <div className=' p-2 mt-5 w-full grid grid-cols-2 gap-1'>
-                            <SingleProfileFriend />
-                            <SingleProfileFriend />
-                            <SingleProfileFriend />
-                            <SingleProfileFriend />
-                            <SingleProfileFriend />
-                            <SingleProfileFriend />
+                            {
+                                allFriends.length > 0 && allFriends.length > 6 &&
+
+                                allFriends.slice(0, 6).map((friend, i) => {
+                                    return (
+
+                                        <SingleProfileFriend key={i} friend={friend} />
+                                    )
+                                })
+                            }
+                            {
+                                allFriends.length > 0 && allFriends.length < 6 &&
+
+                                allFriends.map((friend, i) => {
+                                    return (
+
+                                        <SingleProfileFriend key={i} friend={friend} />
+                                    )
+                                })
+                            }
+
                         </div>
                         <div className=' w-full'>
-                            <button className=' w-full py-2 bg-gray-200 hover:bg-gray-300 rounded-md'>See All</button>
+                            <NavLink to="/profile/friends">
+                                <button className=' w-full py-2 bg-gray-200 hover:bg-gray-300 rounded-md'>See All</button>
+                            </NavLink>
                         </div>
                     </div>
 
                     :
 
                     <div className=' p-2 mt-5 w-full grid grid-cols-2 gap-1'>
-                        <SingleProfileFriend />
-                        <SingleProfileFriend />
-                        <SingleProfileFriend />
-                        <SingleProfileFriend />
-                        <SingleProfileFriend />
-                        <SingleProfileFriend />
-                        <SingleProfileFriend />
-                        <SingleProfileFriend />
-                        <SingleProfileFriend />
+                        {
+                            allFriends.length > 0 && allFriends.map((friend, index) => {
+                                return (
+
+                                    <SingleProfileFriend key={index} friend={friend} />
+                                )
+                            })
+                        }
                     </div>
             }
 
