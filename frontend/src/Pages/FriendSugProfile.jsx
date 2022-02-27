@@ -1,20 +1,27 @@
-import React, { useState } from 'react'
+import axios from 'axios';
+import React, { useEffect, useState } from 'react'
 import { AiOutlineArrowLeft } from 'react-icons/ai';
-import { useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import { useLocation, useNavigate } from 'react-router-dom';
 import Friends from '../Components/Friends';
 import Intro from '../Components/Intro';
 import LiveEvents from '../Components/LiveEvents';
 import Photos from '../Components/Photos';
 import Post from '../Components/Post';
 import ProfileTop from '../Components/ProfileTop';
-import Share from '../Components/Share';
 import SingleFriendSug from '../Components/SingleFriendSug';
 import Topbar from '../Components/Topbar';
+import { Host } from '../Data';
 
 function FriendSugProfile() {
     const [isScrolled, setScrolled] = useState(false);
-    const [isHover, setHover] = useState(false);
+    const user = useSelector(state => state.User.User);
     const navigate = useNavigate();
+    const friendSugeesions = useSelector(state => state.Friends.SuggestedFriends);
+    const location = useLocation();
+    const friendId = location.pathname.split('/')[4];
+    const [friendData, setFriendData] = useState(null);
+    const [friendPosts, setFriendPosts] = useState([]);
 
     const GotoFriendHomePage = () => {
         navigate('/friends/suggetion');
@@ -28,6 +35,53 @@ function FriendSugProfile() {
             setScrolled(false);
         }
     }
+
+    useEffect(() => {
+
+        const getFriendData = async () => {
+
+            try {
+
+                const res = await axios.get(`${Host}/api/friend/getSingleFriend/${friendId}`, {
+                    headers: {
+                        'Authorization': 'Bearer ' + user.token
+                    }
+                })
+
+                setFriendData(res.data);
+
+            } catch (error) {
+
+                console.log(error)
+            }
+        }
+        getFriendData()
+
+    }, [user, location.pathname]);
+
+
+    useEffect(() => {
+
+        const getFriendAllPosts = async () => {
+
+            try {
+
+                const res = await axios.get(`${Host}/api/post/feed/friend/${friendId}`, {
+                    headers: {
+                        'Authorization': 'Bearer ' + user.token
+                    }
+                })
+
+                setFriendPosts(res.data);
+
+            } catch (error) {
+
+                console.log(error);
+            }
+        }
+        getFriendAllPosts()
+
+    }, [user, location.pathname]);
 
 
 
@@ -52,60 +106,40 @@ function FriendSugProfile() {
 
                     <div className=' px-2'>
                         <p className='text-[17px] font-semibold'>People may you know</p>
-                        <SingleFriendSug />
-                        <SingleFriendSug />
-                        <SingleFriendSug />
-                        <SingleFriendSug />
-                        <SingleFriendSug />
-                        <SingleFriendSug />
-                        <SingleFriendSug />
-                        <SingleFriendSug />
-                        <SingleFriendSug />
-                        <SingleFriendSug />
-                        <SingleFriendSug />
-                        <SingleFriendSug />
-                        <SingleFriendSug />
-                        <SingleFriendSug />
-                        <SingleFriendSug />
-                        <SingleFriendSug />
-                        <SingleFriendSug />
-                        <SingleFriendSug />
-                        <SingleFriendSug />
-                        <SingleFriendSug />
-                        <SingleFriendSug />
-                        <SingleFriendSug />
-                        <SingleFriendSug />
-                        <SingleFriendSug />
-                        <SingleFriendSug />
-                        <SingleFriendSug />
-                        <SingleFriendSug />
-                        <SingleFriendSug />
+
+                        {
+                            friendSugeesions.length > 0 && friendSugeesions.map((friend, index) => {
+
+                                return (
+
+                                    <SingleFriendSug friend={friend} key={index} />
+                                )
+                            })
+                        }
                     </div>
                 </div>
 
-                {/* right part  */}
-
+                {/* right part */}
                 <div className='w-[77.5%] h-full bg-gray-100 overflow-y-scroll'>
-
-                    <div className=''>
-                        <ProfileTop FriendSuggetions isHover={isHover} setHover={setHover} />
+                    <div>
+                        <ProfileTop friendData={friendData} FriendSugeesions profile />
                         <div className=' flex justify-center items-center mt-4 mx-6'>
                             <div className=' w-[80%] flex justify-between'>
-                                <div className='h-screen sticky left-0 top-4 overflow-y-scroll ProfileScrollbar w-2/5 mb-5 mr-2'>
-                                    <Intro />
-                                    <Photos />
-                                    <Friends />
+                                <div className='h-screen sticky left-0 top-4 overflow-scroll ProfileScrollbar w-2/5 mb-2 mr-2'>
+                                    <Intro friendData={friendData} />
+                                    <Photos friendData={friendData} FriendSugeesions />
+                                    <Friends friendData={friendData} FriendSugeesions />
                                     <LiveEvents />
                                 </div>
                                 <div className=' w-3/5 ml-2'>
-                                    <Share />
-                                    {/* <Post />
-                                    <Post />
-                                    <Post />
-                                    <Post />
-                                    <Post />
-                                    <Post />
-                                    <Post /> */}
+                                    {
+                                        friendPosts.length > 0 && friendPosts.map((post, index) => {
+                                            return (
+
+                                                <Post post={post} key={index} />
+                                            )
+                                        })
+                                    }
                                 </div>
                             </div>
                         </div>

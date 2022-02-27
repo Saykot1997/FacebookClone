@@ -7,7 +7,7 @@ import { Host } from '../Data';
 import ProfilePhoto from "../images/userAvater.png"
 import FriendsInfo from './FriendsInfo';
 
-function Friends({ AllFriends, Profile, friendData }) {
+function Friends({ AllFriends, FriendSugeesions, Profile, friendData }) {
 
     const user = useSelector(state => state.User.User);
     const [isHover, setHover] = useState(false);
@@ -63,6 +63,12 @@ function Friends({ AllFriends, Profile, friendData }) {
                 {
                     AllFriends &&
                     <NavLink to={`/friends/all/friends/${friendData && friendData._id}`}>
+                        <span className=' text-blue-500 hover:bg-gray-200 px-2 py-1 rounded cursor-pointer '>See All Friends</span>
+                    </NavLink>
+                }
+                {
+                    FriendSugeesions &&
+                    <NavLink to={`/friends/suggetion/friends/${friendData && friendData._id}`}>
                         <span className=' text-blue-500 hover:bg-gray-200 px-2 py-1 rounded cursor-pointer '>See All Friends</span>
                     </NavLink>
                 }

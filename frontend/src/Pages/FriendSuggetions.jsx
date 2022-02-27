@@ -1,15 +1,19 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { AiOutlineArrowLeft } from 'react-icons/ai';
 import Topbar from '../Components/Topbar';
 import Icon from "../images/FriendRequestPageIcon.svg";
 import SingleFriendSug from '../Components/SingleFriendSug';
 import { useNavigate } from 'react-router-dom';
-
-import { useSelector } from 'react-redux';
+import { SuggestedFriendsFatchSuccess } from '../Redux/FriendsSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import { Host } from '../Data';
+import axios from 'axios';
 
 
 function FriendSuggetions() {
 
+    const user = useSelector(state => state.User.User);
+    const dispatch = useDispatch();
     const friendSugeesions = useSelector(state => state.Friends.SuggestedFriends);
 
     const [isScrolled, setScrolled] = useState(false);
@@ -27,6 +31,30 @@ function FriendSuggetions() {
             setScrolled(false);
         }
     }
+
+    useEffect(() => {
+
+        try {
+
+            const getRequest = async () => {
+
+                const res = await axios.get(`${Host}/api/friend/friendSuggestion`, {
+                    headers: {
+                        Authorization: `Bearer ${user.token}`
+                    }
+                });
+
+                dispatch(SuggestedFriendsFatchSuccess(res.data));
+            }
+
+            getRequest()
+
+        } catch (error) {
+
+            console.log(error);
+        }
+
+    }, [user])
 
 
     return (

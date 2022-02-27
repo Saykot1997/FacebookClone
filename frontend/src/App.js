@@ -46,6 +46,10 @@ import AllFriendsAbout from "./Pages/AllFriendsAbout";
 import AllFriendsOfFriend from "./Pages/AllFriendsOfFriend";
 import AllFriendsPhotos from "./Pages/AllFriendsPhotos";
 import AllFriendsVideos from "./Pages/AllFriendsVideos";
+import FriendSugAbout from "./Pages/FriendSugAbout";
+import FriendSugFriends from "./Pages/FriendSugFriends";
+import FriendSugPhotos from "./Pages/FriendSugPhotos";
+import FriendSugVideos from "./Pages/FriendSugVideos";
 
 function App() {
 
@@ -107,7 +111,11 @@ function App() {
         <Route path="/friends/request" element={<FriendRequest />} />
         <Route path="/friends/request/profile" element={<FriendRequestProfile />} />
         <Route path="/friends/suggetion" element={<FriendSuggetions />} />
-        <Route path="/friends/suggetion/profile" element={<FriendSugProfile />} />
+        <Route path="/friends/suggetion/profile/:id" element={<FriendSugProfile />} />
+        <Route path="/friends/suggetion/about/:id" element={<FriendSugAbout />} />
+        <Route path="/friends/suggetion/friends/:id" element={<FriendSugFriends />} />
+        <Route path="/friends/suggetion/photos/:id" element={<FriendSugPhotos />} />
+        <Route path="/friends/suggetion/videos/:id" element={<FriendSugVideos />} />
         <Route path="/friends/all" element={<AllFriend />} />
         <Route path="/friends/all/profile/:id" element={<AllFriendSecProfile />} />
         <Route path="/friends/all/about/:id" element={<AllFriendsAbout />} />

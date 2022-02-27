@@ -1,30 +1,30 @@
-import React, { useState } from 'react'
-import { AiOutlineArrowLeft } from 'react-icons/ai';
-import ProfileTop from '../Components/ProfileTop';
-import SingleAllFriend from '../Components/SingleAllFriend';
-import Topbar from '../Components/Topbar';
-import { useLocation, useNavigate } from "react-router-dom";
-import { useSelector } from 'react-redux';
-import { useEffect } from 'react';
 import axios from 'axios';
-import { Host } from '../Data';
+import React, { useEffect, useState } from 'react'
+import { AiOutlineArrowLeft } from 'react-icons/ai';
+import { useSelector } from 'react-redux';
+import { useLocation, useNavigate } from 'react-router-dom';
+import ProfileAboutComponent from '../Components/PrifileAboutComponent';
+import ProfileCheckIncomponent from '../Components/ProfileCheckIncCompontnt';
 import ProfileFriend from '../Components/ProfileFriend';
 import ProfilePhotoComponent from '../Components/ProfilePhotoComponent';
+import ProfileTop from '../Components/ProfileTop';
 import ProfileVideoComponent from '../Components/ProfileVideoComponent';
-import ProfileCheckIncomponent from '../Components/ProfileCheckIncCompontnt';
+import SingleFriendSug from '../Components/SingleFriendSug';
+import Topbar from '../Components/Topbar';
+import { Host } from '../Data';
 
-function AllFriendsOfFriend() {
+function FriendSugAbout() {
 
     const [isScrolled, setScrolled] = useState(false);
     let navigate = useNavigate();
     const user = useSelector(state => state.User.User);
-    const allFriend = useSelector(state => state.Friends.AllFriends);
+    const friendSugeesions = useSelector(state => state.Friends.SuggestedFriends);
     const location = useLocation();
     const friendId = location.pathname.split('/')[4];
     const [friendData, setFriendData] = useState(null);
 
     const GotoFriendHomePage = () => {
-        navigate('/friends/all');
+        navigate('/friends/suggetion');
     }
 
     const ShowScrool = (e) => {
@@ -35,7 +35,6 @@ function AllFriendsOfFriend() {
             setScrolled(false);
         }
     }
-
 
     useEffect(() => {
 
@@ -66,6 +65,7 @@ function AllFriendsOfFriend() {
             <div className='rightbar w-full flex justify-between'>
 
                 {/* left part */}
+
                 <div id='scrolling_div' onScroll={(e) => { ShowScrool(e) }} className=' h-full w-[23.5%] bg-white shadow-md   shadow-gray-400 overflow-y-scroll friendSuggetionsScrollbar z-20'>
 
                     <div className={isScrolled ? ' flex items-center p-3 sticky top-0 border-b border-gray-300 z-10 bg-white ' : "flex items-center p-3 sticky top-0 z-10 bg-white"}>
@@ -74,21 +74,19 @@ function AllFriendsOfFriend() {
                         </div>
                         <div>
                             <p onClick={GotoFriendHomePage} className=' text-sm text-gray-400 hover:underline cursor-pointer'>Friends</p>
-                            <p className=' font-bold text-[23px]'>All Friends</p>
+                            <p className=' font-bold text-[23px]'>Suggetions</p>
                         </div>
                     </div>
-                    <div className=' px-3 mb-3'>
-                        <div className={`${isScrolled ? "hidden" : "visible"} pb-3 border-b border-gray-300`}>
-                            <input type="text" placeholder='Search Friends' className=' bg-gray-100 rounded-3xl w-full py-[6px] px-3' />
-                        </div>
-                    </div>
+
                     <div className=' px-2'>
-                        <p className='text-[17px] font-semibold ml-2'>{allFriend.length} Friends</p>
+                        <p className='text-[17px] font-semibold'>People may you know</p>
+
                         {
-                            allFriend.length > 0 && allFriend.map((friend, index) => {
+                            friendSugeesions.length > 0 && friendSugeesions.map((friend, index) => {
+
                                 return (
 
-                                    <SingleAllFriend friend={friend} key={index} />
+                                    <SingleFriendSug friend={friend} key={index} />
                                 )
                             })
                         }
@@ -98,11 +96,12 @@ function AllFriendsOfFriend() {
                 {/* right part */}
                 <div className='w-[77.5%] h-full bg-gray-100 overflow-y-scroll'>
                     <div>
-                        <ProfileTop friendData={friendData} AllFriends Friends />
+                        <ProfileTop friendData={friendData} FriendSugeesions About />
                         <div className=' flex justify-center items-center mt-4 mx-6'>
                             <div className=' w-[80%]'>
-                                <ProfileFriend Friends AllFriends />
-                                <ProfilePhotoComponent About AllFriends />
+                                <ProfileAboutComponent />
+                                <ProfileFriend About FriendSugeesions />
+                                <ProfilePhotoComponent About FriendSugeesions />
                                 <ProfileVideoComponent />
                                 <ProfileCheckIncomponent />
                             </div>
@@ -114,4 +113,4 @@ function AllFriendsOfFriend() {
     )
 }
 
-export default AllFriendsOfFriend
+export default FriendSugAbout

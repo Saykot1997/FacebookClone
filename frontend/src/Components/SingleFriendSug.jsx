@@ -57,7 +57,7 @@ function SingleFriendSug({ friend }) {
     const navigate = useNavigate()
 
     const GoPeopleProfilePage = () => {
-        navigate('/friends/suggetion/profile');
+        navigate(`/friends/suggetion/profile/${friend._id}`);
     }
 
     const [isHover, setIshover] = useState(false)
@@ -116,16 +116,18 @@ function SingleFriendSug({ friend }) {
                             <img key={index} src={friend && friend.profilePicture ? `${Host}/images/${friend.profilePicture}` : ProfilePhoto} alt="" className=' h-5 w-5 rounded-full object-cover' />
                         )
                     }
-
-                    <div className=' relative group text-xs text-gray-500 ml-1'>{friend && mutalFriendsLength && mutalFriendsLength} Mutal Friend
-                        <div className={`mutualFrideBox ${isHover ? "visible" : "hidden"}`}>
-                            {
-                                mutalFriends && mutalFriends.length > 0 && mutalFriends.map((f, index) =>
-                                    <p key={index} className='text-white text-xs'>{friend && f.firstName + " " + f.sureName}</p>
-                                )
-                            }
+                    {
+                        mutalFriends && mutalFriends.length > 0 &&
+                        <div className=' relative group text-xs text-gray-500 ml-1'>{friend && mutalFriendsLength && mutalFriendsLength} Mutal Friend
+                            <div className={`mutualFrideBox ${isHover ? "visible" : "hidden"}`}>
+                                {
+                                    mutalFriends && mutalFriends.length > 0 && mutalFriends.map((f, index) =>
+                                        <p key={index} className='text-white text-xs'>{friend && f.firstName + " " + f.sureName}</p>
+                                    )
+                                }
+                            </div>
                         </div>
-                    </div>
+                    }
                 </div>
                 <div className=' w-full flex justify-between'>
                     <button onClick={() => AddFriend(friend && friend._id)} className=' w-1/2 bg-blue-500 mr-1 py-[6px] rounded-md text-white font-semibold'>Add Friend</button>
