@@ -16,11 +16,11 @@ function ProfileAbout() {
             <ProfileTop About />
             <div className=' p-4 flex justify-center'>
                 <div className='w-[60%]'>
-                    <ProfileAboutComponent />
-                    <ProfileFriend About />
-                    <ProfilePhotoComponent About />
-                    <ProfileVideoComponent />
-                    <ProfileCheckIncomponent />
+                    <ProfileAboutComponent Profile />
+                    <ProfileFriend About Profile />
+                    <ProfilePhotoComponent About profile />
+                    <ProfileVideoComponent Profile />
+                    <ProfileCheckIncomponent Profile />
                 </div>
             </div>
         </div>

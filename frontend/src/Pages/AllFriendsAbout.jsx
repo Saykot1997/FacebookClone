@@ -1,10 +1,5 @@
 import React, { useState } from 'react'
 import { AiOutlineArrowLeft } from 'react-icons/ai';
-import Friends from '../Components/Friends';
-import Intro from '../Components/Intro';
-import LiveEvents from '../Components/LiveEvents';
-import Photos from '../Components/Photos';
-import Post from '../Components/Post';
 import ProfileTop from '../Components/ProfileTop';
 import SingleAllFriend from '../Components/SingleAllFriend';
 import Topbar from '../Components/Topbar';
@@ -13,8 +8,13 @@ import { useSelector } from 'react-redux';
 import { useEffect } from 'react';
 import axios from 'axios';
 import { Host } from '../Data';
+import ProfileAboutComponent from '../Components/PrifileAboutComponent';
+import ProfileFriend from '../Components/ProfileFriend';
+import ProfilePhotoComponent from '../Components/ProfilePhotoComponent';
+import ProfileVideoComponent from '../Components/ProfileVideoComponent';
+import ProfileCheckIncomponent from '../Components/ProfileCheckIncCompontnt';
 
-function AllFriendSecProfile() {
+function AllFriendsAbout() {
 
     const [isScrolled, setScrolled] = useState(false);
     let navigate = useNavigate();
@@ -23,7 +23,6 @@ function AllFriendSecProfile() {
     const location = useLocation();
     const friendId = location.pathname.split('/')[4];
     const [friendData, setFriendData] = useState(null);
-    const [friendPosts, setFriendPosts] = useState([]);
 
     const GotoFriendHomePage = () => {
         navigate('/friends/all');
@@ -61,30 +60,6 @@ function AllFriendSecProfile() {
         getFriendData()
 
     }, [user, location.pathname])
-
-
-    useEffect(() => {
-
-        const getFriendAllPosts = async () => {
-
-            try {
-
-                const res = await axios.get(`${Host}/api/post/feed/friend/${friendId}`, {
-                    headers: {
-                        'Authorization': 'Bearer ' + user.token
-                    }
-                })
-
-                setFriendPosts(res.data);
-
-            } catch (error) {
-
-                console.log(error);
-            }
-        }
-        getFriendAllPosts()
-
-    }, [user, location.pathname]);
 
 
     return (
@@ -125,25 +100,14 @@ function AllFriendSecProfile() {
                 {/* right part */}
                 <div className='w-[77.5%] h-full bg-gray-100 overflow-y-scroll'>
                     <div>
-                        <ProfileTop friendData={friendData} AllFriends profile />
+                        <ProfileTop friendData={friendData} AllFriends About />
                         <div className=' flex justify-center items-center mt-4 mx-6'>
-                            <div className=' w-[80%] flex justify-between'>
-                                <div className='h-screen sticky left-0 top-4 overflow-scroll ProfileScrollbar w-2/5 mb-2 mr-2'>
-                                    <Intro friendData={friendData} />
-                                    <Photos friendData={friendData} AllFriends />
-                                    <Friends friendData={friendData} AllFriends />
-                                    <LiveEvents />
-                                </div>
-                                <div className=' w-3/5 ml-2'>
-                                    {
-                                        friendPosts.length > 0 && friendPosts.map((post, index) => {
-                                            return (
-
-                                                <Post post={post} key={index} />
-                                            )
-                                        })
-                                    }
-                                </div>
+                            <div className=' w-[80%]'>
+                                <ProfileAboutComponent />
+                                <ProfileFriend About AllFriends />
+                                <ProfilePhotoComponent About AllFriends />
+                                <ProfileVideoComponent />
+                                <ProfileCheckIncomponent />
                             </div>
                         </div>
                     </div>
@@ -153,5 +117,4 @@ function AllFriendSecProfile() {
     )
 }
 
-export default AllFriendSecProfile
-
+export default AllFriendsAbout

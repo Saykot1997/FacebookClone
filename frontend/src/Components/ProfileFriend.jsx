@@ -1,12 +1,43 @@
+import axios from 'axios';
+import { useEffect, useState } from 'react';
 import { BiSearchAlt2 } from 'react-icons/bi'
 import { BsThreeDots } from 'react-icons/bs'
 import { useSelector } from 'react-redux';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useLocation } from 'react-router-dom';
+import { Host } from '../Data';
 import SingleProfileFriend from './SingleProfileFriend'
 
-function ProfileFriend({ About }) {
+function ProfileFriend({ About, profile, AllFriends }) {
 
     const allFriends = useSelector(state => state.Friends.AllFriends);
+    const user = useSelector(state => state.User.User);
+    const location = useLocation();
+    const friendId = location.pathname.split('/')[4];
+    const [friendAllFriend, setFriendAllFriend] = useState([]);
+
+
+    useEffect(() => {
+
+        const getFriendData = async () => {
+
+            try {
+
+                const res = await axios.get(`${Host}/api/friend/getAllFriendsOfFriend/${friendId}`, {
+                    headers: {
+                        'Authorization': 'Bearer ' + user.token
+                    }
+                })
+
+                setFriendAllFriend(res.data);
+
+            } catch (error) {
+
+                console.log(error)
+            }
+        }
+        getFriendData()
+
+    }, [user, location.pathname])
 
     return (
         <div className=' w-full p-3 bg-white shadow shadow-gray-300 rounded-md mb-3'>
@@ -49,31 +80,65 @@ function ProfileFriend({ About }) {
                     <div className=' w-full'>
                         <div className=' p-2 mt-5 w-full grid grid-cols-2 gap-1'>
                             {
-                                allFriends.length > 0 && allFriends.length > 6 &&
+                                profile && allFriends.length > 0 && allFriends.length > 6 &&
 
                                 allFriends.slice(0, 6).map((friend, i) => {
                                     return (
 
-                                        <SingleProfileFriend key={i} friend={friend} />
+                                        <SingleProfileFriend key={i} friend={friend} profile={profile} />
                                     )
                                 })
                             }
+
                             {
-                                allFriends.length > 0 && allFriends.length < 6 &&
+                                profile && allFriends.length > 0 && allFriends.length < 6 &&
 
                                 allFriends.map((friend, i) => {
                                     return (
 
-                                        <SingleProfileFriend key={i} friend={friend} />
+                                        <SingleProfileFriend key={i} friend={friend} profile={profile} />
+                                    )
+                                })
+                            }
+                            {/* friends friend */}
+                            {
+                                !profile && friendAllFriend.length > 0 && friendAllFriend.length > 6 &&
+
+                                friendAllFriend.slice(0, 6).map((friend, i) => {
+                                    return (
+
+                                        <SingleProfileFriend key={i} friend={friend} profile={profile} />
+                                    )
+                                })
+                            }
+
+                            {
+                                !profile && friendAllFriend.length > 0 && friendAllFriend.length < 6 &&
+
+                                friendAllFriend.map((friend, i) => {
+                                    return (
+
+                                        <SingleProfileFriend key={i} friend={friend} profile={profile} />
                                     )
                                 })
                             }
 
                         </div>
                         <div className=' w-full'>
-                            <NavLink to="/profile/friends">
-                                <button className=' w-full py-2 bg-gray-200 hover:bg-gray-300 rounded-md'>See All</button>
-                            </NavLink>
+                            {
+                                profile &&
+
+                                <NavLink to="/profile/friends">
+                                    <button className=' w-full py-2 bg-gray-200 hover:bg-gray-300 rounded-md'>See All</button>
+                                </NavLink>
+                            }
+                            {
+                                AllFriends &&
+
+                                <NavLink to={`/friends/all/friends/${friendId}`}>
+                                    <button className=' w-full py-2 bg-gray-200 hover:bg-gray-300 rounded-md'>See All</button>
+                                </NavLink>
+                            }
                         </div>
                     </div>
 
@@ -81,7 +146,16 @@ function ProfileFriend({ About }) {
 
                     <div className=' p-2 mt-5 w-full grid grid-cols-2 gap-1'>
                         {
-                            allFriends.length > 0 && allFriends.map((friend, index) => {
+                            profile && allFriends.length > 0 && allFriends.map((friend, index) => {
+                                return (
+
+                                    <SingleProfileFriend key={index} friend={friend} />
+                                )
+                            })
+                        }
+                        {/* friends friend */}
+                        {
+                            !profile && friendAllFriend.length > 0 && friendAllFriend.map((friend, index) => {
                                 return (
 
                                     <SingleProfileFriend key={index} friend={friend} />

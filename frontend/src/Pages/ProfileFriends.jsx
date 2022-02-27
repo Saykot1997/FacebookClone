@@ -14,10 +14,10 @@ function ProfileFriends() {
             <ProfileTop Friends />
             <div className=' p-4 flex justify-center'>
                 <div className='w-[60%]'>
-                    <ProfileFriend />
-                    <ProfilePhotoComponent About />
-                    <ProfileVideoComponent />
-                    <ProfileCheckIncomponent />
+                    <ProfileFriend Profile />
+                    <ProfilePhotoComponent About Profile />
+                    <ProfileVideoComponent Profile />
+                    <ProfileCheckIncomponent Profile />
                 </div>
             </div>
         </div>

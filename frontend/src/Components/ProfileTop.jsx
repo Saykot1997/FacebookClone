@@ -1,12 +1,9 @@
 import coverPhoto from '../images/FBCoverPhoto.png';
 import ProfilePhoto from "../images/userAvater.png"
 import { BsArrowLeftShort, BsFillCameraFill, BsMessenger, BsPencilFill } from "react-icons/bs";
-import { MdModeEditOutline } from "react-icons/md";
-import { FaFacebookMessenger } from "react-icons/fa";
-import { ImUserPlus } from 'react-icons/im';
 import { useState } from 'react';
 import FriendsInfo from './FriendsInfo';
-import { NavLink } from "react-router-dom"
+import { NavLink, useLocation } from "react-router-dom"
 import { useDispatch, useSelector } from 'react-redux';
 import { AiFillPlusCircle, AiOutlineClose, AiOutlineCopy } from 'react-icons/ai';
 import { BiUpload } from 'react-icons/bi';
@@ -15,7 +12,7 @@ import { Host } from "../Data";
 import { loadingSuccess } from '../Redux/UserSlice';
 import { useEffect } from 'react';
 
-function ProfileTop({ FriendSuggetions, AllFriends, friendData, Profile, About, Friends, Photos, Videos, ChecksInc }) {
+function ProfileTop({ FriendSuggetions, AllFriends, friendData, Profile, profile, About, Friends, Photos, Videos, ChecksInc }) {
 
     const dispatch = useDispatch();
     const User = useSelector((state) => state.User.User);
@@ -32,6 +29,8 @@ function ProfileTop({ FriendSuggetions, AllFriends, friendData, Profile, About, 
     const [hoveredFriend, setHoveredFriend] = useState("");
     const [mutalFriendsLength, setMutalFriendsLength] = useState();
     const [friendDataAllFriends, setFriendDataAllFriends] = useState([]);
+    const location = useLocation();
+    const friendId = location.pathname.split('/')[4];
 
 
     useEffect(() => {
@@ -507,42 +506,108 @@ function ProfileTop({ FriendSuggetions, AllFriends, friendData, Profile, About, 
                     <hr className=' h-[1px] bg-black opacity-90 mt-5 ' />
                     <div className=' flex justify-between py-1'>
                         <div className='flex'>
-                            <NavLink to='/profile' className='profileItems '>
-                                <span className={`${Profile ? " text-blue-500" : " text-gray-500 font-semibold"} inline-block`}>Post</span>
-                                {
-                                    Profile && <div className=' absolute -bottom-1 left-0 h-[3px] w-full bg-blue-600'></div>
-                                }
-                            </NavLink>
-                            <NavLink to="/profile/about" className='profileItems '>
-                                <span className={`${About ? " text-blue-500" : "text-gray-500 font-semibold"} inline-block`}>About</span>
-                                {
-                                    About && <div className=' absolute -bottom-1 left-0 h-[3px] w-full bg-blue-600'></div>
-                                }
-                            </NavLink>
-                            <NavLink to="/profile/friends" className='profileItems '>
-                                <span className={`${Friends ? " text-blue-500" : "text-gray-500 font-semibold"} inline-block`}>Friends</span>
-                                {
-                                    Friends && <div className=' absolute -bottom-1 left-0 h-[3px] w-full bg-blue-600'></div>
-                                }
-                            </NavLink>
-                            <NavLink to="/profile/photos" className='profileItems '>
-                                <span className={`${Photos ? " text-blue-500" : "text-gray-500 font-semibold"} inline-block`}>Photos</span>
-                                {
-                                    Photos && <div className=' absolute -bottom-1 left-0 h-[3px] w-full bg-blue-600'></div>
-                                }
-                            </NavLink>
-                            <NavLink to="/profile/videos" className='profileItems '>
-                                <span className={`${Videos ? " text-blue-500" : "text-gray-500 font-semibold"} inline-block`}>Videos</span>
-                                {
-                                    Videos && <div className=' absolute -bottom-1 left-0 h-[3px] w-full bg-blue-600'></div>
-                                }
-                            </NavLink>
-                            <NavLink to="/profile/checkInc" className='profileItems '>
-                                <span className={`${ChecksInc ? " text-blue-500" : "text-gray-500 font-semibold"} inline-block`}>Checks-Inc</span>
-                                {
-                                    ChecksInc && <div className=' absolute -bottom-1 left-0 h-[3px] w-full bg-blue-600'></div>
-                                }
-                            </NavLink>
+                            {
+                                Profile &&
+                                <NavLink to='/profile' className='profileItems '>
+                                    <span className={`${Profile ? " text-blue-500" : " text-gray-500 font-semibold"} inline-block`}>Post</span>
+                                    {
+                                        profile && <div className=' absolute -bottom-1 left-0 h-[3px] w-full bg-blue-600'></div>
+                                    }
+                                </NavLink>
+                            }
+                            {
+                                AllFriends &&
+                                <NavLink to={`/friends/all/profile/${friendId}`} className='profileItems '>
+                                    <span className={`${Profile ? " text-blue-500" : " text-gray-500 font-semibold"} inline-block`}>Post</span>
+                                    {
+                                        profile && <div className=' absolute -bottom-1 left-0 h-[3px] w-full bg-blue-600'></div>
+                                    }
+                                </NavLink>
+                            }
+
+                            {
+                                Profile &&
+                                <NavLink to="/profile/about" className='profileItems '>
+                                    <span className={`${About ? " text-blue-500" : "text-gray-500 font-semibold"} inline-block`}>About</span>
+                                    {
+                                        About && <div className=' absolute -bottom-1 left-0 h-[3px] w-full bg-blue-600'></div>
+                                    }
+                                </NavLink>
+                            }
+                            {
+                                AllFriends &&
+                                <NavLink to={`/friends/all/about/${friendId}`} className='profileItems '>
+                                    <span className={`${About ? " text-blue-500" : "text-gray-500 font-semibold"} inline-block`}>About</span>
+                                    {
+                                        About && <div className=' absolute -bottom-1 left-0 h-[3px] w-full bg-blue-600'></div>
+                                    }
+                                </NavLink>
+                            }
+
+                            {
+                                Profile &&
+                                <NavLink to={`/profile/friends`} className='profileItems '>
+                                    <span className={`${Friends ? " text-blue-500" : "text-gray-500 font-semibold"} inline-block`}>Friends</span>
+                                    {
+                                        Friends && <div className=' absolute -bottom-1 left-0 h-[3px] w-full bg-blue-600'></div>
+                                    }
+                                </NavLink>
+                            }
+
+                            {
+                                AllFriends &&
+                                <NavLink to={`/friends/all/friends/${friendId}`} className='profileItems '>
+                                    <span className={`${Friends ? " text-blue-500" : "text-gray-500 font-semibold"} inline-block`}>Friends</span>
+                                    {
+                                        Friends && <div className=' absolute -bottom-1 left-0 h-[3px] w-full bg-blue-600'></div>
+                                    }
+                                </NavLink>
+                            }
+                            {
+                                Profile &&
+                                <NavLink to="/profile/photos" className='profileItems '>
+                                    <span className={`${Photos ? " text-blue-500" : "text-gray-500 font-semibold"} inline-block`}>Photos</span>
+                                    {
+                                        Photos && <div className=' absolute -bottom-1 left-0 h-[3px] w-full bg-blue-600'></div>
+                                    }
+                                </NavLink>
+                            }
+                            {
+                                AllFriends &&
+                                <NavLink to={`/friends/all/photos/${friendId}`} className='profileItems '>
+                                    <span className={`${Photos ? " text-blue-500" : "text-gray-500 font-semibold"} inline-block`}>Photos</span>
+                                    {
+                                        Photos && <div className=' absolute -bottom-1 left-0 h-[3px] w-full bg-blue-600'></div>
+                                    }
+                                </NavLink>
+                            }
+                            {
+                                Profile &&
+                                <NavLink to="/profile/videos" className='profileItems '>
+                                    <span className={`${Videos ? " text-blue-500" : "text-gray-500 font-semibold"} inline-block`}>Videos</span>
+                                    {
+                                        Videos && <div className=' absolute -bottom-1 left-0 h-[3px] w-full bg-blue-600'></div>
+                                    }
+                                </NavLink>
+                            }
+                            {
+                                AllFriends &&
+                                <NavLink to={`/friends/all/videos/${friendId}`} className='profileItems '>
+                                    <span className={`${Videos ? " text-blue-500" : "text-gray-500 font-semibold"} inline-block`}>Videos</span>
+                                    {
+                                        Videos && <div className=' absolute -bottom-1 left-0 h-[3px] w-full bg-blue-600'></div>
+                                    }
+                                </NavLink>
+                            }
+                            {
+                                Profile &&
+                                <NavLink to="/profile/checkInc" className='profileItems '>
+                                    <span className={`${ChecksInc ? " text-blue-500" : "text-gray-500 font-semibold"} inline-block`}>Checks-Inc</span>
+                                    {
+                                        ChecksInc && <div className=' absolute -bottom-1 left-0 h-[3px] w-full bg-blue-600'></div>
+                                    }
+                                </NavLink>
+                            }
                             <div className=' profileItems text-gray-500 font-semibold'>More</div>
                         </div>
                         <div className=' relative group  h-7 w-9 rounded-md overflow-hidden mt-2 cursor-pointer  bg-gray-300  flex justify-center items-center'>

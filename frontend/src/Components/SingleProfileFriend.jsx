@@ -6,7 +6,7 @@ import { NavLink } from 'react-router-dom';
 import { Host } from '../Data';
 import ProfilePhoto from "../images/2.jpg"
 
-function SingleProfileFriend({ friend }) {
+function SingleProfileFriend({ friend, profile }) {
 
     const user = useSelector(state => state.User.User);
     const [mutalFriends, setMutalFriends] = useState();
@@ -17,18 +17,21 @@ function SingleProfileFriend({ friend }) {
         if (friend) {
 
             const MutalFriend = () => {
+
                 let mutal = [];
                 let userFriends = user.friends;
                 let friendFriends = friend.friends;
 
-                for (let i = 0; i < userFriends.length; i++) {
-                    for (let j = 0; j < friendFriends.length; j++) {
-                        if (userFriends[i] === friendFriends[j]) {
-                            mutal.push(userFriends[i])
+                if (user._id !== friend._id) {
+                    for (let i = 0; i < userFriends.length; i++) {
+                        for (let j = 0; j < friendFriends.length; j++) {
+                            if (userFriends[i] === friendFriends[j]) {
+                                mutal.push(userFriends[i])
+                            }
                         }
                     }
-                }
 
+                }
                 setMutalFriendsLength(mutal.length);
             }
             MutalFriend()
@@ -63,9 +66,13 @@ function SingleProfileFriend({ friend }) {
                     <p className=' text-gray-500 text-sm cursor-pointer'>{mutalFriendsLength} mutal friends</p>
                 </div>
             </div>
-            <div className=' h-9 w-9 rounded-full flex justify-center items-center hover:bg-gray-100 cursor-pointer'>
-                <BsThreeDots className=' to-gray-500 text-lg' />
-            </div>
+            {
+                profile &&
+
+                <div className=' h-9 w-9 rounded-full flex justify-center items-center hover:bg-gray-100 cursor-pointer'>
+                    <BsThreeDots className=' to-gray-500 text-lg' />
+                </div>
+            }
         </div>
     )
 }

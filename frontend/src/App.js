@@ -42,6 +42,10 @@ import { Host } from "./Data";
 import axios from "axios";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import AllFriendsAbout from "./Pages/AllFriendsAbout";
+import AllFriendsOfFriend from "./Pages/AllFriendsOfFriend";
+import AllFriendsPhotos from "./Pages/AllFriendsPhotos";
+import AllFriendsVideos from "./Pages/AllFriendsVideos";
 
 function App() {
 
@@ -106,6 +110,10 @@ function App() {
         <Route path="/friends/suggetion/profile" element={<FriendSugProfile />} />
         <Route path="/friends/all" element={<AllFriend />} />
         <Route path="/friends/all/profile/:id" element={<AllFriendSecProfile />} />
+        <Route path="/friends/all/about/:id" element={<AllFriendsAbout />} />
+        <Route path="/friends/all/friends/:id" element={<AllFriendsOfFriend />} />
+        <Route path="/friends/all/photos/:id" element={<AllFriendsPhotos />} />
+        <Route path="/friends/all/videos/:id" element={<AllFriendsVideos />} />
         <Route path="/friends/birthday" element={<FriendsBirthday />} />
         <Route path="/friends/customList" element={<FriendCustomList />} />
         <Route path="/watch" element={<Watch />} />

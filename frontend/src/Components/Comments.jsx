@@ -8,6 +8,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { PostUpdate } from '../Redux/PostSlice';
 import { FcLike } from 'react-icons/fc';
 import profilePhoto from "../images/2.jpg";
+import { loadingSuccess } from '../Redux/UserSlice';
 
 function Comments({ post }) {
 
@@ -17,7 +18,6 @@ function Comments({ post }) {
     const [commentReplay, setCommentReplay] = useState('');
     const [openReplayBox, setOpenReplayBox] = useState(false);
     const [iscommentEditBox, setIsCommentEditBox] = useState('');
-    // const [commentEdit, setCommentEdit] = useState('');
     const [editAbleComment, setEditAbleComment] = useState("");
     const [curentComment, setCurentComment] = useState("");
 
@@ -35,6 +35,14 @@ function Comments({ post }) {
             });
 
             dispatch(PostUpdate(res.data));
+
+            const user = await axios.get(`${Host}/api/user/userRefresh`, {
+                headers: {
+                    'Authorization': `Bearer ${User.token}`
+                }
+            });
+
+            dispatch(loadingSuccess(user.data));
 
         } catch (err) {
 
@@ -66,6 +74,14 @@ function Comments({ post }) {
 
             dispatch(PostUpdate(res.data));
 
+            const user = await axios.get(`${Host}/api/user/userRefresh`, {
+                headers: {
+                    'Authorization': `Bearer ${User.token}`
+                }
+            });
+
+            dispatch(loadingSuccess(user.data));
+
         } catch (err) {
 
             console.log(err.response.data);
@@ -90,6 +106,14 @@ function Comments({ post }) {
 
                 dispatch(PostUpdate(res.data));
                 setIsCommentEditBox(false);
+
+                const user = await axios.get(`${Host}/api/user/userRefresh`, {
+                    headers: {
+                        'Authorization': `Bearer ${User.token}`
+                    }
+                });
+
+                dispatch(loadingSuccess(user.data));
 
             } catch (err) {
 
@@ -118,6 +142,13 @@ function Comments({ post }) {
                 setOpenReplayBox(false);
                 setCommentReplay('');
 
+                const user = await axios.get(`${Host}/api/user/userRefresh`, {
+                    headers: {
+                        'Authorization': `Bearer ${User.token}`
+                    }
+                });
+
+                dispatch(loadingSuccess(user.data));
 
             } catch (err) {
 

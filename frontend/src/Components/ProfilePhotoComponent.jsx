@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { BsThreeDots } from 'react-icons/bs';
 import coverPhoto from '../images/FBCoverPhoto.png';
 import profilePhoto from '../images/userAvater.png';
@@ -6,11 +6,11 @@ import { BiPencil } from 'react-icons/bi';
 import { AiOutlinePlus } from 'react-icons/ai';
 import { useDispatch, useSelector } from 'react-redux';
 import { Host } from "../Data"
-import { NavLink } from 'react-router-dom';
+import { NavLink, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import { loadingSuccess } from '../Redux/UserSlice';
 
-function ProfilePhotoComponent({ About }) {
+function ProfilePhotoComponent({ About, AllFriends, profile }) {
 
     const User = useSelector((state) => state.User.User);
     const [yourPhoto, setYourPhoto] = useState(true);
@@ -18,6 +18,35 @@ function ProfilePhotoComponent({ About }) {
     const [editMod, setEditMod] = useState(false);
     const [currantPhoto, setCurrantPhoto] = useState("");
     const dispatch = useDispatch();
+    const location = useLocation();
+    const friendId = location.pathname.split('/')[4];
+    const [friendData, setFriendData] = useState(null);
+
+
+    useEffect(() => {
+
+        if (friendId) {
+            const getFriendData = async () => {
+
+                try {
+
+                    const res = await axios.get(`${Host}/api/friend/getSingleFriend/${friendId}`, {
+                        headers: {
+                            'Authorization': 'Bearer ' + User.token
+                        }
+                    })
+
+                    setFriendData(res.data);
+
+                } catch (error) {
+
+                    console.log(error)
+                }
+            }
+            getFriendData()
+        }
+
+    }, [User, location.pathname])
 
     const activeEditMod = (photo) => {
         setEditMod(!editMod);
@@ -64,7 +93,7 @@ function ProfilePhotoComponent({ About }) {
             </div>
             <div className='px-2'>
                 <div className=' flex my-2'>
-                    <span onClick={SeeYourPhotos} className={`p-4 ${yourPhoto ? "border-blue-500 border-b-4 text-blue-500" : " border-0 hover:bg-gray-100 text-gray-500 rounded-md"} font-semibold mr-1 cursor-pointer`}>Your Photos</span>
+                    <span onClick={SeeYourPhotos} className={`p-4 ${yourPhoto ? "border-blue-500 border-b-4 text-blue-500" : " border-0 hover:bg-gray-100 text-gray-500 rounded-md"} font-semibold mr-1 cursor-pointer capitalize`}> {friendData ? `${friendData.firstName}'s Photos` : "Your Photos"}</span>
                     <span onClick={SeeAlbum} className={`p-4  ${album ? "border-b-4 border-blue-500 text-blue-500" : " border-0 hover:bg-gray-100 text-gray-500 rounded-md "} font-semibold mr-1 cursor-pointer`}>Albums</span>
                 </div>
 
@@ -75,7 +104,7 @@ function ProfilePhotoComponent({ About }) {
 
                         {
 
-                            About && User.uploads.length > 10 && User.uploads.slice(0, 10).map((item, index) => {
+                            About && profile && User.uploads.length > 10 && User.uploads.slice(0, 10).map((item, index) => {
 
                                 return (
                                     <div key={index} className=' relative w-full h-36 rounded-md overflow-hidden'>
@@ -96,7 +125,7 @@ function ProfilePhotoComponent({ About }) {
                         }
                         {
 
-                            About && User.uploads.length < 10 && User.uploads.map((item, index) => {
+                            About && profile && User.uploads.length < 10 && User.uploads.map((item, index) => {
 
                                 return (
                                     <div key={index} className=' relative w-full h-36 rounded-md overflow-hidden'>
@@ -116,7 +145,7 @@ function ProfilePhotoComponent({ About }) {
                             })
                         }
                         {
-                            !About && User.uploads.length > 0 && User.uploads.map((item, index) => {
+                            !About && profile && User.uploads.length > 0 && User.uploads.map((item, index) => {
 
                                 return (
                                     <div key={index} className=' relative w-full h-36 rounded-md overflow-hidden'>
@@ -134,12 +163,45 @@ function ProfilePhotoComponent({ About }) {
                                 )
                             })
                         }
+                        {
 
+                            // friends photos
+                            About && !profile && friendData && friendData.uploads.length > 10 && friendData.uploads.slice(0, 10).map((item, index) => {
+
+                                return (
+                                    <div key={index} className=' relative w-full h-36 rounded-md overflow-hidden'>
+                                        <img src={`${Host}/images/${item}`} alt="" className=' w-full h-full object-cover' />
+                                    </div>
+                                )
+                            })
+                        }
+                        {
+                            // friends photos
+                            About && !profile && friendData && friendData.uploads.length < 10 && friendData.uploads.map((item, index) => {
+
+                                return (
+                                    <div key={index} className=' relative w-full h-36 rounded-md overflow-hidden'>
+                                        <img src={`${Host}/images/${item}`} alt="" className=' w-full h-full object-cover' />
+                                    </div>
+                                )
+                            })
+                        }
+                        {
+                            // friends photos
+                            !About && !profile && friendData && friendData.uploads.length > 0 && friendData.uploads.map((item, index) => {
+
+                                return (
+                                    <div key={index} className=' relative w-full h-36 rounded-md overflow-hidden'>
+                                        <img src={`${Host}/images/${item}`} alt="" className=' w-full h-full object-cover' />
+                                    </div>
+                                )
+                            })
+                        }
                     </div>
                 }
 
                 {
-                    album &&
+                    album && profile &&
 
                     <div className='grid grid-cols-5 gap-2 my-3'>
                         <div>
@@ -180,13 +242,49 @@ function ProfilePhotoComponent({ About }) {
                         </div>
                     </div>
                 }
+                {
+                    // friends photos
+                    album && !profile &&
+
+                    <div className='grid grid-cols-5 gap-2 my-3'>
+                        <div>
+                            <div className='relative w-full h-36 rounded-md overflow-hidden'>
+
+                                <img src={friendData.profilePicture ? `${Host}/images/${friendData.profilePicture}` : profilePhoto} alt="" className=' w-full h-full object-cover' />
+
+                            </div>
+                            <div className='mt-2'>
+                                <p className=' font-semibold hover:underline cursor-pointer'>Profile Picture</p>
+                                <p className=' text-sm text-gray-500 hover:underline cursor-pointer'>{friendData.allProfilePicture.length} Items</p>
+                            </div>
+                        </div>
+                        <div>
+                            <div className='relative w-full h-36 rounded-md overflow-hidden'>
+                                <img src={friendData.coverPicture ? `${Host}/images/${friendData.coverPicture}` : coverPhoto} alt="" className=' w-full h-full object-cover' />
+                            </div>
+                            <div className='mt-2'>
+                                <p className=' font-semibold hover:underline cursor-pointer'>Cover Photos</p>
+                                <p className=' text-sm text-gray-500 hover:underline cursor-pointer'>{friendData.AllCoverPhotos.length} Items</p>
+                            </div>
+                        </div>
+                    </div>
+                }
 
                 {
                     About &&
                     <div className=' w-full my-3'>
-                        <NavLink to="/profile/photos">
-                            <button className=' w-full py-2 hover:bg-gray-300 bg-gray-200 rounded-lg font-semibold'>See All</button>
-                        </NavLink>
+                        {
+                            AllFriends &&
+                            <NavLink to={`/friends/all/photos/${friendId}`}>
+                                <button className=' w-full py-2 hover:bg-gray-300 bg-gray-200 rounded-lg font-semibold'>See All</button>
+                            </NavLink>
+                        }
+                        {
+                            profile &&
+                            <NavLink to="/profile/photos">
+                                <button className=' w-full py-2 hover:bg-gray-300 bg-gray-200 rounded-lg font-semibold'>See All</button>
+                            </NavLink>
+                        }
                     </div>
                 }
 

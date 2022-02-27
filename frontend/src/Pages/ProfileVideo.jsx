@@ -12,8 +12,8 @@ function ProfileVideo() {
             <ProfileTop Videos />
             <div className=' p-4 flex justify-center'>
                 <div className='w-[60%]'>
-                    <ProfileVideoComponent />
-                    <ProfileCheckIncomponent />
+                    <ProfileVideoComponent Profile />
+                    <ProfileCheckIncomponent Profile />
                 </div>
             </div>
         </div>

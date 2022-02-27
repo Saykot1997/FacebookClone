@@ -83,14 +83,14 @@ function Profile() {
 
         <div className=' bg-gray-100 w-full h-screen overflow-y-scroll'>
             <Topbar Profile />
-            <ProfileTop Profile />
+            <ProfileTop Profile profile />
             <div className='group p-4 flex justify-center'>
                 <div className='w-[60%] flex'>
                     <div className='h-screen sticky left-0 top-[70px] overflow-scroll ProfileScrollbar w-2/5 mr-2'>
-                        <Intro />
-                        <Photos />
-                        <Friends />
-                        <LiveEvents />
+                        <Intro Profile />
+                        <Photos Profile />
+                        <Friends Profile />
+                        <LiveEvents Profile />
                     </div>
                     <div className=' w-3/5 ml-2'>
                         <Share />
@@ -98,7 +98,7 @@ function Profile() {
                         {
                             timelinePost?.map((post, index) => {
                                 return (
-                                    <Post post={post} key={index} />
+                                    <Post Profile post={post} key={index} />
                                 )
                             })
                         }

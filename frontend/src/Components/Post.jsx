@@ -94,6 +94,14 @@ function Post({ post }) {
                 setLikeAnimation(false);
             }, 1000)
 
+            const user = await axios.get(`${Host}/api/user/userRefresh`, {
+                headers: {
+                    'Authorization': `Bearer ${User.token}`
+                }
+            });
+
+            dispatch(loadingSuccess(user.data));
+
         } catch (error) {
 
             setLikeAnimation(false);
@@ -120,7 +128,15 @@ function Post({ post }) {
             })
 
             setComment('');
-            dispatch(PostUpdate(res.data))
+            dispatch(PostUpdate(res.data));
+
+            const user = await axios.get(`${Host}/api/user/userRefresh`, {
+                headers: {
+                    'Authorization': `Bearer ${User.token}`
+                }
+            })
+
+            dispatch(loadingSuccess(user.data));
 
         } catch (error) {
 

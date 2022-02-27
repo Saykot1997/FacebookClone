@@ -189,11 +189,8 @@ router.get("/:id", async (req, res) => {
         res.status(400).json({
             message: error.message
         })
-
     }
-
 });
-
 
 
 // feed posts 
@@ -203,12 +200,8 @@ router.get("/feed/all", Authgurd, async (req, res) => {
     try {
 
         const curantUser = await User.findById(req.userId);
-
         const allFriends = curantUser.friends;
-        // console.log(allFriends);
         const allFlowings = curantUser.flowings;
-        // console.log(allFlowings);
-
         const findAllSendAblePost = [];
 
         allFriends.forEach(friend => {
@@ -223,7 +216,6 @@ router.get("/feed/all", Authgurd, async (req, res) => {
             })
         })
 
-        // console.log(findAllSendAblePost);
 
         const userPost = await Post.find({ userId: curantUser._id }).populate({ path: 'userId', select: 'firstName sureName profilePicture' }).populate({ path: 'comments.user', select: 'firstName sureName profilePicture' }).populate("comments.replaies.user", "firstName sureName profilePicture");
 
@@ -242,8 +234,30 @@ router.get("/feed/all", Authgurd, async (req, res) => {
             message: error.message
         })
     }
-
 });
+
+
+// get a friend's all  posts
+
+router.get("/feed/friend/:id", Authgurd, async (req, res) => {
+
+    const { id } = req.params;
+
+    try {
+
+        const post = await Post.find({ userId: id }).populate("userId", "firstName sureName profilePicture").populate("comments.user", "firstName sureName profilePicture").populate("comments.replaies.user", "firstName sureName profilePicture");
+
+        res.status(200).json(post);
+
+    } catch (error) {
+
+        console.log(error)
+        res.status(400).json({
+            message: error.message
+        })
+    }
+
+})
 
 
 
@@ -313,7 +327,6 @@ router.post("/update/:id", Authgurd, upload.single("file"), async (req, res) => 
                             if (err) { new Error("Culd not delete photos") }
                         });
                     }
-
                 }
 
 
@@ -366,7 +379,6 @@ router.post("/update/:id", Authgurd, upload.single("file"), async (req, res) => 
                         await user.save();
                     }
                 }
-
             }
 
             const postUpdated = await Post.findByIdAndUpdate(req.params.id, post, { new: true }).populate("userId", "firstName sureName profilePicture").populate("comments.user", "firstName sureName profilePicture").populate("comments.replaies.user", "firstName sureName profilePicture");
@@ -386,7 +398,6 @@ router.post("/update/:id", Authgurd, upload.single("file"), async (req, res) => 
 
 
 // delete post by id
-
 
 router.delete("/delete/:id", Authgurd, async (req, res) => {
 
@@ -578,7 +589,6 @@ router.put("/comment/edit/:postId/:commentId", Authgurd, async (req, res) => {
     } catch (err) {
         console.log(err);
     }
-
 });
 
 

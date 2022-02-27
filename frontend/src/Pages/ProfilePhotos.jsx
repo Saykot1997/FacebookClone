@@ -13,9 +13,9 @@ function ProfilePhotos() {
             <ProfileTop Photos />
             <div className=' p-4 flex justify-center'>
                 <div className='w-[60%]'>
-                    <ProfilePhotoComponent />
-                    <ProfileVideoComponent />
-                    <ProfileCheckIncomponent />
+                    <ProfilePhotoComponent Profile />
+                    <ProfileVideoComponent Profile />
+                    <ProfileCheckIncomponent Profile />
                 </div>
             </div>
         </div>

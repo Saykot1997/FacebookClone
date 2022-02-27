@@ -8,6 +8,7 @@ import { OpenCreatePost, OpenCreatePostImage } from '../Redux/CreatePostSlice';
 import CreatePostWithFile from './CreatePostWithFile';
 import { Host } from "../Data";
 import userAvater from "../images/userAvater.png";
+import { NavLink } from 'react-router-dom';
 
 function Share() {
 

@@ -10,7 +10,7 @@ function ProfileCheckInc() {
             <ProfileTop ChecksInc />
             <div className=' p-4 flex justify-center'>
                 <div className='w-[60%]'>
-                    <ProfileCheckIncomponent />
+                    <ProfileCheckIncomponent Profile />
                 </div>
             </div>
         </div>
