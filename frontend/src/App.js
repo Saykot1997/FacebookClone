@@ -1,9 +1,14 @@
+import { AllFriendsFatchSuccess, FriendsRequestsFatchSuccess, SuggestedFriendsFatchSuccess } from "./Redux/FriendsSlice";
+import { Host } from "./Data";
+import axios from "axios";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Friend from "./Pages/Friend";
 import Home from "./Pages/Home";
 import Profile from "./Pages/Profile";
 import Group from "./Pages/Group";
 import MarketPlace from "./Pages/MarketPlace";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
 import AllFriend from "./Pages/AllFriend";
 import FriendRequest from "./Pages/FriendRequest";
 import FriendSuggetions from "./Pages/FriendSuggetions";
@@ -37,11 +42,6 @@ import PrivateRoute from "./Components/PrivateRoute";
 import Biography from "./Pages/Biography";
 import PhotosOfProfile from "./Pages/PhotosOfProfile";
 import PhotosOfCover from "./Pages/PhotosOfCover";
-import { AllFriendsFatchSuccess, FriendsRequestsFatchSuccess, SuggestedFriendsFatchSuccess } from "./Redux/FriendsSlice";
-import { Host } from "./Data";
-import axios from "axios";
-import { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
 import AllFriendsAbout from "./Pages/AllFriendsAbout";
 import AllFriendsOfFriend from "./Pages/AllFriendsOfFriend";
 import AllFriendsPhotos from "./Pages/AllFriendsPhotos";
@@ -50,6 +50,10 @@ import FriendSugAbout from "./Pages/FriendSugAbout";
 import FriendSugFriends from "./Pages/FriendSugFriends";
 import FriendSugPhotos from "./Pages/FriendSugPhotos";
 import FriendSugVideos from "./Pages/FriendSugVideos";
+import FriendRequestAbout from "./Pages/FriendRequestAbout";
+import FriendRequestFriends from "./Pages/FriendRequestFriends";
+import FriendRequestPhotos from "./Pages/FriendRequestPhotos";
+import FriendRequestVideos from "./Pages/FriendRequestVideos";
 
 function App() {
 
@@ -107,44 +111,48 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<PrivateRoute><Home /></PrivateRoute>} />
-        <Route path="/friends" element={< Friend />} />
-        <Route path="/friends/request" element={<FriendRequest />} />
-        <Route path="/friends/request/profile" element={<FriendRequestProfile />} />
-        <Route path="/friends/suggetion" element={<FriendSuggetions />} />
-        <Route path="/friends/suggetion/profile/:id" element={<FriendSugProfile />} />
-        <Route path="/friends/suggetion/about/:id" element={<FriendSugAbout />} />
-        <Route path="/friends/suggetion/friends/:id" element={<FriendSugFriends />} />
-        <Route path="/friends/suggetion/photos/:id" element={<FriendSugPhotos />} />
-        <Route path="/friends/suggetion/videos/:id" element={<FriendSugVideos />} />
-        <Route path="/friends/all" element={<AllFriend />} />
-        <Route path="/friends/all/profile/:id" element={<AllFriendSecProfile />} />
-        <Route path="/friends/all/about/:id" element={<AllFriendsAbout />} />
-        <Route path="/friends/all/friends/:id" element={<AllFriendsOfFriend />} />
-        <Route path="/friends/all/photos/:id" element={<AllFriendsPhotos />} />
-        <Route path="/friends/all/videos/:id" element={<AllFriendsVideos />} />
-        <Route path="/friends/birthday" element={<FriendsBirthday />} />
-        <Route path="/friends/customList" element={<FriendCustomList />} />
-        <Route path="/watch" element={<Watch />} />
-        <Route path="/watch/live" element={<WatchLive />} />
-        <Route path="/watch/show" element={<WatchShow />} />
-        <Route path="/watch/saved" element={<WatchSavedVideo />} />
-        <Route path="/watch/latestVideo" element={<WatchLatestVideo />} />
-        <Route path="/marketplace" element={<MarketPlace />} />
-        <Route path="/marketplace/notifications" element={<MarketPlaceNotification />} />
-        <Route path="/marketplace/index" element={<MarketPlaceIndex />} />
-        <Route path="/marketplace/buying" element={<MarketPlaceBuying />} />
-        <Route path="/marketplace/selling" element={<MarketPlaceSelling />} />
-        <Route path="/group" element={<Group />} />
-        <Route path="/group/discover" element={<GroupDiscover />} />
-        <Route path="/group/notifications" element={<GroupNotifications />} />
-        <Route path="/profile" element={<Profile />} />
-        <Route path="/profile/about" element={<ProfileAbout />} />
-        <Route path="/profile/friends" element={<ProfileFriends />} />
-        <Route path="/profile/photos" element={<ProfilePhotos />} />
-        <Route path="/profile/videos" element={<ProfileVideo />} />
-        <Route path="/profile/checkInc" element={<ProfileCheckInc />} />
-        <Route path="/profile/PhotosOfProfile" element={<PhotosOfProfile />} />
-        <Route path="/profile/PhotosOfCover" element={<PhotosOfCover />} />
+        <Route path="/friends" element={<PrivateRoute><Friend /></PrivateRoute>} />
+        <Route path="/friends/request" element={<PrivateRoute><FriendRequest /></PrivateRoute>} />
+        <Route path="/friends/request/profile/:id" element={<PrivateRoute><FriendRequestProfile /></PrivateRoute>} />
+        <Route path="/friends/request/about/:id" element={<PrivateRoute><FriendRequestAbout /></PrivateRoute>} />
+        <Route path="/friends/request/friends/:id" element={<PrivateRoute><FriendRequestFriends /></PrivateRoute>} />
+        <Route path="/friends/request/photos/:id" element={<PrivateRoute><FriendRequestPhotos /></PrivateRoute>} />
+        <Route path="/friends/request/videos/:id" element={<PrivateRoute><FriendRequestVideos /></PrivateRoute>} />
+        <Route path="/friends/suggetion" element={<PrivateRoute><FriendSuggetions /></PrivateRoute>} />
+        <Route path="/friends/suggetion/profile/:id" element={<PrivateRoute><FriendSugProfile /></PrivateRoute>} />
+        <Route path="/friends/suggetion/about/:id" element={<PrivateRoute><FriendSugAbout /></PrivateRoute>} />
+        <Route path="/friends/suggetion/friends/:id" element={<PrivateRoute><FriendSugFriends /></PrivateRoute>} />
+        <Route path="/friends/suggetion/photos/:id" element={<PrivateRoute><FriendSugPhotos /></PrivateRoute>} />
+        <Route path="/friends/suggetion/videos/:id" element={<PrivateRoute><FriendSugVideos /></PrivateRoute>} />
+        <Route path="/friends/all" element={<PrivateRoute><AllFriend /></PrivateRoute>} />
+        <Route path="/friends/all/profile/:id" element={<PrivateRoute><AllFriendSecProfile /></PrivateRoute>} />
+        <Route path="/friends/all/about/:id" element={<PrivateRoute><AllFriendsAbout /></PrivateRoute>} />
+        <Route path="/friends/all/friends/:id" element={<PrivateRoute><AllFriendsOfFriend /></PrivateRoute>} />
+        <Route path="/friends/all/photos/:id" element={<PrivateRoute><AllFriendsPhotos /></PrivateRoute>} />
+        <Route path="/friends/all/videos/:id" element={<PrivateRoute><AllFriendsVideos /></PrivateRoute>} />
+        <Route path="/friends/birthday" element={<PrivateRoute><FriendsBirthday /></PrivateRoute>} />
+        <Route path="/friends/customList" element={<PrivateRoute><FriendCustomList /></PrivateRoute>} />
+        <Route path="/watch" element={<PrivateRoute><Watch /></PrivateRoute>} />
+        <Route path="/watch/live" element={<PrivateRoute><WatchLive /></PrivateRoute>} />
+        <Route path="/watch/show" element={<PrivateRoute><WatchShow /></PrivateRoute>} />
+        <Route path="/watch/saved" element={<PrivateRoute><WatchSavedVideo /></PrivateRoute>} />
+        <Route path="/watch/latestVideo" element={<PrivateRoute><WatchLatestVideo /></PrivateRoute>} />
+        <Route path="/marketplace" element={<PrivateRoute><MarketPlace /></PrivateRoute>} />
+        <Route path="/marketplace/notifications" element={<PrivateRoute><MarketPlaceNotification /></PrivateRoute>} />
+        <Route path="/marketplace/index" element={<PrivateRoute><MarketPlaceIndex /></PrivateRoute>} />
+        <Route path="/marketplace/buying" element={<PrivateRoute><MarketPlaceBuying /></PrivateRoute>} />
+        <Route path="/marketplace/selling" element={<PrivateRoute><MarketPlaceSelling /></PrivateRoute>} />
+        <Route path="/group" element={<PrivateRoute><Group /></PrivateRoute>} />
+        <Route path="/group/discover" element={<PrivateRoute><GroupDiscover /></PrivateRoute>} />
+        <Route path="/group/notifications" element={<PrivateRoute><GroupNotifications /></PrivateRoute>} />
+        <Route path="/profile" element={<PrivateRoute><Profile /></PrivateRoute>} />
+        <Route path="/profile/about" element={<PrivateRoute><ProfileAbout /></PrivateRoute>} />
+        <Route path="/profile/friends" element={<PrivateRoute><ProfileFriends /></PrivateRoute>} />
+        <Route path="/profile/photos" element={<PrivateRoute><ProfilePhotos /></PrivateRoute>} />
+        <Route path="/profile/videos" element={<PrivateRoute><ProfileVideo /></PrivateRoute>} />
+        <Route path="/profile/checkInc" element={<PrivateRoute><ProfileCheckInc /></PrivateRoute>} />
+        <Route path="/profile/PhotosOfProfile" element={<PrivateRoute><PhotosOfProfile /></PrivateRoute>} />
+        <Route path="/profile/PhotosOfCover" element={<PrivateRoute><PhotosOfCover /></PrivateRoute>} />
         <Route path="/login" element={<Login />} />
         <Route path="/forgetPassword" element={<ForgetPassword />} />
         <Route path="/createPassword" element={<CreatePassword />} />

@@ -6,6 +6,7 @@ import { useEffect } from 'react';
 import axios from 'axios';
 import { loadingSuccess } from '../Redux/UserSlice';
 import { FriendsRequestsFatchSuccess, SuggestedFriendsFatchSuccess } from '../Redux/FriendsSlice';
+import { NavLink } from 'react-router-dom';
 
 function SingleFindFriend({ RequestedFriend, friend }) {
 
@@ -111,10 +112,31 @@ function SingleFindFriend({ RequestedFriend, friend }) {
 
         <div className=' h-[360px] bg-white shadow shadow-gray-400 rounded-lg overflow-hidden'>
             <div className=' h-3/5 w-full'>
-                <img src={friend && friend.profilePicture ? `${Host}/images/${friend.profilePicture}` : ProfilePhoto} alt="" className=' h-full w-full object-cover' />
+                {
+                    RequestedFriend ?
+                        <NavLink to={`/friends/request/profile/${friend && friend._id}`} >
+                            <img src={friend && friend.profilePicture ? `${Host}/images/${friend.profilePicture}` : ProfilePhoto} alt="" className=' h-full w-full object-cover' />
+                        </NavLink>
+                        :
+                        <NavLink to={`/friends/suggetion/profile/${friend && friend._id}`}>
+                            <img src={friend && friend.profilePicture ? `${Host}/images/${friend.profilePicture}` : ProfilePhoto} alt="" className=' h-full w-full object-cover' />
+                        </NavLink>
+
+                }
             </div>
             <div className=' w-full h-2/5'>
-                <p className=' font-semibold my-2 mx-3 hover:underline cursor-pointer capitalize'>{friend && friend.firstName + " " + friend.sureName}</p>
+                {
+                    RequestedFriend ?
+                        <NavLink to={`/friends/request/profile/${friend && friend._id}`} >
+                            <p className=' font-semibold my-2 mx-3 hover:underline cursor-pointer capitalize'>{friend && friend.firstName + " " + friend.sureName}</p>
+                        </NavLink>
+                        :
+                        <NavLink to={`/friends/suggetion/profile/${friend && friend._id}`}>
+                            <p className=' font-semibold my-2 mx-3 hover:underline cursor-pointer capitalize'>{friend && friend.firstName + " " + friend.sureName}</p>
+                        </NavLink>
+
+                }
+
                 <div className=' flex items-center ml-2'>
                     <div className=' flex'>
                         <img src={ProfilePhoto} alt="" className=' h-5 w-5 rounded-full object-cover' />

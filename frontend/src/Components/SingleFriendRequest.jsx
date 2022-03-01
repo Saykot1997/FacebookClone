@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
 import { loadingSuccess } from '../Redux/UserSlice';
 import { FriendsRequestsFatchSuccess } from '../Redux/FriendsSlice';
+import { format } from 'timeago.js';
 
 function SingleFriendRequest({ Topbar, friend }) {
 
@@ -16,6 +17,23 @@ function SingleFriendRequest({ Topbar, friend }) {
     const [mutalFriendsLength, setMutalFriendsLength] = useState();
     const dispatch = useDispatch();
     const request = useSelector(state => state.Friends.FriendsRequests);
+    const [friendRequestTime, setFriendRequestTime] = useState(null);
+
+    useEffect(() => {
+        user.notifications.map((notification, i) => {
+
+            if (notification.massage.search("send you friend request") > -1) {
+
+                user.recievedFriendRequests.map((recievedFriendRequest, i) => {
+                    if (recievedFriendRequest === notification.sendId) {
+                        setFriendRequestTime(notification.date)
+                    }
+                })
+            }
+        })
+
+    }, [user]);
+
 
     const acceptFriendRequest = async (id) => {
 
@@ -37,7 +55,7 @@ function SingleFriendRequest({ Topbar, friend }) {
     }
 
     const GoPeopleProfilePage = () => {
-        navigate('/friends/request/profile');
+        navigate(`/friends/request/profile/${friend._id}`);
     }
 
     const openMutalFriendBox = () => {
@@ -112,10 +130,14 @@ function SingleFriendRequest({ Topbar, friend }) {
             </div>
             <div className=' ml-2 w-4/5'>
                 {
-                    Topbar ? <p className=' text-sm text-gray-500'><span className=' font-semibold text-base text-black capitalize'>{friend && friend.firstName + " " + friend.sureName}</span> send you a friend request</p> : <p className=' font-semibold capitalize'>{friend && friend.firstName + " " + friend.sureName}</p>
+                    Topbar ?
+
+                        <p onClick={GoPeopleProfilePage} className=' text-sm text-gray-500'><span className=' font-semibold text-base text-black capitalize'>{friend && friend.firstName + " " + friend.sureName}</span> send you a friend request</p>
+                        :
+                        <p onClick={GoPeopleProfilePage} className=' font-semibold capitalize'>{friend && friend.firstName + " " + friend.sureName}</p>
                 }
                 {
-                    Topbar && <p className=' text-xs font-bold text-blue-400 mb-2'>12 hours ago</p>
+                    Topbar && <p className=' text-xs font-bold text-blue-400 mb-2'>{friendRequestTime && format(friendRequestTime, 'en-US')}</p>
                 }
 
                 <div onMouseEnter={openMutalFriendBox} onMouseLeave={closeMutalFriendBox} className=' flex my-2'>

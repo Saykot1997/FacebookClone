@@ -2,12 +2,9 @@ import { NavLink } from "react-router-dom"
 import { useSelector } from 'react-redux';
 import { Host } from "../Data"
 
-function Photos({ Profile, friendData, AllFriends, FriendSugeesions }) {
+function Photos({ Profile, friendData, AllFriends, FriendSugeesions, FriendRequest }) {
 
     const User = useSelector((state) => state.User.User);
-    console.log(friendData)
-    console.log(FriendSugeesions)
-
 
     return (
 
@@ -29,6 +26,12 @@ function Photos({ Profile, friendData, AllFriends, FriendSugeesions }) {
                 {
                     FriendSugeesions &&
                     <NavLink to={`/friends/suggetion/photos/${FriendSugeesions && friendData && friendData._id}`}>
+                        <span className=' text-blue-500 hover:bg-gray-200 px-2 py-1 rounded cursor-pointer '>See All Photos</span>
+                    </NavLink>
+                }
+                {
+                    FriendRequest &&
+                    <NavLink to={`/friends/request/photos/${FriendRequest && friendData && friendData._id}`}>
                         <span className=' text-blue-500 hover:bg-gray-200 px-2 py-1 rounded cursor-pointer '>See All Photos</span>
                     </NavLink>
                 }

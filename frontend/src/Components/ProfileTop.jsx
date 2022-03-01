@@ -12,7 +12,7 @@ import { Host } from "../Data";
 import { loadingSuccess } from '../Redux/UserSlice';
 import { useEffect } from 'react';
 
-function ProfileTop({ FriendSugeesions, AllFriends, friendData, Profile, profile, About, Friends, Photos, Videos, ChecksInc }) {
+function ProfileTop({ FriendSugeesions, AllFriends, FriendRequest, friendData, Profile, profile, About, Friends, Photos, Videos, ChecksInc }) {
 
     const dispatch = useDispatch();
     const User = useSelector((state) => state.User.User);
@@ -533,6 +533,15 @@ function ProfileTop({ FriendSugeesions, AllFriends, friendData, Profile, profile
                                     }
                                 </NavLink>
                             }
+                            {
+                                FriendRequest &&
+                                <NavLink to={`/friends/request/profile/${friendId}`} className='profileItems '>
+                                    <span className={`${Profile ? " text-blue-500" : " text-gray-500 font-semibold"} inline-block`}>Post</span>
+                                    {
+                                        profile && <div className=' absolute -bottom-1 left-0 h-[3px] w-full bg-blue-600'></div>
+                                    }
+                                </NavLink>
+                            }
 
                             {
                                 Profile &&
@@ -555,6 +564,15 @@ function ProfileTop({ FriendSugeesions, AllFriends, friendData, Profile, profile
                             {
                                 FriendSugeesions &&
                                 <NavLink to={`/friends/suggetion/about/${friendId}`} className='profileItems '>
+                                    <span className={`${About ? " text-blue-500" : "text-gray-500 font-semibold"} inline-block`}>About</span>
+                                    {
+                                        About && <div className=' absolute -bottom-1 left-0 h-[3px] w-full bg-blue-600'></div>
+                                    }
+                                </NavLink>
+                            }
+                            {
+                                FriendRequest &&
+                                <NavLink to={`/friends/request/about/${friendId}`} className='profileItems '>
                                     <span className={`${About ? " text-blue-500" : "text-gray-500 font-semibold"} inline-block`}>About</span>
                                     {
                                         About && <div className=' absolute -bottom-1 left-0 h-[3px] w-full bg-blue-600'></div>
@@ -591,6 +609,15 @@ function ProfileTop({ FriendSugeesions, AllFriends, friendData, Profile, profile
                                 </NavLink>
                             }
                             {
+                                FriendRequest &&
+                                <NavLink to={`/friends/request/friends/${friendId}`} className='profileItems '>
+                                    <span className={`${Friends ? " text-blue-500" : "text-gray-500 font-semibold"} inline-block`}>Friends</span>
+                                    {
+                                        Friends && <div className=' absolute -bottom-1 left-0 h-[3px] w-full bg-blue-600'></div>
+                                    }
+                                </NavLink>
+                            }
+                            {
                                 Profile &&
                                 <NavLink to="/profile/photos" className='profileItems '>
                                     <span className={`${Photos ? " text-blue-500" : "text-gray-500 font-semibold"} inline-block`}>Photos</span>
@@ -618,6 +645,15 @@ function ProfileTop({ FriendSugeesions, AllFriends, friendData, Profile, profile
                                 </NavLink>
                             }
                             {
+                                FriendRequest &&
+                                <NavLink to={`/friends/request/photos/${friendId}`} className='profileItems '>
+                                    <span className={`${Photos ? " text-blue-500" : "text-gray-500 font-semibold"} inline-block`}>Photos</span>
+                                    {
+                                        Photos && <div className=' absolute -bottom-1 left-0 h-[3px] w-full bg-blue-600'></div>
+                                    }
+                                </NavLink>
+                            }
+                            {
                                 Profile &&
                                 <NavLink to="/profile/videos" className='profileItems '>
                                     <span className={`${Videos ? " text-blue-500" : "text-gray-500 font-semibold"} inline-block`}>Videos</span>
@@ -638,6 +674,15 @@ function ProfileTop({ FriendSugeesions, AllFriends, friendData, Profile, profile
                             {
                                 FriendSugeesions &&
                                 <NavLink to={`/friends/suggetion/videos/${friendId}`} className='profileItems '>
+                                    <span className={`${Videos ? " text-blue-500" : "text-gray-500 font-semibold"} inline-block`}>Videos</span>
+                                    {
+                                        Videos && <div className=' absolute -bottom-1 left-0 h-[3px] w-full bg-blue-600'></div>
+                                    }
+                                </NavLink>
+                            }
+                            {
+                                FriendRequest &&
+                                <NavLink to={`/friends/request/videos/${friendId}`} className='profileItems '>
                                     <span className={`${Videos ? " text-blue-500" : "text-gray-500 font-semibold"} inline-block`}>Videos</span>
                                     {
                                         Videos && <div className=' absolute -bottom-1 left-0 h-[3px] w-full bg-blue-600'></div>

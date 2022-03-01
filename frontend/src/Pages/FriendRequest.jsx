@@ -4,44 +4,13 @@ import Icon from "../images/FriendRequestPageIcon.svg";
 import { AiOutlineArrowLeft } from "react-icons/ai";
 import { useNavigate } from 'react-router-dom';
 import SingleFriendRequest from '../Components/SingleFriendRequest';
-import { useEffect } from 'react';
-import axios from 'axios';
-import { Host } from '../Data';
 import { useSelector } from 'react-redux';
 
-function FriendRequest({ setPageType }) {
+function FriendRequest() {
 
     const navigate = useNavigate();
     const [isScrolled, setScrolled] = useState(false);
-
-    const user = useSelector(state => state.User.User);
-    const [friendRequests, setFriendRequests] = useState([]);
-
-    useEffect(() => {
-
-        try {
-
-            const getRequest = async () => {
-
-                const res = await axios.get(`${Host}/api/friend/getFriendRequests`, {
-                    headers: {
-                        Authorization: `Bearer ${user.token}`
-                    }
-                });
-
-                setFriendRequests(res.data);
-            }
-
-            getRequest()
-
-        } catch (error) {
-
-            console.log(error);
-        }
-
-    }, [user])
-
-
+    const friendRequests = useSelector(state => state.Friends.FriendsRequests);
 
 
     const GotoFriendHomePage = () => {
@@ -86,7 +55,7 @@ function FriendRequest({ setPageType }) {
                                         friendRequests.map((friendRequest, index) => {
                                             return (
 
-                                                <SingleFriendRequest friend={friendRequest} key={index} friendRequests={friendRequests} setFriendRequests={setFriendRequests} />
+                                                <SingleFriendRequest friend={friendRequest} key={index} />
                                             )
                                         })
                                     }

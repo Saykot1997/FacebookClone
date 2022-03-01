@@ -7,14 +7,13 @@ import { Host } from '../Data';
 import ProfilePhoto from "../images/userAvater.png"
 import FriendsInfo from './FriendsInfo';
 
-function Friends({ AllFriends, FriendSugeesions, Profile, friendData }) {
+function Friends({ AllFriends, FriendSugeesions, FriendRequest, Profile, friendData }) {
 
     const user = useSelector(state => state.User.User);
     const [isHover, setHover] = useState(false);
     const allFriends = useSelector((state) => state.Friends.AllFriends)
     const [hoveredFriend, setHoveredFriend] = useState(null);
     const [allFriendsOfFriend, setAllFriendsOfFriend] = useState([]);
-    // console.log(friendData);
 
     useEffect(() => {
 
@@ -31,7 +30,6 @@ function Friends({ AllFriends, FriendSugeesions, Profile, friendData }) {
                     })
 
                     setAllFriendsOfFriend(res.data);
-                    // console.log(res.data);
 
                 } catch (error) {
 
@@ -69,6 +67,12 @@ function Friends({ AllFriends, FriendSugeesions, Profile, friendData }) {
                 {
                     FriendSugeesions &&
                     <NavLink to={`/friends/suggetion/friends/${friendData && friendData._id}`}>
+                        <span className=' text-blue-500 hover:bg-gray-200 px-2 py-1 rounded cursor-pointer '>See All Friends</span>
+                    </NavLink>
+                }
+                {
+                    FriendRequest &&
+                    <NavLink to={`/friends/request/friends/${friendData && friendData._id}`}>
                         <span className=' text-blue-500 hover:bg-gray-200 px-2 py-1 rounded cursor-pointer '>See All Friends</span>
                     </NavLink>
                 }

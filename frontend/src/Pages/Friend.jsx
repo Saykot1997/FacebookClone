@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from "react-redux";
 import axios from "axios"
 import { Host } from "../Data"
 import { AllFriendsFatchSuccess, FriendsRequestsFatchSuccess, SuggestedFriendsFatchSuccess } from "../Redux/FriendsSlice"
+import { NavLink } from "react-router-dom";
 
 
 function Friend() {
@@ -77,7 +78,7 @@ function Friend() {
                                 <div className=" w-full pb-4 mb-4 border-b border-gray-300">
                                     <div className=" w-full flex justify-between mb-4">
                                         <span className=' font-bold text-xl'>Friend Request</span>
-                                        <span className=' text-blue-500 text-lg'>See All</span>
+                                        <NavLink to="/friends/request" className=' text-blue-500 text-lg'>See All</NavLink>
                                     </div>
                                     <div className='w-full grid grid-cols-5 gap-3'>
                                         {
@@ -95,7 +96,7 @@ function Friend() {
                         }
                         <div className=' w-full flex justify-between mb-4'>
                             <span className=' font-bold text-xl'>People You May Know</span>
-                            <span className=' text-blue-500 text-lg'>See All</span>
+                            <NavLink to="/friends/suggetion" className=' text-blue-500 text-lg'>See All</NavLink>
                         </div>
                         <div className='w-full grid grid-cols-5 gap-3'>
                             {
