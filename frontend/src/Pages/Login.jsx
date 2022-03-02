@@ -51,11 +51,11 @@ function Login() {
 
             setEmailErr('Email or mobile number is required');
 
-        } else if (email && email.length < 10) {
+        } else if (email && !mobileNumber && email.length < 10) {
 
             setEmailErr('Email or mobile number must be at least 10 characters long');
 
-        } else if (mobileNumber && mobileNumber.length < 10) {
+        } else if (!email && mobileNumber && mobileNumber.length < 10) {
 
             setEmailErr('Email or mobile number must be at least 10 characters long');
 
@@ -97,6 +97,8 @@ function Login() {
 
         }
     }
+
+    console.log(email)
 
     return (
         <div className=' h-screen w-full relative'>

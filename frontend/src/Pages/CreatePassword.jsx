@@ -1,20 +1,78 @@
+import axios from 'axios';
 import React, { useState } from 'react';
-import { NavLink, useNavigate } from 'react-router-dom';
-import { FacebookIcon } from "../Data"
+import { useDispatch } from 'react-redux';
+import { NavLink, useLocation, useNavigate } from 'react-router-dom';
+import { FacebookIcon, Host } from "../Data"
+import { loadingSuccess } from '../Redux/UserSlice';
 
 function CreatePassword() {
 
     const [hidePassword, setHidePassword] = useState(true);
     const navigate = useNavigate();
+    const location = useLocation();
+    const [password, setPassword] = useState('');
+    const [error, setError] = useState('');
+    const dispatch = useDispatch();
 
     const HidePassword = () => {
         setHidePassword(!hidePassword);
     }
-    const SendCreatePasswordRequest = () => {
-        navigate('/');
-    }
     const GoBack = () => {
         navigate(-1);
+    }
+
+    const GetParams = (quiry) => {
+
+        if (quiry) {
+            const quiryString = quiry.split("?")[1];
+            if (quiryString.length > 0) {
+                const params = quiryString.split("&");
+                const paramObj = {};
+                params.forEach(element => {
+                    const keyValue = element.split("=");
+                    paramObj[keyValue[0]] = keyValue[1];
+                });
+
+                return paramObj
+            }
+
+        }
+
+        return {};
+    }
+
+    const params = GetParams(location.search);
+
+
+    const CreateNewPassword = async () => {
+
+        if (password) {
+
+            const tokenData = {
+                token: params.token,
+                userId: params.id,
+                password: password
+            }
+
+            try {
+
+                const res = await axios.post(`${Host}/api/password/create-password`, tokenData);
+                dispatch(loadingSuccess(res.data));
+                navigate("/");
+            }
+            catch (error) {
+
+                setError(error.response.data);
+            }
+
+        } else {
+
+            alert("Fill all fields");
+        }
+    }
+
+    const closeErrorMassage = () => {
+        setError("");
     }
 
     return (
@@ -33,7 +91,7 @@ function CreatePassword() {
                             <p className=' leading-5'>Create a new password that is at last 6 disite long. A strong password has a combination of letters, digits and pancuation mark.</p>
                             <div className=' flex items-center'>
                                 <div className=' relative w-full mr-2'>
-                                    <input type={`${hidePassword ? "password" : "text"}`} className=' w-full p-3 border focus:outline-0 focus:ring-1 ring-blue-500 my-5 border-gray-300 rounded placeholder:text-gray-500' placeholder='New password' />
+                                    <input onFocus={closeErrorMassage} onChange={(e) => { setPassword(e.target.value) }} type={`${hidePassword ? "password" : "text"}`} className=' w-full p-3 border focus:outline-0 focus:ring-1 ring-blue-500 my-5 border-gray-300 rounded placeholder:text-gray-500' placeholder='New password' />
                                     <span onClick={HidePassword} className=' text-blue-500 font-semibold absolute top-1/2 -translate-y-1/2 right-2 cursor-pointer'>{hidePassword ? "Show" : "Hide"}</span>
                                 </div>
                                 <div className=' bg-gray-200 rounded p-3 px-4 cursor-pointer'>
@@ -44,8 +102,11 @@ function CreatePassword() {
                         <hr className=' h-[1px] bg-gray-300 w-full ' />
                         <div className=' flex justify-end px-5 pt-3'>
                             <button onClick={GoBack} className=' bg-gray-300 py-[6px] px-4 font-semibold rounded-md mr-2'>Skip</button>
-                            <button onClick={SendCreatePasswordRequest} className=' bg-blue-500 py-[6px] px-4 text-white font-bold rounded-md'>Continue</button>
+                            <button onClick={CreateNewPassword} className=' bg-blue-500 py-[6px] px-4 text-white font-bold rounded-md'>Continue</button>
                         </div>
+                        {
+                            error && <p className=' text-red-500 text-center px-5 py-4'>{error}</p>
+                        }
                     </div>
                 </div>
             </div>

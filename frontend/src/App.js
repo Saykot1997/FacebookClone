@@ -155,7 +155,7 @@ function App() {
         <Route path="/profile/PhotosOfCover" element={<PrivateRoute><PhotosOfCover /></PrivateRoute>} />
         <Route path="/login" element={<Login />} />
         <Route path="/forgetPassword" element={<ForgetPassword />} />
-        <Route path="/createPassword" element={<CreatePassword />} />
+        <Route path="/newpassword/:token" element={<CreatePassword />} />
         <Route path="/profilePhotoUpdate" element={<ProfilePhotoUpdate />} />
         <Route path="/coverPhotoupload" element={<CoverPhotoUpload />} />
         <Route path="/biography" element={<Biography />} />
