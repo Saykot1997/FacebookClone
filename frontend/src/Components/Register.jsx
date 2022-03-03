@@ -16,7 +16,6 @@ function Register({ createAccount, setCreateAccount }) {
     const [firstName, setFirstName] = useState("")
     const [sureName, setSureName] = useState("")
     const [email, setEmail] = useState("")
-    const [mobileNumber, setMobileNumber] = useState("")
     const [password, setPassword] = useState("")
     const [birthDay, setBirthDay] = useState("")
     const [birthMonth, setBirthMonth] = useState("")
@@ -24,7 +23,7 @@ function Register({ createAccount, setCreateAccount }) {
     const [gender, setGender] = useState("")
     const [firstNameErr, setFirstNameErr] = useState("")
     const [sureNameErr, setSureNameErr] = useState("")
-    const [emailOrMobileErr, setEmailOrMobileErr] = useState("")
+    const [emailErr, setEmailErr] = useState("")
     const [passwordErr, setPasswordErr] = useState("")
     const [birthDayErr, setBirthDayErr] = useState("")
     const [birthMonthErr, setBirthMonthErr] = useState("")
@@ -40,7 +39,6 @@ function Register({ createAccount, setCreateAccount }) {
         setFirstName("");
         setSureName("");
         setEmail("");
-        setMobileNumber("");
         setPassword("");
         setBirthDay("");
         setBirthMonth("");
@@ -48,7 +46,7 @@ function Register({ createAccount, setCreateAccount }) {
         setGender("");
         setFirstNameErr("");
         setSureNameErr("");
-        setEmailOrMobileErr("");
+        setEmailErr("");
         setPasswordErr("");
         setBirthDayErr("");
         setBirthMonthErr("");
@@ -68,23 +66,12 @@ function Register({ createAccount, setCreateAccount }) {
         }
     }
 
-    const emailOrMobile = (value) => {
-        let isEmail = value.search("@");
-        if (isEmail > 0) {
-            setEmail(value)
-            setMobileNumber("")
-        } else {
-            setMobileNumber(value)
-            setEmail("")
-        }
-    }
-
     const RegisterUser = async (e) => {
 
         e.preventDefault();
         setFirstNameErr("");
         setSureNameErr("");
-        setEmailOrMobileErr("");
+        setEmailErr("");
         setPasswordErr("");
         setBirthDayErr("");
         setBirthMonthErr("");
@@ -110,18 +97,23 @@ function Register({ createAccount, setCreateAccount }) {
 
             setSureNameErr("Sure name must be at least 3 characters long");
 
-        } else if (!email && !mobileNumber) {
+        } else if (!email) {
 
-            setEmailOrMobileErr("Enter your email or mobile number");
+            setEmailErr("Enter your email");
         }
         else if (email && email.length < 10) {
 
-            setEmailOrMobileErr("Email or mobile number contains at least 10 characters");
+            setEmailErr("Email contains at least 10 characters");
         }
-        else if (mobileNumber && mobileNumber.length < 10) {
+        else if (email && email.indexOf("@") === -1) {
 
-            setEmailOrMobileErr("Email or mobile number contains at least 10 characters");
+            setEmailErr("Email must contain @");
         }
+        else if (email && email.indexOf(".com") === -1) {
+
+            setEmailErr("Email must contain .com");
+        }
+
         else if (!password) {
 
             setPasswordErr("What's your password?");
@@ -155,10 +147,9 @@ function Register({ createAccount, setCreateAccount }) {
                 sureName,
                 password,
                 birthDay: date,
-                gender
+                gender,
+                email
             }
-
-            email ? userData.email = email : userData.mobileNumber = mobileNumber;
 
             try {
 
@@ -182,7 +173,6 @@ function Register({ createAccount, setCreateAccount }) {
         setFirstName("");
         setSureName("");
         setEmail("");
-        setMobileNumber("");
         setPassword("");
         setBirthDay("");
         setBirthMonth("");
@@ -190,7 +180,7 @@ function Register({ createAccount, setCreateAccount }) {
         setGender("");
         setFirstNameErr("");
         setSureNameErr("");
-        setEmailOrMobileErr("")
+        setEmailErr("")
         setPasswordErr("");
         setBirthDayErr("");
         setBirthMonthErr("");
@@ -207,7 +197,7 @@ function Register({ createAccount, setCreateAccount }) {
     const CloseErrorMessage = () => {
         setFirstNameErr("");
         setSureNameErr("");
-        setEmailOrMobileErr("")
+        setEmailErr("")
         setPasswordErr("");
         setBirthDayErr("");
         setBirthMonthErr("");
@@ -261,19 +251,19 @@ function Register({ createAccount, setCreateAccount }) {
                                     }
                                 </div>
                             </div>
-                            <div className={`w-full relative my-2 ${emailOrMobileErr ? "border border-red-400 animate-shake" : ""}`}>
-                                <input onFocus={CloseErrorMessage} onChange={(e) => { emailOrMobile(e.target.value) }} value={email ? email : mobileNumber} type="text" className=' w-full py-2 border border-gray-300 bg-gray-100 px-2 focus:outline-0 rounded placeholder:text-gray-500' placeholder='Mobile number or email address' />
+                            <div className={`w-full relative my-2 ${emailErr ? "border border-red-400 animate-shake" : ""}`}>
+                                <input onFocus={CloseErrorMessage} onChange={(e) => { setEmail(e.target.value) }} value={email} type="text" className=' w-full py-2 border border-gray-300 bg-gray-100 px-2 focus:outline-0 rounded placeholder:text-gray-500' placeholder='Email address' />
                                 {
-                                    showError === "emailOrMobileErr" &&
+                                    showError === "emailErr" &&
                                     <div className=' absolute w-4/5 rounded-md right-full top-0 p-2 bg-red-400 text-white font-semibold'>
                                         {
-                                            emailOrMobileErr && <p>{emailOrMobileErr}</p>
+                                            emailErr && <p>{emailErr}</p>
                                         }
                                     </div>
                                 }
                                 {
-                                    emailOrMobileErr &&
-                                    <CgDanger onClick={() => { ShowErrorMessage("emailOrMobileErr") }} className=' text-red-500 absolute top-1/2 right-2 -translate-y-1/2 text-lg cursor-pointer' />
+                                    emailErr &&
+                                    <CgDanger onClick={() => { ShowErrorMessage("emailErr") }} className=' text-red-500 absolute top-1/2 right-2 -translate-y-1/2 text-lg cursor-pointer' />
                                 }
                             </div>
                             <div className={`w-full my-2 relative ${passwordErr && "border border-red-400 animate-shake"}`}>

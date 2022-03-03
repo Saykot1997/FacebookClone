@@ -1,0 +1,31 @@
+version: "3.9"
+services:
+  frontend:
+    build: ./frontend
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+      - mongo
+  backend:
+    build: ./Server
+    ports:
+      - "8000:8000"
+    depends_on:
+      - mongo
+    environment:
+      - EMAIL=exampleEmail
+      - EMAIL_PASSWORD=examplePassword
+      - SECRATE_key=alskdjfklasjkljsakljlksajfksajkljsalkfjksajflksajksajkljsakljlskajlksajsad
+      - TOKENSECRATE=lksdajlkjslkajklklsfakklsajkljakljflkjjlkajkljfjflklkksakfjdsafljkajskslsa
+      - DATABASE_URL=mongodb://mongo:27017/blogapp
+      - CLIENT_URL=http://localhost:3000
+    volumes:
+      - /uploads:/uploads
+  mongo:
+    image: mongo
+    restart: always
+    ports:
+      - "27017:27017"
+    volumes:
+      - /data/db:/data/db

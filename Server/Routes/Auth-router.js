@@ -7,46 +7,33 @@ const jwt = require('jsonwebtoken');
 
 router.post("/register", async (req, res) => {
 
-    const { firstName, sureName, birthDay, gender } = req.body;
+    const { firstName, sureName, birthDay, gender, email } = req.body;
 
     const userPassword = req.body.password
 
-    if (firstName && sureName && userPassword && birthDay && gender) {
-
-        if (!req.body.email && !req.body.mobileNumber) {
-            res.status(403).json("Email or MobileNumber is required")
-        }
+    if (firstName && sureName && userPassword && birthDay && gender && email) {
 
         const user = new User({
             firstName,
             sureName,
             birthDay,
-            gender
+            gender,
+            email
         })
-
-        req.body.email ? user.email = req.body.email : user.mobileNumber = req.body.mobileNumber;
 
         try {
 
             let findUserEmail
-            let findUserMobileNumber
 
             if (user.email) {
 
                 findUserEmail = await User.findOne({ email: user.email });
 
-            } else {
-
-                findUserMobileNumber = await User.findOne({ mobileNumber: user.mobileNumber })
             }
 
             if (findUserEmail) {
 
                 res.status(403).json("User email should be unique");
-
-            } else if (findUserMobileNumber) {
-
-                res.status(403).json("User mobile number should be unique");
 
             } else {
 
@@ -88,16 +75,7 @@ router.post("/login", async (req, res) => {
 
         try {
 
-            let user
-
-            if (email) {
-
-                user = await User.findOne({ email });
-
-            } else {
-
-                user = await User.findOne({ mobileNumber });
-            }
+            const user = await User.findOne({ email });
 
             if (!user) {
 

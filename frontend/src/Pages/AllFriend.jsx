@@ -55,6 +55,7 @@ function AllFriend() {
     }
 
     return (
+
         <div className=' bg-gray-100 h-screen w-full'>
             <Topbar />
             <div className='rightbar w-full flex justify-between'>

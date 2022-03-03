@@ -207,7 +207,7 @@ function Comments({ post }) {
                                             }
 
                                             <form onSubmit={(e) => PostReplayComment(e, comment._id)} className={`${openReplayBox && (curentComment === comment._id) ? "visible" : "hidden"} flex items-center my-2`} >
-                                                <img src={profilePhoto} alt="" className=' h-7 w-7 rounded-full object-cover mr-1' />
+                                                <img src={User.profilePicture ? `${Host}/images/${User.profilePicture}` : userAvater} alt="" className=' h-7 w-7 rounded-full object-cover mr-1' />
                                                 <input onChange={(e) => { setCommentReplay(e.target.value) }} type="text" placeholder='Write a replay...' id='commentInput' className=' py-[6px] focus:outline-0 w-full px-3 bg-gray-100 rounded-2xl' />
                                             </form>
                                         </div>

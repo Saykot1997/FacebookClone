@@ -13,7 +13,6 @@ function Login() {
     const navigate = useNavigate();
     const [createAccount, setCreateAccount] = useState(false);
     const [email, setEmail] = useState('');
-    const [mobileNumber, setMobileNumber] = useState('');
     const [password, setPassword] = useState('');
     const [emailErr, setEmailErr] = useState('');
     const [passwordErr, setPasswordErr] = useState('');
@@ -37,29 +36,26 @@ function Login() {
         setShowError(error)
     }
 
-    const isEmail = (email) => {
-        if (email.includes('@')) {
-            setEmail(email);
-        } else {
-            setMobileNumber(email);
-        }
-    }
-
     const Login = async () => {
 
-        if (email === '' && mobileNumber === '') {
+        if (email === '') {
 
-            setEmailErr('Email or mobile number is required');
+            setEmailErr('Email is required');
 
-        } else if (email && !mobileNumber && email.length < 10) {
+        } else if (email && email.length < 10) {
 
-            setEmailErr('Email or mobile number must be at least 10 characters long');
+            setEmailErr('Email must be at least 10 characters long');
 
-        } else if (!email && mobileNumber && mobileNumber.length < 10) {
+        }
+        else if (email && email.indexOf("@") === -1) {
 
-            setEmailErr('Email or mobile number must be at least 10 characters long');
+            setEmailErr("Email must contain @");
+        }
+        else if (email && email.indexOf(".com") === -1) {
 
-        } else if (password === '') {
+            setEmailErr("Email must contain .com");
+        }
+        else if (password === '') {
 
             setPasswordErr('Password is required');
 
@@ -76,16 +72,14 @@ function Login() {
 
             const userData = {
                 password: password,
+                email: email
             }
-
-            email ? userData.email = email : userData.mobileNumber = mobileNumber;
 
             try {
 
                 const res = await axios.post(`${Host}/api/auth/login`, userData)
                 dispatch(loadingSuccess(res.data));
                 res && setEmail('');
-                res && setMobileNumber('');
                 res && setPassword('');
                 navigate('/');
 
@@ -94,11 +88,9 @@ function Login() {
                 dispatch(loadingFailure(error.response.data));
 
             }
-
         }
     }
 
-    console.log(email)
 
     return (
         <div className=' h-screen w-full relative'>
@@ -111,7 +103,7 @@ function Login() {
                         <div className=' w-[395px] bg-white shadow-md shadow-gray-400 rounded-md p-4'>
                             <p className=' text-center text-lg mb-4'>Log in to Facebook</p>
                             <div className={`${emailErr && " ring-2 ring-red-500 animate-shake"} relative w-full`}>
-                                <input onFocus={CloseErrorMessage} onChange={(e) => { isEmail(e.target.value) }} value={email ? email : mobileNumber} type="text" placeholder='Email address or phone number' className={`p-3 w-full border border-gray-300 placeholder:text-gray-400 focus:ring-1 ring-blue-600 focus:outline-0 placeholder:font-semibold rounded`} />
+                                <input onFocus={CloseErrorMessage} onChange={(e) => { setEmail(e.target.value) }} value={email} type="text" placeholder='Email address' className={`p-3 w-full border border-gray-300 placeholder:text-gray-400 focus:ring-1 ring-blue-600 focus:outline-0 placeholder:font-semibold rounded`} />
                                 {
                                     showError === "emailErr" &&
                                     <div className=' absolute w-full rounded-md left-full top-0 p-2 bg-red-400 text-white font-semibold'>

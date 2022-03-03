@@ -29,7 +29,7 @@ app.use(express.static(path.join(__dirname, "uploads")))
 
 
 // databess conection
-mongoose.connect('mongodb://localhost:27017/socal-app', { useNewUrlParser: true, useUnifiedTopology: true }, () => { console.log("databess has been conected !") });
+mongoose.connect(process.env.DATABASE_URL, { useNewUrlParser: true, useUnifiedTopology: true }, () => { console.log("databess has been conected !") });
 
 //get route
 app.get('/', Authgurd, async (req, res) => {
