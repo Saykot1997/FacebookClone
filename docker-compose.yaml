@@ -18,13 +18,12 @@ services:
       - EMAIL_PASSWORD=examplePassword
       - SECRATE_key=alskdjfklasjkljsakljlksajfksajkljsalkfjksajflksajksajkljsakljlskajlksajsad
       - TOKENSECRATE=lksdajlkjslkajklklsfakklsajkljakljflkjjlkajkljfjflklkksakfjdsafljkajskslsa
-      - DATABASE_URL=mongodb://mongo:27017/blogapp
+      - DATABASE_URL=mongodb://mongo:27017/socal-app
       - CLIENT_URL=http://localhost:3000
     volumes:
       - /uploads:/uploads
   mongo:
     image: mongo
-    restart: always
     ports:
       - "27017:27017"
     volumes:
