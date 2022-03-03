@@ -509,7 +509,7 @@ function ProfileTop({ FriendSugeesions, AllFriends, FriendRequest, friendData, P
                             {
                                 Profile &&
                                 <NavLink to='/profile' className='profileItems '>
-                                    <span className={`${Profile ? " text-blue-500" : " text-gray-500 font-semibold"} inline-block`}>Post</span>
+                                    <span className={`${profile ? " text-blue-500" : " text-gray-500 font-semibold"} inline-block`}>Post</span>
                                     {
                                         profile && <div className=' absolute -bottom-1 left-0 h-[3px] w-full bg-blue-600'></div>
                                     }
@@ -518,7 +518,7 @@ function ProfileTop({ FriendSugeesions, AllFriends, FriendRequest, friendData, P
                             {
                                 AllFriends &&
                                 <NavLink to={`/friends/all/profile/${friendId}`} className='profileItems '>
-                                    <span className={`${Profile ? " text-blue-500" : " text-gray-500 font-semibold"} inline-block`}>Post</span>
+                                    <span className={`${profile ? " text-blue-500" : " text-gray-500 font-semibold"} inline-block`}>Post</span>
                                     {
                                         profile && <div className=' absolute -bottom-1 left-0 h-[3px] w-full bg-blue-600'></div>
                                     }
@@ -527,7 +527,7 @@ function ProfileTop({ FriendSugeesions, AllFriends, FriendRequest, friendData, P
                             {
                                 FriendSugeesions &&
                                 <NavLink to={`/friends/suggetion/profile/${friendId}`} className='profileItems '>
-                                    <span className={`${Profile ? " text-blue-500" : " text-gray-500 font-semibold"} inline-block`}>Post</span>
+                                    <span className={`${profile ? " text-blue-500" : " text-gray-500 font-semibold"} inline-block`}>Post</span>
                                     {
                                         profile && <div className=' absolute -bottom-1 left-0 h-[3px] w-full bg-blue-600'></div>
                                     }
@@ -536,7 +536,7 @@ function ProfileTop({ FriendSugeesions, AllFriends, FriendRequest, friendData, P
                             {
                                 FriendRequest &&
                                 <NavLink to={`/friends/request/profile/${friendId}`} className='profileItems '>
-                                    <span className={`${Profile ? " text-blue-500" : " text-gray-500 font-semibold"} inline-block`}>Post</span>
+                                    <span className={`${profile ? " text-blue-500" : " text-gray-500 font-semibold"} inline-block`}>Post</span>
                                     {
                                         profile && <div className=' absolute -bottom-1 left-0 h-[3px] w-full bg-blue-600'></div>
                                     }

@@ -10,7 +10,7 @@ import { NavLink, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import { loadingSuccess } from '../Redux/UserSlice';
 
-function ProfilePhotoComponent({ About, AllFriends, profile }) {
+function ProfilePhotoComponent({ About, AllFriends, Profile, profile }) {
 
     const User = useSelector((state) => state.User.User);
     const [yourPhoto, setYourPhoto] = useState(true);
@@ -104,7 +104,7 @@ function ProfilePhotoComponent({ About, AllFriends, profile }) {
 
                         {
 
-                            About && profile && User.uploads.length > 10 && User.uploads.slice(0, 10).map((item, index) => {
+                            About && Profile && User.uploads.length > 10 && User.uploads.slice(0, 10).map((item, index) => {
 
                                 return (
                                     <div key={index} className=' relative w-full h-36 rounded-md overflow-hidden'>
@@ -125,7 +125,7 @@ function ProfilePhotoComponent({ About, AllFriends, profile }) {
                         }
                         {
 
-                            About && profile && User.uploads.length < 10 && User.uploads.map((item, index) => {
+                            About && Profile && User.uploads.length < 10 && User.uploads.map((item, index) => {
 
                                 return (
                                     <div key={index} className=' relative w-full h-36 rounded-md overflow-hidden'>
@@ -145,7 +145,7 @@ function ProfilePhotoComponent({ About, AllFriends, profile }) {
                             })
                         }
                         {
-                            !About && profile && User.uploads.length > 0 && User.uploads.map((item, index) => {
+                            !About && Profile && User.uploads.length > 0 && User.uploads.map((item, index) => {
 
                                 return (
                                     <div key={index} className=' relative w-full h-36 rounded-md overflow-hidden'>
@@ -166,7 +166,7 @@ function ProfilePhotoComponent({ About, AllFriends, profile }) {
                         {
 
                             // friends photos
-                            About && !profile && friendData && friendData.uploads.length > 10 && friendData.uploads.slice(0, 10).map((item, index) => {
+                            About && !Profile && friendData && friendData.uploads.length > 10 && friendData.uploads.slice(0, 10).map((item, index) => {
 
                                 return (
                                     <div key={index} className=' relative w-full h-36 rounded-md overflow-hidden'>
@@ -177,7 +177,7 @@ function ProfilePhotoComponent({ About, AllFriends, profile }) {
                         }
                         {
                             // friends photos
-                            About && !profile && friendData && friendData.uploads.length < 10 && friendData.uploads.map((item, index) => {
+                            About && !Profile && friendData && friendData.uploads.length < 10 && friendData.uploads.map((item, index) => {
 
                                 return (
                                     <div key={index} className=' relative w-full h-36 rounded-md overflow-hidden'>
@@ -188,7 +188,7 @@ function ProfilePhotoComponent({ About, AllFriends, profile }) {
                         }
                         {
                             // friends photos
-                            !About && !profile && friendData && friendData.uploads.length > 0 && friendData.uploads.map((item, index) => {
+                            !About && !Profile && friendData && friendData.uploads.length > 0 && friendData.uploads.map((item, index) => {
 
                                 return (
                                     <div key={index} className=' relative w-full h-36 rounded-md overflow-hidden'>
@@ -201,7 +201,7 @@ function ProfilePhotoComponent({ About, AllFriends, profile }) {
                 }
 
                 {
-                    album && profile &&
+                    album && Profile &&
 
                     <div className='grid grid-cols-5 gap-2 my-3'>
                         <div>
@@ -244,7 +244,7 @@ function ProfilePhotoComponent({ About, AllFriends, profile }) {
                 }
                 {
                     // friends photos
-                    album && !profile &&
+                    album && !Profile &&
 
                     <div className='grid grid-cols-5 gap-2 my-3'>
                         <div>
@@ -280,7 +280,7 @@ function ProfilePhotoComponent({ About, AllFriends, profile }) {
                             </NavLink>
                         }
                         {
-                            profile &&
+                            Profile &&
                             <NavLink to="/profile/photos">
                                 <button className=' w-full py-2 hover:bg-gray-300 bg-gray-200 rounded-lg font-semibold'>See All</button>
                             </NavLink>

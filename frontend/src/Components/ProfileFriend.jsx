@@ -7,7 +7,7 @@ import { NavLink, useLocation } from 'react-router-dom';
 import { Host } from '../Data';
 import SingleProfileFriend from './SingleProfileFriend'
 
-function ProfileFriend({ About, profile, AllFriends }) {
+function ProfileFriend({ About, Profile, profile, AllFriends }) {
 
     const allFriends = useSelector(state => state.Friends.AllFriends);
     const user = useSelector(state => state.User.User);
@@ -80,7 +80,7 @@ function ProfileFriend({ About, profile, AllFriends }) {
                     <div className=' w-full'>
                         <div className=' p-2 mt-5 w-full grid grid-cols-2 gap-1'>
                             {
-                                profile && allFriends.length > 0 && allFriends.length > 6 &&
+                                Profile && allFriends.length > 0 && allFriends.length > 6 &&
 
                                 allFriends.slice(0, 6).map((friend, i) => {
                                     return (
@@ -91,7 +91,7 @@ function ProfileFriend({ About, profile, AllFriends }) {
                             }
 
                             {
-                                profile && allFriends.length > 0 && allFriends.length < 6 &&
+                                Profile && allFriends.length > 0 && allFriends.length < 6 &&
 
                                 allFriends.map((friend, i) => {
                                     return (
@@ -102,7 +102,7 @@ function ProfileFriend({ About, profile, AllFriends }) {
                             }
                             {/* friends friend */}
                             {
-                                !profile && friendAllFriend.length > 0 && friendAllFriend.length > 6 &&
+                                !Profile && friendAllFriend.length > 0 && friendAllFriend.length > 6 &&
 
                                 friendAllFriend.slice(0, 6).map((friend, i) => {
                                     return (
@@ -113,7 +113,7 @@ function ProfileFriend({ About, profile, AllFriends }) {
                             }
 
                             {
-                                !profile && friendAllFriend.length > 0 && friendAllFriend.length < 6 &&
+                                !Profile && friendAllFriend.length > 0 && friendAllFriend.length < 6 &&
 
                                 friendAllFriend.map((friend, i) => {
                                     return (
@@ -126,7 +126,7 @@ function ProfileFriend({ About, profile, AllFriends }) {
                         </div>
                         <div className=' w-full'>
                             {
-                                profile &&
+                                Profile &&
 
                                 <NavLink to="/profile/friends">
                                     <button className=' w-full py-2 bg-gray-200 hover:bg-gray-300 rounded-md'>See All</button>
@@ -146,7 +146,7 @@ function ProfileFriend({ About, profile, AllFriends }) {
 
                     <div className=' p-2 mt-5 w-full grid grid-cols-2 gap-1'>
                         {
-                            profile && allFriends.length > 0 && allFriends.map((friend, index) => {
+                            Profile && allFriends.length > 0 && allFriends.map((friend, index) => {
                                 return (
 
                                     <SingleProfileFriend key={index} friend={friend} />
@@ -155,7 +155,7 @@ function ProfileFriend({ About, profile, AllFriends }) {
                         }
                         {/* friends friend */}
                         {
-                            !profile && friendAllFriend.length > 0 && friendAllFriend.map((friend, index) => {
+                            !Profile && friendAllFriend.length > 0 && friendAllFriend.map((friend, index) => {
                                 return (
 
                                     <SingleProfileFriend key={index} friend={friend} />

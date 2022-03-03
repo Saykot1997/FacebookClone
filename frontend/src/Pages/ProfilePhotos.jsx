@@ -10,7 +10,7 @@ function ProfilePhotos() {
     return (
         <div className=' bg-gray-100 w-full h-screen overflow-y-scroll'>
             <Topbar Profile />
-            <ProfileTop Photos />
+            <ProfileTop Profile Photos />
             <div className=' p-4 flex justify-center'>
                 <div className='w-[60%]'>
                     <ProfilePhotoComponent Profile />

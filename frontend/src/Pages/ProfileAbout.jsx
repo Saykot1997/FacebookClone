@@ -13,7 +13,7 @@ function ProfileAbout() {
     return (
         <div className=' bg-gray-100 w-full h-screen overflow-y-scroll'>
             <Topbar Profile />
-            <ProfileTop About />
+            <ProfileTop Profile About />
             <div className=' p-4 flex justify-center'>
                 <div className='w-[60%]'>
                     <ProfileAboutComponent Profile />

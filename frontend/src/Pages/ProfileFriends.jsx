@@ -11,7 +11,7 @@ function ProfileFriends() {
     return (
         <div className=' bg-gray-100 w-full h-screen overflow-y-scroll'>
             <Topbar Profile />
-            <ProfileTop Friends />
+            <ProfileTop Profile Friends />
             <div className=' p-4 flex justify-center'>
                 <div className='w-[60%]'>
                     <ProfileFriend Profile />
