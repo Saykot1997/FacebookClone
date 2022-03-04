@@ -1,5 +1,7 @@
 
-export const Host = "http://localhost:8000";
+export const Host = "https://facebookclonebacken.herokuapp.com";
+// export const Host = "http://localhost:8000";
+
 
 const sidebarLinks = [
     {

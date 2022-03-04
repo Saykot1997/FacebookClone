@@ -18,7 +18,7 @@ function ProfileAbout() {
                 <div className='w-[60%]'>
                     <ProfileAboutComponent Profile />
                     <ProfileFriend About Profile />
-                    <ProfilePhotoComponent About profile />
+                    <ProfilePhotoComponent About Profile />
                     <ProfileVideoComponent Profile />
                     <ProfileCheckIncomponent Profile />
                 </div>

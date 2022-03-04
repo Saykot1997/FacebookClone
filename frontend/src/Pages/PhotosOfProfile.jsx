@@ -43,7 +43,7 @@ function PhotosOfProfile() {
     return (
         <div className=' bg-gray-100 w-full h-screen overflow-y-scroll'>
             <Topbar Profile />
-            <ProfileTop Photos />
+            <ProfileTop Photos Profile />
             <div className=' p-4 flex justify-center'>
                 <div className='w-[60%]'>
                     {/* top component start */}
