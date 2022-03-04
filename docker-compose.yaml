@@ -1,14 +1,14 @@
-version: "3.9"
+version: "3.3"
 services:
   frontend:
-    build: ./frontend
+    build: ./frontend/
     ports:
       - "3000:3000"
     depends_on:
       - backend
       - mongo
   backend:
-    build: ./Server
+    build: ./Server/
     ports:
       - "8000:8000"
     depends_on:
@@ -21,10 +21,10 @@ services:
       - DATABASE_URL=mongodb://mongo:27017/socal-app
       - CLIENT_URL=http://localhost:3000
     volumes:
-      - /uploads:/uploads
+      - /uploads/:/uploads/
   mongo:
     image: mongo
     ports:
-      - "27017:27017"
+      - "27017"
     volumes:
       - /data/db:/data/db
