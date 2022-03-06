@@ -12,7 +12,7 @@ import { Host } from '../Data';
 import axios from 'axios';
 import { useLocation } from 'react-router-dom';
 
-function ProfileAboutComponent() {
+function ProfileAboutComponent({ Profile }) {
 
     const user = useSelector(state => state.User.User);
     const [work, setWork] = useState(user.work);
@@ -189,6 +189,13 @@ function ProfileAboutComponent() {
                                     <input className='w-full bg-gray-300 p-[6px] rounded-md ' placeholder="what's your mobile number" value={phone} onChange={(e) => setPhone(e.target.value)} />
                                 </div>
                             </div>
+                            {
+                                Profile &&
+                                <div className=' w-full flex justify-end'>
+                                    <button onClick={updateBiography} className=' py-[6px] px-3 bg-blue-500 mr-2 rounded-md text-white hover:bg-blue-600'>Save</button>
+                                    <button onClick={cencleEditdetail} className=' py-[6px] px-3 bg-gray-300 mr-2 rounded-md hover:bg-gray-400'>Cencle</button>
+                                </div>
+                            }
                         </div>
 
                         :
@@ -386,14 +393,6 @@ function ProfileAboutComponent() {
                                                 </div>
                                             </div>
                                         </div>
-                                        {
-                                            editDtailsMode &&
-                                            <div className=' w-full flex justify-end'>
-                                                <button onClick={updateBiography} className=' py-[6px] px-3 bg-blue-500 mr-2 rounded-md text-white hover:bg-blue-600'>Save</button>
-                                                <button onClick={cencleEditdetail} className=' py-[6px] px-3 bg-gray-300 mr-2 rounded-md hover:bg-gray-400'>Cencle</button>
-                                            </div>
-                                        }
-
                                     </div>
 
                                     :
