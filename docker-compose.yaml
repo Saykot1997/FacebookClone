@@ -1,30 +1,31 @@
 version: "3.3"
 services:
-  frontend:
-    build: ./frontend/
+  facebook-clone-frontend:
+    image: saykot/facebook-clone-frontend:1.0.0
     ports:
       - "3000:3000"
     depends_on:
-      - backend
+      - facebook-clone-backend
       - mongo
-  backend:
-    build: ./Server/
+  facebook-clone-backend:
+    image: saykot/facebook-clone-backend:1.0.0
     ports:
       - "8000:8000"
     depends_on:
       - mongo
     environment:
-      - EMAIL=exampleEmail
-      - EMAIL_PASSWORD=examplePassword
-      - SECRATE_key=alskdjfklasjkljsakljlksajfksajkljsalkfjksajflksajksajkljsakljlskajlksajsad
-      - TOKENSECRATE=lksdajlkjslkajklklsfakklsajkljakljflkjjlkajkljfjflklkksakfjdsafljkajskslsa
-      - DATABASE_URL=mongodb://mongo:27017/socal-app
+      - EMAIL=<email>
+      - EMAIL_PASSWORD=<password>
+      - TOKENSECRATE=<secrate>
+      - DATABASE_URL=<mongodbURL>
       - CLIENT_URL=http://localhost:3000
-    volumes:
-      - /uploads/:/uploads/
   mongo:
     image: mongo
+    restart: always
     ports:
       - "27017"
     volumes:
-      - /data/db:/data/db
+      - mongo-data:/data/db
+volumes:
+  mongo-data:
+    driver: local

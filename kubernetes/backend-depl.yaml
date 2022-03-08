@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: facebook-backend-depl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: facebook-backend
+  template:
+    metadata:
+      labels:
+        app: facebook-backend
+    spec:
+      containers:
+        - name: facebook-backend
+          image: saykot/facebook-clone-backend:1.0.1
+          ports:
+            - containerPort: 8000
+          env:
+            - name: TOKENSECRATE
+              value: alskdjfkljafkljdlksjfkjlkjlkjfkljslkajkljfkjkfasjjfkjlkdslfjlakjlksaj
+            - name: DATABASE_URL
+              value: mongodb://facebook-mongo-srv/facebook_clone
+            - name: EMAIL
+              value: saykothossain14@gmail.com
+            - name: EMAIL_PASSWORD
+              value: saykothossain1997@
+            - name: CLIENT_URL
+              value: http://facebook-clone.com
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: facebook-backend-srv
+spec:
+  selector:
+    app: facebook-backend
+  ports:
+    - port: 8000
+      targetPort: 8000

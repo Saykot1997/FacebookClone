@@ -1,6 +1,7 @@
 
-export const Host = "http://localhost:8000";
-
+// export const Host = "http://localhost:8000";
+// export const Host = "http://192.168.49.2:30008";
+export const Host = "http://saykotfacebook.io";
 
 const sidebarLinks = [
     {

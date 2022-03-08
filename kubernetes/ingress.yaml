@@ -1,0 +1,23 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: facebook-clone-ingress
+spec:
+  rules:
+    - host: saykotfacebook.io
+      http:
+        paths:
+          - path: "/api"
+            pathType: Prefix
+            backend:
+              service:
+                name: facebook-backend-srv
+                port:
+                  number: 8000
+          - path: "/"
+            pathType: Prefix
+            backend:
+              service:
+                name: facebook-frontend-srv
+                port:
+                  number: 3000

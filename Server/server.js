@@ -1,7 +1,6 @@
 //initialize the server
 const express = require('express');
 const app = express();
-const port = process.env.PORT || 8000;
 const mongoose = require('mongoose');
 const cors = require('cors');
 const env = require('dotenv');
@@ -28,8 +27,8 @@ app.use(express.static(path.join(__dirname, "uploads")))
 // app.use(express.static('uploads'));
 
 
-// databess conection
-mongoose.connect(process.env.DATABASE_URL, { useNewUrlParser: true, useUnifiedTopology: true }, () => { console.log("databess has been conected !") });
+// mongodb conection
+mongoose.connect(process.env.DATABASE_URL, { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false }, () => { console.log("databess has been conected !") });
 
 //get route
 app.get('/', Authgurd, async (req, res) => {
@@ -44,6 +43,6 @@ app.use('/api/password', PasswordResetRoutes);
 
 
 // server listen
-app.listen(port, () => {
-    console.log('Server is running on port: ' + port);
+app.listen(8000, () => {
+    console.log('Server is running on port: ' + 8000);
 });
