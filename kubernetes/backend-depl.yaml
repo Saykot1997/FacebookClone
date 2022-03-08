@@ -23,9 +23,9 @@ spec:
             - name: DATABASE_URL
               value: mongodb://facebook-mongo-srv/facebook_clone
             - name: EMAIL
-              value: saykothossain14@gmail.com
+              value: exampleemail
             - name: EMAIL_PASSWORD
-              value: saykothossain1997@
+              value: exampleemailPassword
             - name: CLIENT_URL
               value: http://facebook-clone.com
 
