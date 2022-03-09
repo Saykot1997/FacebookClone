@@ -19,15 +19,37 @@ spec:
             - containerPort: 8000
           env:
             - name: TOKENSECRATE
-              value: alskdjfkljafkljdlksjfkjlkjlkjfkljslkajkljfkjkfasjjfkjlkdslfjlakjlksaj
+              valueFrom:
+                secretKeyRef:
+                  name: mysecret
+                  key: token-secrate
             - name: DATABASE_URL
-              value: mongodb://facebook-mongo-srv/facebook_clone
+              valueFrom:
+                secretKeyRef:
+                  name: mysecret
+                  key: database-url
             - name: EMAIL
-              value: exampleemail
+              valueFrom:
+                secretKeyRef:
+                  name: mysecret
+                  key: email
             - name: EMAIL_PASSWORD
-              value: exampleemailPassword
+              valueFrom:
+                secretKeyRef:
+                  name: mysecret
+                  key: email-password
             - name: CLIENT_URL
-              value: http://facebook-clone.com
+              valueFrom:
+                secretKeyRef:
+                  name: mysecret
+                  key: cliet-url
+          volumeMounts:
+            - name: server-storage
+              mountPath: ./uploads
+      volumes:
+        - name: server-storage
+          persistentVolumeClaim:
+            claimName: server-pvc
 
 ---
 apiVersion: v1

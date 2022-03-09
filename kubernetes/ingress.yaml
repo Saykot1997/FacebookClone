@@ -14,6 +14,13 @@ spec:
                 name: facebook-backend-srv
                 port:
                   number: 8000
+          - path: "/images"
+            pathType: Prefix
+            backend:
+              service:
+                name: facebook-backend-srv
+                port:
+                  number: 8000
           - path: "/"
             pathType: Prefix
             backend:
