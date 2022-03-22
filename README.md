@@ -18,7 +18,7 @@ That command will install all the dependencies of the app. After install all the
 
 That will run the app in localhost:3000 you can see the app in localhost:3000
 
-## As the app is full stack app. So the app in depends on backend app. To  run backend app follow:
+### As the app is full stack app. So the app in depends on backend app. To  run backend app follow:
 
 First change directory to Server
 
