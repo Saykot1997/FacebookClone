@@ -1,4 +1,4 @@
-# Getting Started with FacebookClone
+## FacebookClone
 
 This is a testing purpose app to increase skill not for production
 
