@@ -24,7 +24,7 @@ node {
 
     stage("Frontend Image Push to Docker Hub"){
 
-        sh 'docker push saykot/facebook-clone-frontend:latest:latest'
+        sh 'docker push saykot/facebook-clone-frontend:latest'
     }
 
     stage("Backend Image Push to Docker Hub"){
